@@ -22,7 +22,7 @@ customize:
     icon: mdi:bed-king-outline
   light.kitchen_lights:
     icon: mdi:countertop-outline
-  light.office_light:
+  light.office_lights:
     icon: mdi:desk
   light.toilet:
     icon: mdi:emoticon-poop

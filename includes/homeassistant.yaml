@@ -4,8 +4,8 @@ longitude: !secret longitude_home
 # external_url:  # XXX: take from .storage config
 elevation: 0
 unit_system: metric
-country: NL
-time_zone: America/Los_Angeles
+country: FR
+time_zone: Europe/Paris
 name: Home
 allowlist_external_dirs:
   - /config/

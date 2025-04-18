@@ -1,0 +1,41 @@
+---
+#-
+#              _   _  __
+#  _ __   ___ | |_(_)/ _|_   _
+# | '_ \ / _ \| __| | |_| | | |
+# | | | | (_) | |_| |  _| |_| |
+# |_| |_|\___/ \__|_|_|  \__, |
+#                        |___/
+#
+#- from github.com/basnijholt/home-assistant-config
+- platform: group
+  name: all_iphones
+  services:
+    - service: mobile_app_basnijholt_iphone_10
+    - service: mobile_app_basnijholt_iphone_13
+    - service: mobile_app_marcella_iphone_se2
+    - service: mobile_app_marcella_iphone_14_pro
+
+- platform: group
+  name: bas
+  services:
+    - service: mobile_app_basnijholt_iphone_10
+    - service: mobile_app_basnijholt_iphone_13
+    - service: chrome
+
+- platform: group
+  name: iphone_bas
+  services:
+    - service: mobile_app_basnijholt_iphone_10
+    - service: mobile_app_basnijholt_iphone_13
+
+- platform: group
+  name: all
+  services:
+    - service: mobile_app_basnijholt_iphone_10
+    - service: mobile_app_basnijholt_iphone_13
+    - service: mobile_app_basnijholt_macbook
+    - service: mobile_app_marcella_iphone_se2
+    - service: mobile_app_marcella_iphone_14_pro
+    - service: tv
+    - service: chrome

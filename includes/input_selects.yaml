@@ -1,0 +1,60 @@
+---
+#-
+#  _                   _                _           _
+# (_)_ __  _ __  _   _| |_     ___  ___| | ___  ___| |_ ___
+# | | '_ \| '_ \| | | | __|   / __|/ _ \ |/ _ \/ __| __/ __|
+# | | | | | |_) | |_| | |_    \__ \  __/ |  __/ (__| |_\__ \
+# |_|_| |_| .__/ \__,_|\__|___|___/\___|_|\___|\___|\__|___/
+#         |_|            |_____|
+#
+#- from github.com/basnijholt/home-assistant-config
+sleep_mode:
+  options:
+    - total # everyone is sleeping
+    - half # one person is awake and one person is sleeping
+    - "off" # everyone is awake
+  icon: mdi:bed-king
+
+cube_mode:
+  options:
+    - Volume
+    - Brightness
+    - Hue
+  icon: mdi:cube-outline
+
+last_script_living_room:
+  options:
+    - script.cozy_lights_living_room
+    - script.white_lights_living_room
+  icon: mdi:lightbulb-on
+
+last_script_bedroom:
+  options:
+    - script.cozy_lights_bedroom
+    - script.white_lights_bedroom
+  icon: mdi:lightbulb-on
+
+bathroom_color:
+  options:
+    - red
+    - blue
+    - purple
+    - pink
+    - white
+  icon: mdi:lightbulb-on
+
+theme:
+  options:
+    - blue-red
+    - dark-blue
+    - dark-green
+    - light-blue
+    - light-green
+    - orange
+    - red
+  icon: mdi:format-color-fill
+
+z2m_lights:
+  name: Zigbee2MQTT Lights Friendly Names
+  options:
+    - None

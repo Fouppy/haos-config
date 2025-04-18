@@ -1,0 +1,75 @@
+---
+#-
+#  _                   _                             _
+# (_)_ __  _ __  _   _| |_     _ __  _   _ _ __ ___ | |__   ___ _ __ ___
+# | | '_ \| '_ \| | | | __|   | '_ \| | | | '_ ` _ \| '_ \ / _ \ '__/ __|
+# | | | | | |_) | |_| | |_    | | | | |_| | | | | | | |_) |  __/ |  \__ \
+# |_|_| |_| .__/ \__,_|\__|___|_| |_|\__,_|_| |_| |_|_.__/ \___|_|  |___/
+#         |_|            |_____|
+#
+#- from github.com/basnijholt/home-assistant-config
+
+temperature_low:
+  name: Temperature low
+  min: 10
+  max: 22
+  initial: 14
+  step: 0.5
+  icon: mdi:temperature-celsius
+
+temperature_high:
+  name: Temperature high
+  min: 10
+  max: 22
+  initial: 20
+  step: 0.5
+  icon: mdi:temperature-celsius
+
+kef_ls50_desk_db:
+  name: Desk dB
+  min: -6
+  max: 0
+  step: 0.5
+  icon: mdi:equalizer
+
+kef_ls50_wall_db:
+  name: Wall dB
+  min: -6
+  max: 0
+  step: 0.5
+  icon: mdi:equalizer
+
+kef_ls50_treble_db:
+  name: Treble dB
+  min: -2
+  max: 2
+  step: 0.5
+  icon: mdi:equalizer
+
+kef_ls50_high_hz:
+  name: High Hz
+  min: 50
+  max: 120
+  step: 5
+  icon: mdi:equalizer
+
+kef_ls50_low_hz:
+  name: Low Hz
+  min: 40
+  max: 250
+  step: 5
+  icon: mdi:equalizer
+
+kef_ls50_sub_db:
+  name: Sub dB
+  min: -10
+  max: 10
+  step: 1
+  icon: mdi:equalizer
+
+contraction_intensity:
+  name: Contraction Intensity
+  min: 1
+  max: 10
+  step: 1
+  mode: slider

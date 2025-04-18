@@ -1,5 +1,5 @@
 - name: Fouppy
-  id: fouppy
+  id: fred_honore
   user_id: e5b82f87b00d41a3be748acb037910bd
   # picture: !secret profile_photo_bas
   device_trackers:
@@ -7,7 +7,7 @@
     - device_tracker.in2023 # from Android app
     - device_tracker.in2023_ping
 - name: MooM
-  id: moom
+  id: morgane_skowron
   user_id: 7e4128d9bf5041e68d6afb646267dc22
   # picture: !secret profile_photo_marcella
   device_trackers:

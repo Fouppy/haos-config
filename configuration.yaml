@@ -30,13 +30,13 @@ automation old: !include_dir_merge_list automations
 # shell_command: !include includes/shell_commands.yaml
 # notify: !include includes/notify.yaml
 # light: !include includes/lights.yaml
-# wake_on_lan:
+wake_on_lan:
 # timer: !include includes/timers.yaml
 # ios: !include includes/ios.yaml
 # homekit: !include includes/homekit.yaml
 # plant: !include includes/plant.yaml
 # influxdb: !include includes/influxdb.yaml
-# intent:
+intent:
 # intent_script: !include includes/intent_script.yaml
 
 # Custom components

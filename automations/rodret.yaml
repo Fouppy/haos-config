@@ -1,8 +1,0 @@
-alias: Rodret to Tradfri
-description: ''
-use_blueprint:
-path: damru/ikea_E1743-E2201-E2213_ZHA-Z2M_control-light.yaml
-input:
-  light: light.cuisine_plans_de_travail
-  remote_devices:
-  - df5b9b63c997a2417895397f2d10f3bf

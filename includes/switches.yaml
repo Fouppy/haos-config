@@ -2,10 +2,10 @@
   switches:
     vacuum_mode:
       value_template: >
-        {{ is_state("vacuum.chambre_aspirateur_mode", "smart")}}
+        {{ is_state("vacuum.hoover", "smart")}}
       turn_on:
         action: vacuum.start
-        entity_id: vacuum.chambre_aspirateur
+        entity_id: vacuum.hoover
       turn_off:
         action: vacuum.return_to_base
-        entity_id: vacuum.chambre_aspirateur
+        entity_id: vacuum.hoover

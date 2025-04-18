@@ -192,8 +192,8 @@
     no_one_home:
       friendly_name: No one is home
       value_template: >
-        {{ not is_state("person.bas", "home")
-            and not is_state("person.marcella", "home") }}
+        {{ not is_state("person.fred_honore", "home")
+            and not is_state("person.morgane_skowron", "home") }}
 
     using_macbook_in_guest_room:
       friendly_name: Activity in the guest room

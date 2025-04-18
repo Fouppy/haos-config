@@ -1,8 +1,8 @@
 persons:
   name: People
   entities:
-    - person.fred_honore
-    - person.morgane_skowron
+    - person.fouppy
+    - person.moom
 
 1+8_fouppy:
   # OnePlus 8 Pro

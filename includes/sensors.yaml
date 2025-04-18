@@ -87,7 +87,7 @@
         {% set seven_oclock = as_timestamp(now().replace(hour=19).replace(minute=0).replace(second=0)) %}
 
         {% if t_today > hours_per_day_excluding_today
-              or (not is_state("person.fred_honore", "Work") and t_today > 0)
+              or (not is_state("person.fouppy", "Work") and t_today > 0)
               or (as_timestamp(now()) > seven_oclock)
               or day == 0
               or now().weekday() > 4
@@ -204,7 +204,7 @@
     nearest_iphone_notify:
       friendly_name: Nearest iPhone's notify service
       value_template: >
-        {% if is_state("person.fred_honore", "home") and is_state("person.morgane_skowron", "home") %}
+        {% if is_state("person.fouppy", "home") and is_state("person.moom", "home") %}
           notify.all_iphones
         {% elif is_state_attr("sensor.home_nearest_device", "Bas") %}
           notify.iphone_bas
@@ -390,7 +390,7 @@
 
 - platform: history_stats
   name: Quarantine meter Fouppy
-  entity_id: person.fred_honore
+  entity_id: person.fouppy
   state: "home"
   type: ratio
   duration:
@@ -399,7 +399,7 @@
 
 - platform: history_stats
   name: Quarantine meter MooM
-  entity_id: person.morgane_skowron
+  entity_id: person.moom
   state: "home"
   type: ratio
   duration:
@@ -408,7 +408,7 @@
 
 - platform: history_stats
   name: Quarantine meter Fouppy times left
-  entity_id: person.fred_honore
+  entity_id: person.fouppy
   state: "home"
   type: count
   duration:
@@ -417,7 +417,7 @@
 
 - platform: history_stats
   name: Quarantine meter MooM times left
-  entity_id: person.morgane_skowron
+  entity_id: person.moom
   state: "home"
   type: count
   duration:
@@ -480,7 +480,7 @@
 
 - platform: history_stats
   name: Time at work this week
-  entity_id: person.fred_honore
+  entity_id: person.fouppy
   state: Work
   type: time
   start: >
@@ -489,7 +489,7 @@
 
 - platform: history_stats
   name: Time at work today
-  entity_id: person.fred_honore
+  entity_id: person.fouppy
   state: Work
   type: time
   start: >
@@ -499,7 +499,7 @@
 
 - platform: history_stats
   name: Time at work on Monday
-  entity_id: person.fred_honore
+  entity_id: person.fouppy
   state: Work
   type: time
   duration:
@@ -511,7 +511,7 @@
 
 - platform: history_stats
   name: Time at work on Tuesday
-  entity_id: person.fred_honore
+  entity_id: person.fouppy
   state: Work
   type: time
   duration:
@@ -523,7 +523,7 @@
 
 - platform: history_stats
   name: Time at work on Wednessday
-  entity_id: person.fred_honore
+  entity_id: person.fouppy
   state: Work
   type: time
   duration:
@@ -535,7 +535,7 @@
 
 - platform: history_stats
   name: Time at work on Thursday
-  entity_id: person.fred_honore
+  entity_id: person.fouppy
   state: Work
   type: time
   duration:
@@ -547,7 +547,7 @@
 
 - platform: history_stats
   name: Time at work on Friday
-  entity_id: person.fred_honore
+  entity_id: person.fouppy
   state: Work
   type: time
   duration:

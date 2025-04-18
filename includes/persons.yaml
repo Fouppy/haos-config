@@ -1,7 +1,7 @@
 - name: Fouppy
-  id: fred_honore
+  id: fouppy
   user_id: e5b82f87b00d41a3be748acb037910bd
-  picture: !secret profile_photo_fred_honore
+  picture: !secret profile_photo_fouppy
   device_trackers:
     # OnePlus 8 Pro
     - device_tracker.in2023 # from Android app
@@ -10,9 +10,9 @@
     - device_tracker.fouppys_iphone_2 # from iOS app
     - device_tracker.fouppys_iphone_2_ping
 - name: MooM
-  id: morgane_skowron
+  id: moom
   user_id: 7e4128d9bf5041e68d6afb646267dc22
-  # picture: !secret profile_photo_morgane_skowron
+  # picture: !secret profile_photo_moom
   device_trackers:
     # OnePlus Nord CE
     - device_tracker.cph2465 # from Android app

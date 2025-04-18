@@ -4,59 +4,40 @@ persons:
     - person.fred_honore
     - person.morgane_skowron
 
-iphone_bas:
+1+8_fouppy:
   # iPhone X
-  - binary_sensor.basnijholt_iphone_10_focus
-  - sensor.basnijholt_iphone_10_activity
-  - sensor.basnijholt_iphone_10_average_active_pace
-  - sensor.basnijholt_iphone_10_battery_level
-  - sensor.basnijholt_iphone_10_battery_state
-  - sensor.basnijholt_iphone_10_bssid
-  - sensor.basnijholt_iphone_10_connection_type
-  - sensor.basnijholt_iphone_10_distance
-  - sensor.basnijholt_iphone_10_floors_ascended
-  - sensor.basnijholt_iphone_10_floors_descended
-  - sensor.basnijholt_iphone_10_geocoded_location
-  - sensor.basnijholt_iphone_10_last_update_trigger
-  - sensor.basnijholt_iphone_10_sim_1
-  - sensor.basnijholt_iphone_10_ssid
-  - sensor.basnijholt_iphone_10_steps
-  - sensor.basnijholt_iphone_10_storage
-  - device_tracker.basnijholt_iphone_10
-  - device_tracker.basnijholt_iphone_10_router
-  # iPhone 13 Pro
-  - binary_sensor.basnijholt_iphone_13_focus
-  - sensor.basnijholt_iphone_13_activity
-  - sensor.basnijholt_iphone_13_average_active_pace
-  - sensor.basnijholt_iphone_13_battery_level
-  - sensor.basnijholt_iphone_13_battery_state
-  - sensor.basnijholt_iphone_13_bssid
-  - sensor.basnijholt_iphone_13_connection_type
-  - sensor.basnijholt_iphone_13_distance
-  - sensor.basnijholt_iphone_13_floors_ascended
-  - sensor.basnijholt_iphone_13_floors_descended
-  - sensor.basnijholt_iphone_13_geocoded_location
-  - sensor.basnijholt_iphone_13_last_update_trigger
-  - sensor.basnijholt_iphone_13_sim_1
-  - sensor.basnijholt_iphone_13_sim_2
-  - sensor.basnijholt_iphone_13_ssid
-  - sensor.basnijholt_iphone_13_steps
-  - sensor.basnijholt_iphone_13_storage
-
-iphone_marcella:
-  - sensor.marcella_iphone_se_activity
-  - sensor.marcella_iphone_se_average_active
-  - sensor.marcella_iphone_se_bssid
-  - sensor.marcella_iphone_se_battery_level
-  - sensor.marcella_iphone_se_battery_state
-  - sensor.marcella_iphone_se_connection_type
-  - sensor.marcella_iphone_se_distance
-  - sensor.marcella_iphone_se_floors_ascended
-  - sensor.marcella_iphone_se_floors_descended
-  - sensor.marcella_iphone_se_geocoded_location
-  - sensor.marcella_iphone_se_last_update_trigger
-  - sensor.marcella_iphone_se_sim_1
-  - sensor.marcella_iphone_se_sim_2
-  - sensor.marcella_iphone_se_ssid
-  - sensor.marcella_iphone_se_steps
-  - device_tracker.marcella_iphone_se
+  - binary_sensor.in2023_focus
+  - sensor.in2023_activity
+  - sensor.in2023_average_active_pace
+  - sensor.in2023_battery_level
+  - sensor.in2023_battery_state
+  - sensor.in2023_bssid
+  - sensor.in2023_connection_type
+  - sensor.in2023_distance
+  - sensor.in2023_floors_ascended
+  - sensor.in2023_floors_descended
+  - sensor.in2023_geocoded_location
+  - sensor.in2023_last_update_trigger
+  - sensor.in2023_sim_1
+  - sensor.in2023_ssid
+  - sensor.in2023_steps
+  - sensor.in2023_storage
+  - device_tracker.in2023
+  - device_tracker.in2023_router
+# iphone_marcella:
+#   - sensor.marcella_iphone_se_activity
+#   - sensor.marcella_iphone_se_average_active
+#   - sensor.marcella_iphone_se_bssid
+#   - sensor.marcella_iphone_se_battery_level
+#   - sensor.marcella_iphone_se_battery_state
+#   - sensor.marcella_iphone_se_connection_type
+#   - sensor.marcella_iphone_se_distance
+#   - sensor.marcella_iphone_se_floors_ascended
+#   - sensor.marcella_iphone_se_floors_descended
+#   - sensor.marcella_iphone_se_geocoded_location
+#   - sensor.marcella_iphone_se_last_update_trigger
+#   - sensor.marcella_iphone_se_sim_1
+#   - sensor.marcella_iphone_se_sim_2
+#   - sensor.marcella_iphone_se_ssid
+#   - sensor.marcella_iphone_se_steps
+#   - device_tracker.marcella_iphone_se

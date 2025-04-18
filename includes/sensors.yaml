@@ -334,12 +334,6 @@
     - date
     - time
 
-# - platform: file
-#   name: contractions_csv
-#   file_path: "/config/utils/contractions_log.csv"
-#   value_template: "{{ value }}"
-#   scan_interval: 1
-
 - platform: history_stats
   name: Hours TV has been on last 7 days
   entity_id: media_player.tv

@@ -12,7 +12,7 @@ input_select: !include includes/input_selects.yaml
 input_number: !include includes/input_numbers.yaml
 
 # Logging and history
-# logger: !include includes/logger.yaml
+logger: !include includes/logger.yaml
 # recorder: !include includes/recorder.yaml
 
 # Managed via UI
@@ -22,7 +22,7 @@ script: !include scripts.yaml
 # Others
 person: !include includes/persons.yaml
 zone: !include includes/zones.yaml
-# group: !include includes/groups.yaml
+group: !include includes/groups.yaml
 # automation old: !include_dir_merge_list automations
 # switch: !include includes/switches.yaml
 # sensor: !include includes/sensors.yaml
@@ -40,5 +40,5 @@ zone: !include includes/zones.yaml
 # intent_script: !include includes/intent_script.yaml
 
 # Custom components
-# pyscript: !include includes/pyscript.yaml
+pyscript: !include includes/pyscript.yaml
 # adaptive_lighting: !include includes/adaptive_lighting.yaml

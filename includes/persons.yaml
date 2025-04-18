@@ -1,7 +1,7 @@
 - name: Fouppy
   id: fred_honore
   user_id: e5b82f87b00d41a3be748acb037910bd
-  # picture: !secret profile_photo_bas
+  picture: !secret profile_photo_fred_honore
   device_trackers:
     # 1+8
     - device_tracker.in2023 # from Android app

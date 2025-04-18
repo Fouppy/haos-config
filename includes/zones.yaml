@@ -3,8 +3,9 @@
   longitude: !secret longitude_home
   radius: 100
   icon: mdi:home
-# - name: Work
-#   latitude: !secret latitude_work
-#   longitude: !secret longitude_work
-#   radius: 500
-#   icon: mdi:work
+
+- name: Work
+  latitude: !secret latitude_work
+  longitude: !secret longitude_work
+  radius: 500
+  icon: mdi:work

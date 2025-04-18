@@ -4,7 +4,7 @@ persons:
     - person.fouppy
     - person.moom
 
-1+8_fouppy:
+oneplus_8_fouppy:
   # OnePlus 8 Pro
   - sensor.in2023_do_not_disturb_sensor
   - sensor.in2023_detected_activity
@@ -40,7 +40,7 @@ iphone_fouppy:
   - sensor.fouppys_iphone_storage
   - device_tracker.fouppys_iphone_2
 
-1+nord_moom:
+oneplus_nord_moom:
   # OnePlus Nord CE
   - sensor.cph2465_do_not_disturb_sensor
   - sensor.cph2465_detected_activit

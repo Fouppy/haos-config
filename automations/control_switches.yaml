@@ -30,6 +30,13 @@
         cluster_id: 8
         endpoint_id: 1
       id: hold-off-zha
+    - trigger: event
+      event_type: zha_event
+      event_data:
+        command: stop_with_on_off
+        endpoint_id: 1
+        cluster_id: 8
+      id: release-zha
   variables:
     helper_force_brightness: false
     helper_hold_delay: 0.1

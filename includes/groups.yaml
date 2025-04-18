@@ -8,20 +8,20 @@ persons:
   # iPhone X
   - binary_sensor.in2023_focus
   - sensor.in2023_activity
-  - sensor.in2023_average_active_pace
+  # - sensor.in2023_average_active_pace
   - sensor.in2023_battery_level
   - sensor.in2023_battery_state
   - sensor.in2023_bssid
-  - sensor.in2023_connection_type
+  - sensor.in2023_network_type
   - sensor.in2023_distance
-  - sensor.in2023_floors_ascended
-  - sensor.in2023_floors_descended
+  # - sensor.in2023_floors_ascended
+  # - sensor.in2023_floors_descended
   - sensor.in2023_geocoded_location
   - sensor.in2023_last_update_trigger
   - sensor.in2023_sim_1
-  - sensor.in2023_ssid
+  - sensor.in2023_wifi_connection
   - sensor.in2023_steps
-  - sensor.in2023_storage
+  - sensor.in2023_internal_storage
   - device_tracker.in2023
   - device_tracker.in2023_router
 # iphone_marcella:

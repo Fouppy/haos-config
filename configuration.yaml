@@ -13,7 +13,7 @@ input_number: !include includes/input_numbers.yaml
 
 # Logging and history
 logger: !include includes/logger.yaml
-# recorder: !include includes/recorder.yaml
+recorder: !include includes/recorder.yaml
 
 # Managed via UI
 scene: !include scenes.yaml

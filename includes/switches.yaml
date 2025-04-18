@@ -2,7 +2,7 @@
   switches:
     vacuum_mode:
       value_template: >
-        {{ is_state("vacuum.hoover", "cleaning")}}
+        {{ is_state_attr("vacuum.hoover", "cleaning_mode", "smart") }}
       turn_on:
         action: vacuum.start
         entity_id: vacuum.hoover

@@ -5,7 +5,7 @@ persons:
     - person.morgane_skowron
 
 1+8_fouppy:
-  # 1+8
+  # OnePlus 8 Pro
   - sensor.in2023_do_not_disturb_sensor
   - sensor.in2023_detected_activity
   - sensor.in2023_battery_level
@@ -20,7 +20,28 @@ persons:
   - sensor.in2023_internal_storage
   - device_tracker.in2023
 
+iphone_fouppy:
+  # iPhone XR
+  - binary_sensor.fouppys_iphone_focus
+  - sensor.fouppys_iphone_activity
+  - sensor.fouppys_iphone_average_active_pace
+  - sensor.fouppys_iphone_battery_level
+  - sensor.fouppys_iphone_battery_state
+  - sensor.fouppys_iphone_bssid
+  - sensor.fouppys_iphone_connection_type
+  - sensor.fouppys_iphone_distance
+  - sensor.fouppys_iphone_floors_ascended
+  - sensor.fouppys_iphone_floors_descended
+  - sensor.fouppys_iphone_geocoded_location
+  - sensor.fouppys_iphone_last_update_trigger
+  - sensor.fouppys_iphone_sim_1
+  - sensor.fouppys_iphone_ssid
+  - sensor.fouppys_iphone_steps
+  - sensor.fouppys_iphone_storage
+  - device_tracker.fouppys_iphone_2
+
 1+nord_moom:
+  # OnePlus Nord CE
   - sensor.cph2465_do_not_disturb_sensor
   - sensor.cph2465_detected_activit
   - sensor.cph2465_battery_level

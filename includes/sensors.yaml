@@ -207,7 +207,7 @@
         {% if is_state("person.fred_honore", "home") and is_state("person.morgane_skowron", "home") %}
           notify.all_iphones
         {% elif is_state_attr("sensor.home_nearest_device", "Bas") %}
-          notify.1+8_fouppy
+          notify.iphone_bas
         {% else %}
           notify.mobile_app_marcella_iphone
         {% endif %}

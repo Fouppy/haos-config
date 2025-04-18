@@ -3,13 +3,17 @@
   user_id: e5b82f87b00d41a3be748acb037910bd
   picture: !secret profile_photo_fred_honore
   device_trackers:
-    # 1+8
+    # OnePlus 8 Pro
     - device_tracker.in2023 # from Android app
     - device_tracker.in2023_ping
+    # iPhone XR
+    - device_tracker.fouppys_iphone_2 # from iOS app
+    - device_tracker.fouppys_iphone_2_ping
 - name: MooM
   id: morgane_skowron
   user_id: 7e4128d9bf5041e68d6afb646267dc22
-  # picture: !secret profile_photo_marcella
+  # picture: !secret profile_photo_morgane_skowron
   device_trackers:
+    # OnePlus Nord CE
     - device_tracker.cph2465 # from Android app
     - device_tracker.cph2465_ping

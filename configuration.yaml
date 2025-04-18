@@ -25,13 +25,13 @@ zone: !include includes/zones.yaml
 group: !include includes/groups.yaml
 automation old: !include_dir_merge_list automations
 switch: !include includes/switches.yaml
-# sensor: !include includes/sensors.yaml
-# binary_sensor: !include includes/binary_sensors.yaml
+sensor: !include includes/sensors.yaml
+binary_sensor: !include includes/binary_sensors.yaml
 # shell_command: !include includes/shell_commands.yaml
 # notify: !include includes/notify.yaml
 light: !include includes/lights.yaml
 wake_on_lan:
-# timer: !include includes/timers.yaml
+timer: !include includes/timers.yaml
 ios: !include includes/ios.yaml
 homekit: !include includes/homekit.yaml
 influxdb: !include includes/influxdb.yaml

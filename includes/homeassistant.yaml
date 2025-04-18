@@ -26,9 +26,3 @@ customize:
     icon: mdi:desk
   light.toilet:
     icon: mdi:emoticon-poop
-  # plant.monstera:
-  #   friendly_name: Monstera
-  # plant.peace_lily:
-  #   friendly_name: Peace lily
-  # plant.calathea:
-  #   friendly_name: Calathea

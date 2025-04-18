@@ -1,5 +1,0 @@
-- sensor:
-    # command: !secret portfolio_value
-    name: portfolio_value
-    unit_of_measurement: "€"
-    scan_interval: 20

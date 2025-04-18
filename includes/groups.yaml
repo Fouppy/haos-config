@@ -5,17 +5,14 @@ persons:
     - person.morgane_skowron
 
 1+8_fouppy:
-  # iPhone X
-  - binary_sensor.in2023_focus
+  # 1+8
+  - sensor.in2023_do_not_disturb_sensor
   - sensor.in2023_activity
-  # - sensor.in2023_average_active_pace
   - sensor.in2023_battery_level
   - sensor.in2023_battery_state
   - sensor.in2023_bssid
   - sensor.in2023_network_type
   - sensor.in2023_distance
-  # - sensor.in2023_floors_ascended
-  # - sensor.in2023_floors_descended
   - sensor.in2023_geocoded_location
   - sensor.in2023_last_update_trigger
   - sensor.in2023_sim_1
@@ -24,20 +21,20 @@ persons:
   - sensor.in2023_internal_storage
   - device_tracker.in2023
   - device_tracker.in2023_router
-# iphone_marcella:
-#   - sensor.marcella_iphone_se_activity
-#   - sensor.marcella_iphone_se_average_active
-#   - sensor.marcella_iphone_se_bssid
-#   - sensor.marcella_iphone_se_battery_level
-#   - sensor.marcella_iphone_se_battery_state
-#   - sensor.marcella_iphone_se_connection_type
-#   - sensor.marcella_iphone_se_distance
-#   - sensor.marcella_iphone_se_floors_ascended
-#   - sensor.marcella_iphone_se_floors_descended
-#   - sensor.marcella_iphone_se_geocoded_location
-#   - sensor.marcella_iphone_se_last_update_trigger
-#   - sensor.marcella_iphone_se_sim_1
-#   - sensor.marcella_iphone_se_sim_2
-#   - sensor.marcella_iphone_se_ssid
-#   - sensor.marcella_iphone_se_steps
-#   - device_tracker.marcella_iphone_se
+
+1+nord_moom:
+  - sensor.cph2465_do_not_disturb_sensor
+  - sensor.cph2465_activity
+  - sensor.cph2465_battery_level
+  - sensor.cph2465_battery_state
+  - sensor.cph2465_bssid
+  - sensor.cph2465_network_type
+  - sensor.cph2465_distance
+  - sensor.cph2465_geocoded_location
+  - sensor.cph2465_last_update_trigger
+  - sensor.cph2465_sim_1
+  - sensor.cph2465_wifi_connection
+  - sensor.cph2465_steps
+  - sensor.cph2465_internal_storage
+  - device_tracker.cph2465
+  - device_tracker.cph2465_router

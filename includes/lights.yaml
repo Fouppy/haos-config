@@ -15,6 +15,15 @@
     - light.chambre_lampe_rouge_light
     - light.chambre_guirlande_light
 
+- platform: group
+  name: Kitchen lights
+  entities:
+    - light.cuisine_plans_de_travail
+
+- platform: group
+  name: Office lights
+  entities:
+    - light.bureau_lampe_light
 # - platform: group
 #   name: Baby room lights
 #   entities:
@@ -37,10 +46,6 @@
 #     - light.guest_room
 #     - light.desk_led
 
-- platform: group
-  name: Kitchen lights
-  entities:
-    - light.cuisine_plans_de_travail
 # - platform: switch
 #   name: Baby sphere
 #   entity_id: switch.baby_sphere
@@ -48,6 +53,7 @@
 # - platform: switch
 #   name: Guest room
 #   entity_id: switch.guest_room
+
 # - platform: group
 #   name: Bathroom lights
 #   entities:

@@ -14,17 +14,21 @@ customize:
     friendly_name: Vacuum
   sensor.temperature_mean:
     icon: mdi:temperature-celsius
-  light.automatic_lights:
-    icon: mdi:robot
+  # light.automatic_lights:
+  #   icon: mdi:robot
   light.living_room_lights:
-    icon: mdi:sofa
+    icon: mdi:sofa-outline
   light.bedroom_lights:
-    icon: mdi:bed-king
+    icon: mdi:bed-king-outline
+  light.kitchen_lights:
+    icon: mdi:countertop-outline
+  light.office_light:
+    icon: mdi:desk
   light.toilet:
     icon: mdi:emoticon-poop
-  plant.monstera:
-    friendly_name: Monstera
-  plant.peace_lily:
-    friendly_name: Peace lily
-  plant.calathea:
-    friendly_name: Calathea
+  # plant.monstera:
+  #   friendly_name: Monstera
+  # plant.peace_lily:
+  #   friendly_name: Peace lily
+  # plant.calathea:
+  #   friendly_name: Calathea

@@ -1,55 +1,53 @@
 - platform: group
   name: Living room lights
   entities:
-    - light.sphere_tv
-    - light.sphere_2
-    - light.living_room_corner
-    - light.tv_led
-    - light.cabinet_led
-    - light.mid_room
-    - light.shelve
-    - light.marble
+    - light.salon_guirlande_bleue_light
+    - light.salon_lampe_principale_light
+    - light.salon_lampe_rouge_light
+    - light.salon_lampe_tv_light
+    - light.salon_lava_lampe_rouge_light
+    - light.salon_lava_lampe_bleue_light
 
 - platform: group
   name: Bedroom lights
   entities:
-    - light.philips_go
-    - light.bed_led
+    - light.chambre_lampe_principale_light
+    - light.chambre_lampe_rouge_light
+    - light.chambre_guirlande_light
 
-- platform: group
-  name: Baby room lights
-  entities:
-    - light.baby_room
-    - light.bamboo
+# - platform: group
+#   name: Baby room lights
+#   entities:
+#     - light.baby_room
+#     - light.bamboo
 
-- platform: group
-  name: Automatic lights
-  entities:
-    - light.utility_room
-    - light.garage_outside
-    - light.outside_front_door
-    - light.front_house
-    - light.bedroom_outside
-    - light.string_lights_outside
+# - platform: group
+#   name: Automatic lights
+#   entities:
+#     - light.utility_room
+#     - light.garage_outside
+#     - light.outside_front_door
+#     - light.front_house
+#     - light.bedroom_outside
+#     - light.string_lights_outside
 
-- platform: group
-  name: Guest room lights
-  entities:
-    - light.guest_room
-    - light.desk_led
+# - platform: group
+#   name: Guest room lights
+#   entities:
+#     - light.guest_room
+#     - light.desk_led
 
 - platform: group
   name: Kitchen lights
   entities:
-    - light.dinner_area
+    - light.cuisine_plans_de_travail
+# - platform: switch
+#   name: Baby sphere
+#   entity_id: switch.baby_sphere
 
-- platform: switch
-  name: Baby sphere
-  entity_id: switch.baby_sphere
-
-- platform: switch
-  name: Guest room
-  entity_id: switch.guest_room
+# - platform: switch
+#   name: Guest room
+#   entity_id: switch.guest_room
 # - platform: group
 #   name: Bathroom lights
 #   entities:

@@ -7,12 +7,11 @@ persons:
 1+8_fouppy:
   # 1+8
   - sensor.in2023_do_not_disturb_sensor
-  - sensor.in2023_activity
+  - sensor.in2023_detected_activity
   - sensor.in2023_battery_level
   - sensor.in2023_battery_state
   - sensor.in2023_bssid
   - sensor.in2023_network_type
-  - sensor.in2023_distance
   - sensor.in2023_geocoded_location
   - sensor.in2023_last_update_trigger
   - sensor.in2023_sim_1
@@ -20,16 +19,14 @@ persons:
   - sensor.in2023_steps
   - sensor.in2023_internal_storage
   - device_tracker.in2023
-  - device_tracker.in2023_router
 
 1+nord_moom:
   - sensor.cph2465_do_not_disturb_sensor
-  - sensor.cph2465_activity
+  - sensor.cph2465_detected_activit
   - sensor.cph2465_battery_level
   - sensor.cph2465_battery_state
   - sensor.cph2465_bssid
   - sensor.cph2465_network_type
-  - sensor.cph2465_distance
   - sensor.cph2465_geocoded_location
   - sensor.cph2465_last_update_trigger
   - sensor.cph2465_sim_1
@@ -37,4 +34,3 @@ persons:
   - sensor.cph2465_steps
   - sensor.cph2465_internal_storage
   - device_tracker.cph2465
-  - device_tracker.cph2465_router

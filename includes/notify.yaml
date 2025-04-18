@@ -14,7 +14,7 @@
     - service: chrome
 
 - platform: group
-  name: iphone_bas
+  name: 1+8_fouppy
   services:
     - service: mobile_app_basnijholt_iphone_10
     - service: mobile_app_basnijholt_iphone_13

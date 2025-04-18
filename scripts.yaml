@@ -1,710 +1,700 @@
----
-#-
-#                _       _
-#  ___  ___ _ __(_)_ __ | |_ ___
-# / __|/ __| '__| | '_ \| __/ __|
-# \__ \ (__| |  | | |_) | |_\__ \
-# |___/\___|_|  |_| .__/ \__|___/
-#                 |_|
-#
-#- from github.com/basnijholt/home-assistant-config
-# start_speakers:
-#   alias: Start speakers
-#   description: Start a Spotify playlist on KEF speakers
-#   fields:
-#     volume:
-#       description: Volume at which to play
-#       example: "0.3"
-#     source:
-#       description: Which source to use on the speakers
-#       example: Spotify
-#     entity_id:
-#       description: entity_id of the speaker
-#       example: media_player.kef_ls50
-#   variables:
-#     volume: "{% if volume %}volume{% else %}0.3{% endif %}"
-#     source: "{% if source %}source{% else %}Spotify{% endif %}"
-#     entity_id: "{% if entity_id %}entity_id{% else %}media_player.kef_ls50{% endif %}"
-#   sequence:
-#     - action: media_player.select_source
-#       data:
-#         entity_id: "{{ entity_id }}"
-#         source: "{{ source }}"
-#     - action: media_player.volume_set
-#       data:
-#         entity_id: "{{ entity_id }}"
-#         volume_level: "{{ volume }}"
+start_speakers:
+  alias: Start speakers
+  description: Start a Spotify playlist on KEF speakers
+  fields:
+    volume:
+      description: Volume at which to play
+      example: "0.3"
+    source:
+      description: Which source to use on the speakers
+      example: Spotify
+    entity_id:
+      description: entity_id of the speaker
+      example: media_player.kef_ls50
+  variables:
+    volume: "{% if volume %}volume{% else %}0.3{% endif %}"
+    source: "{% if source %}source{% else %}Spotify{% endif %}"
+    entity_id: "{% if entity_id %}entity_id{% else %}media_player.kef_ls50{% endif %}"
+  sequence:
+    - action: media_player.select_source
+      data:
+        entity_id: "{{ entity_id }}"
+        source: "{{ source }}"
+    - action: media_player.volume_set
+      data:
+        entity_id: "{{ entity_id }}"
+        volume_level: "{{ volume }}"
 
-# start_spotify:
-#   alias: Start Spotify
-#   description: Start a Spotify playlist on KEF speakers
-#   fields:
-#     source:
-#       description: The name of the speaker as it appears in Spotify
-#       example: KEF LS50
-#     id:
-#       description: The playlist/album/podcast URI from Spotify
-#       example: playlist:6rPTm9dYftKcFAfwyRqmDZ
-#   variables:
-#     media_content_type: "{{ id.split(':')[0] }}"
-#     media_content_id: "spotify:{{ id }}"
-#   sequence:
-#     - action: homeassistant.update_entity
-#       entity_id: media_player.spotify
-#     - if: >
-#         {{ not (is_state('media_player.spotify', 'playing')
-#                 and is_state_attr('media_player.spotify', 'source', 'KEF LS50')) }}"
-#       then:
-#         - wait_template: '{{ source in state_attr("media_player.spotify", "source_list")  }}'
-#           timeout: 00:01:00
-#           continue_on_timeout: false
-#         - action: media_player.select_source
-#           entity_id: media_player.spotify
-#           data:
-#             source: "{{ source }}"
-#     - action: media_player.shuffle_set
-#       entity_id: media_player.spotify
-#       data:
-#         shuffle: true
-#     - entity_id: media_player.spotify
-#       action: media_player.play_media
-#       data:
-#         entity_id: media_player.spotify
-#         media_content_type: "{{ media_content_type }}"
-#         media_content_id: "{{ media_content_id }}"
-#     - action: media_player.media_play
-#       entity_id: media_player.spotify
+start_spotify:
+  alias: Start Spotify
+  description: Start a Spotify playlist on KEF speakers
+  fields:
+    source:
+      description: The name of the speaker as it appears in Spotify
+      example: KEF LS50
+    id:
+      description: The playlist/album/podcast URI from Spotify
+      example: playlist:6rPTm9dYftKcFAfwyRqmDZ
+  variables:
+    media_content_type: "{{ id.split(':')[0] }}"
+    media_content_id: "spotify:{{ id }}"
+  sequence:
+    - action: homeassistant.update_entity
+      entity_id: media_player.spotify
+    - if: >
+        {{ not (is_state('media_player.spotify', 'playing')
+                and is_state_attr('media_player.spotify', 'source', 'KEF LS50')) }}"
+      then:
+        - wait_template: '{{ source in state_attr("media_player.spotify", "source_list")  }}'
+          timeout: 00:01:00
+          continue_on_timeout: false
+        - action: media_player.select_source
+          entity_id: media_player.spotify
+          data:
+            source: "{{ source }}"
+    - action: media_player.shuffle_set
+      entity_id: media_player.spotify
+      data:
+        shuffle: true
+    - entity_id: media_player.spotify
+      action: media_player.play_media
+      data:
+        entity_id: media_player.spotify
+        media_content_type: "{{ media_content_type }}"
+        media_content_id: "{{ media_content_id }}"
+    - action: media_player.media_play
+      entity_id: media_player.spotify
 
-# start_spotify_playlist_of_nearest_person:
-#   alias: Start Spotify
-#   description: Start a Spotify playlist on KEF speakers
-#   fields:
-#     source:
-#       description: The name of the speaker as it appears in Spotify
-#       example: KEF LS50
-#     entity_id:
-#       description: entity_id of the speaker
-#       example: media_player.kef_ls50
-#   sequence:
-#     - action: script.start_speakers
-#       data:
-#         source: Spotify
-#         volume: 0.25
-#         entity_id: "{{ entity_id }}"
-#     - action: script.start_spotify
-#       data:
-#         source: "{{ source }}"
-#         id: >
-#           playlist:{{ states("sensor.favorite_playlist_of_nearest_person") }}
-#         volume: 0.25
+start_spotify_playlist_of_nearest_person:
+  alias: Start Spotify
+  description: Start a Spotify playlist on KEF speakers
+  fields:
+    source:
+      description: The name of the speaker as it appears in Spotify
+      example: KEF LS50
+    entity_id:
+      description: entity_id of the speaker
+      example: media_player.kef_ls50
+  sequence:
+    - action: script.start_speakers
+      data:
+        source: Spotify
+        volume: 0.25
+        entity_id: "{{ entity_id }}"
+    - action: script.start_spotify
+      data:
+        source: "{{ source }}"
+        id: >
+          playlist:{{ states("sensor.favorite_playlist_of_nearest_person") }}
+        volume: 0.25
 
-# cozy_lights_living_room:
-#   alias: Set cozy lights in the living room
-#   mode: parallel
-#   sequence:
-#     - data:
-#         entity_id: light.cabinet_led
-#         hs_color:
-#           - 268.267
-#           - 88.235
-#       action: light.turn_on
-#     - data:
-#         entity_id: light.sphere_tv
-#         hs_color:
-#           - 299.147
-#           - 82.745
-#       action: light.turn_on
-#     - data:
-#         entity_id: light.sphere_2
-#         hs_color:
-#           - 26.667
-#           - 88.235
-#       action: light.turn_on
-#     - data:
-#         entity_id: light.tv_led
-#         hs_color:
-#           - 26.725
-#           - 89.804
-#       action: light.turn_on
-#     - data:
-#         entity_id: light.mid_room
-#         hs_color:
-#           - 336.293
-#           - 80.392
-#       action: light.turn_on
-#     - data:
-#         entity_id: light.living_room_corner
-#         hs_color:
-#           - 224.64
-#           - 98.039
-#       action: light.turn_on
-#     - data:
-#         entity_id: light.shelve
-#         hs_color:
-#           - 224.64
-#           - 98.039
-#       action: light.turn_on
-#     - data:
-#         entity_id: light.marble
-#         hs_color:
-#           - 25
-#           - 80
-#       action: light.turn_on
-#     - action: input_select.select_option
-#       entity_id: input_select.last_script_living_room
-#       data:
-#         option: script.cozy_lights_living_room
+cozy_lights_living_room:
+  alias: Set cozy lights in the living room
+  mode: parallel
+  sequence:
+    - data:
+        entity_id: light.cabinet_led
+        hs_color:
+          - 268.267
+          - 88.235
+      action: light.turn_on
+    - data:
+        entity_id: light.sphere_tv
+        hs_color:
+          - 299.147
+          - 82.745
+      action: light.turn_on
+    - data:
+        entity_id: light.sphere_2
+        hs_color:
+          - 26.667
+          - 88.235
+      action: light.turn_on
+    - data:
+        entity_id: light.tv_led
+        hs_color:
+          - 26.725
+          - 89.804
+      action: light.turn_on
+    - data:
+        entity_id: light.mid_room
+        hs_color:
+          - 336.293
+          - 80.392
+      action: light.turn_on
+    - data:
+        entity_id: light.living_room_corner
+        hs_color:
+          - 224.64
+          - 98.039
+      action: light.turn_on
+    - data:
+        entity_id: light.shelve
+        hs_color:
+          - 224.64
+          - 98.039
+      action: light.turn_on
+    - data:
+        entity_id: light.marble
+        hs_color:
+          - 25
+          - 80
+      action: light.turn_on
+    - action: input_select.select_option
+      entity_id: input_select.last_script_living_room
+      data:
+        option: script.cozy_lights_living_room
 
-# cozy_lights_bedroom:
-#   alias: Set cozy lights in the bedroom
-#   mode: parallel
-#   sequence:
-#     - data:
-#         entity_id: light.philips_go
-#         hs_color:
-#           - 0
-#           - 100
-#       action: light.turn_on
-#     # - data:
-#     #     entity_id: light.desk_led
-#     #     hs_color:
-#     #       - 299.72
-#     #       - 83.922
-#     #   action: light.turn_on
-#     # - data:
-#     #     entity_id: light.bamboo
-#     #   action: light.turn_on
-#     # - data:
-#     #     entity_id: light.bed_reading_up
-#     #     hs_color:
-#     #       - 26.725
-#     #       - 89.804
-#     #   action: light.turn_on
-#     # - data:
-#     #     entity_id: light.bed_reading_down
-#     #     hs_color:
-#     #       - 26.725
-#     #       - 89.804
-#     #   action: light.turn_on
-#     # - data:
-#     #     entity_id: light.lampan
-#     #     hs_color:
-#     #       - 269.86
-#     #       - 84.314
-#     #   action: light.turn_on
-#     # - data:
-#     #     entity_id: light.ceiling_bedroom
-#     #     hs_color:
-#     #       - 22
-#     #       - 100
-#     #   action: light.turn_on
-#     - data:
-#         entity_id: light.bed_led
-#         hs_color:
-#           - 10
-#           - 100
-#       action: light.turn_on
-#     - action: input_select.select_option
-#       entity_id: input_select.last_script_bedroom
-#       data:
-#         option: script.cozy_lights_bedroom
+cozy_lights_bedroom:
+  alias: Set cozy lights in the bedroom
+  mode: parallel
+  sequence:
+    - data:
+        entity_id: light.philips_go
+        hs_color:
+          - 0
+          - 100
+      action: light.turn_on
+    # - data:
+    #     entity_id: light.desk_led
+    #     hs_color:
+    #       - 299.72
+    #       - 83.922
+    #   action: light.turn_on
+    # - data:
+    #     entity_id: light.bamboo
+    #   action: light.turn_on
+    # - data:
+    #     entity_id: light.bed_reading_up
+    #     hs_color:
+    #       - 26.725
+    #       - 89.804
+    #   action: light.turn_on
+    # - data:
+    #     entity_id: light.bed_reading_down
+    #     hs_color:
+    #       - 26.725
+    #       - 89.804
+    #   action: light.turn_on
+    # - data:
+    #     entity_id: light.lampan
+    #     hs_color:
+    #       - 269.86
+    #       - 84.314
+    #   action: light.turn_on
+    # - data:
+    #     entity_id: light.ceiling_bedroom
+    #     hs_color:
+    #       - 22
+    #       - 100
+    #   action: light.turn_on
+    - data:
+        entity_id: light.bed_led
+        hs_color:
+          - 10
+          - 100
+      action: light.turn_on
+    - action: input_select.select_option
+      entity_id: input_select.last_script_bedroom
+      data:
+        option: script.cozy_lights_bedroom
 
-# white_lights_living_room:
-#   alias: Set white lights in the living room
-#   mode: parallel
-#   sequence:
-#     - action: light.turn_on
-#       data:
-#         entity_id:
-#           - light.living_room_lights
-#         color_temp: 366
-#     - action: input_select.select_option
-#       entity_id: input_select.last_script_living_room
-#       data:
-#         option: script.white_lights_living_room
+white_lights_living_room:
+  alias: Set white lights in the living room
+  mode: parallel
+  sequence:
+    - action: light.turn_on
+      data:
+        entity_id:
+          - light.living_room_lights
+        color_temp: 366
+    - action: input_select.select_option
+      entity_id: input_select.last_script_living_room
+      data:
+        option: script.white_lights_living_room
 
-# white_lights_bedroom:
-#   alias: Set white lights in the bedroom
-#   mode: parallel
-#   sequence:
-#     - data:
-#         color_temp: 366
-#         entity_id:
-#           - light.bedroom_lights
-#       action: light.turn_on
-#     - action: input_select.select_option
-#       entity_id: input_select.last_script_bedroom
-#       data:
-#         option: script.white_lights_bedroom
+white_lights_bedroom:
+  alias: Set white lights in the bedroom
+  mode: parallel
+  sequence:
+    - data:
+        color_temp: 366
+        entity_id:
+          - light.bedroom_lights
+      action: light.turn_on
+    - action: input_select.select_option
+      entity_id: input_select.last_script_bedroom
+      data:
+        option: script.white_lights_bedroom
 
-# increase_brightness:
-#   alias: Increase the brightness of a group of lights
-#   mode: parallel
-#   fields:
-#     group:
-#       description: The group to apply the light increase to.
-#       example: light.living_room_lights
-#   sequence:
-#     - action: light.turn_on
-#       data:
-#         entity_id: "{{ group }}"
-#         brightness: >
-#           {% set b = state_attr(group, 'brightness') %}
-#           {% if b == None %}
-#             10
-#           {% elif b < 20 %}
-#             128
-#           {% elif b < 140 %}
-#             255
-#           {% else %}
-#             10
-#           {% endif %}
+increase_brightness:
+  alias: Increase the brightness of a group of lights
+  mode: parallel
+  fields:
+    group:
+      description: The group to apply the light increase to.
+      example: light.living_room_lights
+  sequence:
+    - action: light.turn_on
+      data:
+        entity_id: "{{ group }}"
+        brightness: >
+          {% set b = state_attr(group, 'brightness') %}
+          {% if b == None %}
+            10
+          {% elif b < 20 %}
+            128
+          {% elif b < 140 %}
+            255
+          {% else %}
+            10
+          {% endif %}
 
-# turn_off_everything_non_automatic:
-#   alias: Turn off everything
-#   mode: parallel
-#   sequence:
-#     - action: light.turn_off
-#       data:
-#         transition: 4
-#         entity_id:
-#           - light.living_room_lights
-#           - light.bedroom_lights
-#     - action: media_player.turn_off
-#       entity_id: media_player.tv
-#     - action: media_player.turn_off
-#       entity_id: media_player.living_room_xbox
+turn_off_everything_non_automatic:
+  alias: Turn off everything
+  mode: parallel
+  sequence:
+    - action: light.turn_off
+      data:
+        transition: 4
+        entity_id:
+          - light.living_room_lights
+          - light.bedroom_lights
+    - action: media_player.turn_off
+      entity_id: media_player.tv
+    - action: media_player.turn_off
+      entity_id: media_player.living_room_xbox
 
-# turn_off_everything:
-#   alias: Turn off everything
-#   mode: parallel
-#   sequence:
-#     - action: light.turn_off
-#       entity_id: all
-#     - action: script.turn_off_everything_non_automatic
+turn_off_everything:
+  alias: Turn off everything
+  mode: parallel
+  sequence:
+    - action: light.turn_off
+      entity_id: all
+    - action: script.turn_off_everything_non_automatic
 
-# going_to_sleep:
-#   alias: Going to sleep
-#   mode: parallel
-#   sequence:
-#     - entity_id: input_select.sleep_mode
-#       action: input_select.select_option
-#       data:
-#         option: "total"
-#     - action: script.turn_off_everything_non_automatic
+going_to_sleep:
+  alias: Going to sleep
+  mode: parallel
+  sequence:
+    - entity_id: input_select.sleep_mode
+      action: input_select.select_option
+      data:
+        option: "total"
+    - action: script.turn_off_everything_non_automatic
 
-# next_colors:
-#   alias: Change the colors of lights
-#   mode: parallel
-#   fields:
-#     input_select:
-#       description: The input select that lists script names.
-#       example: input_select.last_script_living_room
-#   sequence:
-#     - action: input_select.select_next
-#       data:
-#         entity_id: "{{ input_select }}"
-#     - action: "{{ states(input_select) }}"
+next_colors:
+  alias: Change the colors of lights
+  mode: parallel
+  fields:
+    input_select:
+      description: The input select that lists script names.
+      example: input_select.last_script_living_room
+  sequence:
+    - action: input_select.select_next
+      data:
+        entity_id: "{{ input_select }}"
+    - action: "{{ states(input_select) }}"
 
-# start_tv:
-#   alias: Start TV
-#   sequence:
-#     if: "{{ is_state('media_player.tv', 'off') }}"
-#     then:
-#       - action: media_player.turn_on
-#         data:
-#           entity_id: media_player.tv
-#       - delay:
-#           milliseconds: 5000
+start_tv:
+  alias: Start TV
+  sequence:
+    if: "{{ is_state('media_player.tv', 'off') }}"
+    then:
+      - action: media_player.turn_on
+        data:
+          entity_id: media_player.tv
+      - delay:
+          milliseconds: 5000
 
-# start_netflix:
-#   alias: Start Netflix
-#   sequence:
-#     - action: script.start_tv
-#     - data:
-#         source: Netflix
-#       entity_id: media_player.tv
-#       action: media_player.select_source
+start_netflix:
+  alias: Start Netflix
+  sequence:
+    - action: script.start_tv
+    - data:
+        source: Netflix
+      entity_id: media_player.tv
+      action: media_player.select_source
 
-# start_fireplace:
-#   alias: Start fireplace on YouTube
-#   sequence:
-#     - action: script.start_tv
-#     - action: webostv.command
-#       data:
-#         command: system.launcher/launch
-#         payload:
-#           id: youtube.leanback.v4
-#           contentId: v=cdKop6aixVE
-#         entity_id: media_player.tv
-#     - delay:
-#         milliseconds: 3000
-#     - action: webostv.button
-#       entity_id: media_player.tv
-#       data:
-#         button: ENTER # enter into "All settings"
-#     - action: media_player.volume_set
-#       data:
-#         entity_id: media_player.tv
-#         volume_level: 0.2
+start_fireplace:
+  alias: Start fireplace on YouTube
+  sequence:
+    - action: script.start_tv
+    - action: webostv.command
+      data:
+        command: system.launcher/launch
+        payload:
+          id: youtube.leanback.v4
+          contentId: v=cdKop6aixVE
+        entity_id: media_player.tv
+    - delay:
+        milliseconds: 3000
+    - action: webostv.button
+      entity_id: media_player.tv
+      data:
+        button: ENTER # enter into "All settings"
+    - action: media_player.volume_set
+      data:
+        entity_id: media_player.tv
+        volume_level: 0.2
 
-# start_fireplace_netflix:
-#   alias: Start fireplace on Netflix
-#   sequence:
-#     - action: script.start_tv
-#     - action: webostv.command
-#       data:
-#         command: system.launcher/launch
-#         payload:
-#           id: netflix
-#           contentId: m=http://api.netflix.com/catalog/titles/movies/80092835&source_type=4
-#         entity_id: media_player.tv
-#     - delay:
-#         milliseconds: 3000
-#     - action: webostv.button
-#       entity_id: media_player.tv
-#       data:
-#         button: ENTER # enter into "All settings"
-#     - action: media_player.volume_set
-#       data:
-#         entity_id: media_player.tv
-#         volume_level: 0.08
+start_fireplace_netflix:
+  alias: Start fireplace on Netflix
+  sequence:
+    - action: script.start_tv
+    - action: webostv.command
+      data:
+        command: system.launcher/launch
+        payload:
+          id: netflix
+          contentId: m=http://api.netflix.com/catalog/titles/movies/80092835&source_type=4
+        entity_id: media_player.tv
+    - delay:
+        milliseconds: 3000
+    - action: webostv.button
+      entity_id: media_player.tv
+      data:
+        button: ENTER # enter into "All settings"
+    - action: media_player.volume_set
+      data:
+        entity_id: media_player.tv
+        volume_level: 0.08
 
-# start_xbox:
-#   alias: Start Xbox on TV
-#   sequence:
-#     - if: "{{ is_state('media_player.living_room_xbox', 'off') }}"
-#       then:
-#         - action: media_player.turn_on
-#           entity_id: media_player.living_room_xbox
-#         - delay:
-#             milliseconds: 5000
-#         # This seems to be useful for when the Xbox is in a weird state
-#         - action: media_player.media_play_pause
-#           entity_id: media_player.living_room_xbox
-#     - action: script.start_tv
-#     - action: media_player.select_source
-#       data:
-#         source: XBOX
-#         entity_id: media_player.tv
+start_xbox:
+  alias: Start Xbox on TV
+  sequence:
+    - if: "{{ is_state('media_player.living_room_xbox', 'off') }}"
+      then:
+        - action: media_player.turn_on
+          entity_id: media_player.living_room_xbox
+        - delay:
+            milliseconds: 5000
+        # This seems to be useful for when the Xbox is in a weird state
+        - action: media_player.media_play_pause
+          entity_id: media_player.living_room_xbox
+    - action: script.start_tv
+    - action: media_player.select_source
+      data:
+        source: XBOX
+        entity_id: media_player.tv
 
-# start_hogwarts_legacy:
-#   alias: Start Hogwarts Legacy on the Xbox
-#   sequence:
-#     - action: script.start_xbox
-#     - action: media_player.play_media
-#       data:
-#         entity_id: media_player.living_room_xbox
-#         media_content_id: 9MT5NJ5W7B8Z
-#         media_content_type: game
+start_hogwarts_legacy:
+  alias: Start Hogwarts Legacy on the Xbox
+  sequence:
+    - action: script.start_xbox
+    - action: media_player.play_media
+      data:
+        entity_id: media_player.living_room_xbox
+        media_content_id: 9MT5NJ5W7B8Z
+        media_content_type: game
 
-# set_low_temperature:
-#   alias: Set low temperature
-#   sequence:
-#     - action: climate.set_temperature
-#       entity_id: climate.thermostat
-#       data:
-#         temperature: >
-#           {{ states("input_number.temperature_low") }}
+set_low_temperature:
+  alias: Set low temperature
+  sequence:
+    - action: climate.set_temperature
+      entity_id: climate.thermostat
+      data:
+        temperature: >
+          {{ states("input_number.temperature_low") }}
 
-# set_high_temperature:
-#   alias: Set high temperature
-#   sequence:
-#     - action: climate.set_temperature
-#       entity_id: climate.thermostat
-#       data:
-#         temperature: >
-#           {{ states("input_number.temperature_high") }}
+set_high_temperature:
+  alias: Set high temperature
+  sequence:
+    - action: climate.set_temperature
+      entity_id: climate.thermostat
+      data:
+        temperature: >
+          {{ states("input_number.temperature_high") }}
 
-# toggle_thermostat_off_heat:
-#   alias: Toggle climate between 'off' and 'heat'
-#   sequence:
-#     - action: climate.set_hvac_mode
-#       entity_id: climate.thermostat
-#       data:
-#         hvac_mode: |-
-#           {{ "off" if is_state('climate.thermostat', "heat") else "heat" }}
+toggle_thermostat_off_heat:
+  alias: Toggle climate between 'off' and 'heat'
+  sequence:
+    - action: climate.set_hvac_mode
+      entity_id: climate.thermostat
+      data:
+        hvac_mode: |-
+          {{ "off" if is_state('climate.thermostat', "heat") else "heat" }}
 
-# leaving:
-#   alias: Leaving the house
-#   sequence:
-#     - action: script.set_low_temperature
-#     - action: script.turn_off_everything
+leaving:
+  alias: Leaving the house
+  sequence:
+    - action: script.set_low_temperature
+    - action: script.turn_off_everything
 
-# arriving:
-#   alias: Arriving home
-#   sequence:
-#     - action: script.set_high_temperature
-#     - action: script.cozy_lights_living_room
+arriving:
+  alias: Arriving home
+  sequence:
+    - action: script.set_high_temperature
+    - action: script.cozy_lights_living_room
 
-# update_dns:
-#   alias: Update DNS record
-#   sequence:
-#     - action: shell_command.update_dns
-#       data:
-#         api: !secret gandi_api_key
-#         domain: !secret domain
-#         subdomain: !secret subdomain
+update_dns:
+  alias: Update DNS record
+  sequence:
+    - action: shell_command.update_dns
+      data:
+        api: !secret gandi_api_key
+        domain: !secret domain
+        subdomain: !secret subdomain
 
-# fix_sound:
-#   alias: Fix Opt LG Sound Sync bug
-#   sequence:
-#     - action: webostv.button
-#       entity_id: media_player.tv
-#       data:
-#         button: MENU # Open "Menu"
-#     - delay:
-#         milliseconds: 1000
-#     - action: webostv.button
-#       entity_id: media_player.tv
-#       data:
-#         button: UP # Navigate to "All settings"
-#     - delay:
-#         milliseconds: 500
-#     - action: webostv.button
-#       entity_id: media_player.tv
-#       data:
-#         button: ENTER # enter into "All settings"
-#     - delay:
-#         milliseconds: 1500
-#     - action: webostv.button
-#       entity_id: media_player.tv
-#       data:
-#         button: DOWN # Navigate to "Sound"
-#     - delay:
-#         milliseconds: 1500
-#     - action: webostv.button
-#       entity_id: media_player.tv
-#       data:
-#         button: RIGHT # Move into "Sound" menu
-#     - delay:
-#         milliseconds: 500
-#     - action: webostv.button
-#       entity_id: media_player.tv
-#       data:
-#         button: ENTER # Enter "Sound Out" menu
-#     - delay:
-#         milliseconds: 1500
-#     - action: webostv.button
-#       entity_id: media_player.tv
-#       data:
-#         button: DOWN # Move to "Optical"
-#     - delay:
-#         milliseconds: 500
-#     - action: webostv.button
-#       entity_id: media_player.tv
-#       data:
-#         button: DOWN # Move to "Optical - LG Sound Sync"
-#     - delay:
-#         milliseconds: 500
-#     - action: webostv.button
-#       entity_id: media_player.tv
-#       data:
-#         button: ENTER # Disable "LG Sound Sync"
-#     - delay:
-#         milliseconds: 500
-#     - action: webostv.button
-#       entity_id: media_player.tv
-#       data:
-#         button: ENTER # Enable "LG Sound Sync"
-#     - delay:
-#         milliseconds: 500
-#     - action: webostv.button
-#       entity_id: media_player.tv
-#       data:
-#         button: BACK # Go up one menu in "All settings"
-#     - delay:
-#         milliseconds: 500
-#     - action: webostv.button
-#       entity_id: media_player.tv
-#       data:
-#         button: BACK # Close the "All settings" window
+fix_sound:
+  alias: Fix Opt LG Sound Sync bug
+  sequence:
+    - action: webostv.button
+      entity_id: media_player.tv
+      data:
+        button: MENU # Open "Menu"
+    - delay:
+        milliseconds: 1000
+    - action: webostv.button
+      entity_id: media_player.tv
+      data:
+        button: UP # Navigate to "All settings"
+    - delay:
+        milliseconds: 500
+    - action: webostv.button
+      entity_id: media_player.tv
+      data:
+        button: ENTER # enter into "All settings"
+    - delay:
+        milliseconds: 1500
+    - action: webostv.button
+      entity_id: media_player.tv
+      data:
+        button: DOWN # Navigate to "Sound"
+    - delay:
+        milliseconds: 1500
+    - action: webostv.button
+      entity_id: media_player.tv
+      data:
+        button: RIGHT # Move into "Sound" menu
+    - delay:
+        milliseconds: 500
+    - action: webostv.button
+      entity_id: media_player.tv
+      data:
+        button: ENTER # Enter "Sound Out" menu
+    - delay:
+        milliseconds: 1500
+    - action: webostv.button
+      entity_id: media_player.tv
+      data:
+        button: DOWN # Move to "Optical"
+    - delay:
+        milliseconds: 500
+    - action: webostv.button
+      entity_id: media_player.tv
+      data:
+        button: DOWN # Move to "Optical - LG Sound Sync"
+    - delay:
+        milliseconds: 500
+    - action: webostv.button
+      entity_id: media_player.tv
+      data:
+        button: ENTER # Disable "LG Sound Sync"
+    - delay:
+        milliseconds: 500
+    - action: webostv.button
+      entity_id: media_player.tv
+      data:
+        button: ENTER # Enable "LG Sound Sync"
+    - delay:
+        milliseconds: 500
+    - action: webostv.button
+      entity_id: media_player.tv
+      data:
+        button: BACK # Go up one menu in "All settings"
+    - delay:
+        milliseconds: 500
+    - action: webostv.button
+      entity_id: media_player.tv
+      data:
+        button: BACK # Close the "All settings" window
 
-# utility_notification:
-#   mode: parallel
-#   max: 20
-#   fields:
-#     name:
-#       description: name
-#       example: washing_machine
-#     emojis:
-#       description: emojis
-#       example: "👚👕"
-#   variables:
-#     switch: "{{ 'switch.{}'.format(name) }}"
-#     binary_sensor: "{{ 'binary_sensor.{}'.format(name) }}"
-#     friendly_name: "{{ name.capitalize().replace('_', ' ') }}"
-#     energy_sensor: "{{ 'sensor.{}_energy'.format(name) }}"
-#   sequence:
-#     - variables:
-#         start_time: "{{ as_timestamp(now()) }}"
-#         start_kwh: "{{ states(energy_sensor) }}"
-#     - wait_for_trigger:
-#         trigger: template
-#         value_template: "{{ is_state(binary_sensor, 'off') }}"
-#       timeout: "03:00:00"
-#       continue_on_timeout: false
-#     - variables:
-#         end_time: "{{ as_timestamp(now()) }}"
-#         end_kwh: "{{ states(energy_sensor) }}"
-#     - variables:
-#         total_time: "{{ (end_time - start_time) }}"
-#         total_kwh: "{{ end_kwh - start_kwh }}"
-#     - variables:
-#         minutes: "{{ (total_time / 60) | round(0) }}"
-#         total_kwh_rounded: "{{ (total_kwh) | round(2) }}"
-#         price: "{{ (states('sensor.electricity_price_peak')|float(0) * total_kwh) | round(2) }}"
-#     - action: "{{ states('sensor.nearest_iphone_notify') }}"
-#       data:
-#         title: "Utilities"
-#         message: "{{ friendly_name }} is done after {{ minutes }} minutes and it used {{ total_kwh_rounded }} kWh (€{{ price }}) {{ emojis }}"
+utility_notification:
+  mode: parallel
+  max: 20
+  fields:
+    name:
+      description: name
+      example: washing_machine
+    emojis:
+      description: emojis
+      example: "👚👕"
+  variables:
+    switch: "{{ 'switch.{}'.format(name) }}"
+    binary_sensor: "{{ 'binary_sensor.{}'.format(name) }}"
+    friendly_name: "{{ name.capitalize().replace('_', ' ') }}"
+    energy_sensor: "{{ 'sensor.{}_energy'.format(name) }}"
+  sequence:
+    - variables:
+        start_time: "{{ as_timestamp(now()) }}"
+        start_kwh: "{{ states(energy_sensor) }}"
+    - wait_for_trigger:
+        trigger: template
+        value_template: "{{ is_state(binary_sensor, 'off') }}"
+      timeout: "03:00:00"
+      continue_on_timeout: false
+    - variables:
+        end_time: "{{ as_timestamp(now()) }}"
+        end_kwh: "{{ states(energy_sensor) }}"
+    - variables:
+        total_time: "{{ (end_time - start_time) }}"
+        total_kwh: "{{ end_kwh - start_kwh }}"
+    - variables:
+        minutes: "{{ (total_time / 60) | round(0) }}"
+        total_kwh_rounded: "{{ (total_kwh) | round(2) }}"
+        price: "{{ (states('sensor.electricity_price_peak')|float(0) * total_kwh) | round(2) }}"
+    - action: "{{ states('sensor.nearest_iphone_notify') }}"
+      data:
+        title: "Utilities"
+        message: "{{ friendly_name }} is done after {{ minutes }} minutes and it used {{ total_kwh_rounded }} kWh (€{{ price }}) {{ emojis }}"
 
-# vacuum_command:
-#   alias: Vacuum living room
-#   icon: mdi:robot-vacuum
-#   fields:
-#     option:
-#       description: living_room, bedroom, office, hall, kitchen, all, or stop
-#       example: living_room
-#   sequence:
-#     choose:
-#       # living_room
-#       - conditions: "{{ option == 'living_room' }}"
-#         sequence:
-#           action: vacuum.send_command
-#           data:
-#             entity_id: vacuum.valetudo_vacuum
-#             command: app_zoned_clean
-#             params: [[29706, 27237, 34806, 31137, 1]]
-#       # bedroom
-#       - conditions: "{{ option == 'bedroom' }}"
-#         sequence:
-#           action: vacuum.send_command
-#           data:
-#             entity_id: vacuum.valetudo_vacuum
-#             command: app_zoned_clean
-#             params: [[22799, 27340, 27649, 31240, 1]]
-#       # office
-#       - conditions: "{{ option == 'office' }}"
-#         sequence:
-#           action: vacuum.send_command
-#           data:
-#             entity_id: vacuum.valetudo_vacuum
-#             command: app_zoned_clean
-#             params: [[22803, 25150, 26353, 27250, 1]]
-#       # hall
-#       - conditions: "{{ option == 'hall' }}"
-#         sequence:
-#           action: vacuum.send_command
-#           data:
-#             entity_id: vacuum.valetudo_vacuum
-#             command: app_zoned_clean
-#             params: [[26379, 26239, 31929, 27189, 1]]
-#       # kitchen
-#       - conditions: "{{ option == 'kitchen' }}"
-#         sequence:
-#           action: vacuum.send_command
-#           data:
-#             entity_id: vacuum.valetudo_vacuum
-#             command: app_zoned_clean
-#             params: [[31941, 25364, 34791, 27164, 1]]
-#       # all
-#       - conditions: "{{ option == 'all' }}"
-#         sequence:
-#           action: vacuum.start
-#           entity_id: vacuum.valetudo_vacuum
-#       # stop
-#       - conditions: "{{ option == 'stop' }}"
-#         sequence:
-#           action: vacuum.return_to_base
-#           entity_id: vacuum.valetudo_vacuum
+vacuum_command:
+  alias: Vacuum living room
+  icon: mdi:robot-vacuum
+  fields:
+    option:
+      description: living_room, bedroom, office, hall, kitchen, all, or stop
+      example: living_room
+  sequence:
+    choose:
+      # living_room
+      - conditions: "{{ option == 'living_room' }}"
+        sequence:
+          action: vacuum.send_command
+          data:
+            entity_id: vacuum.valetudo_vacuum
+            command: app_zoned_clean
+            params: [[29706, 27237, 34806, 31137, 1]]
+      # bedroom
+      - conditions: "{{ option == 'bedroom' }}"
+        sequence:
+          action: vacuum.send_command
+          data:
+            entity_id: vacuum.valetudo_vacuum
+            command: app_zoned_clean
+            params: [[22799, 27340, 27649, 31240, 1]]
+      # office
+      - conditions: "{{ option == 'office' }}"
+        sequence:
+          action: vacuum.send_command
+          data:
+            entity_id: vacuum.valetudo_vacuum
+            command: app_zoned_clean
+            params: [[22803, 25150, 26353, 27250, 1]]
+      # hall
+      - conditions: "{{ option == 'hall' }}"
+        sequence:
+          action: vacuum.send_command
+          data:
+            entity_id: vacuum.valetudo_vacuum
+            command: app_zoned_clean
+            params: [[26379, 26239, 31929, 27189, 1]]
+      # kitchen
+      - conditions: "{{ option == 'kitchen' }}"
+        sequence:
+          action: vacuum.send_command
+          data:
+            entity_id: vacuum.valetudo_vacuum
+            command: app_zoned_clean
+            params: [[31941, 25364, 34791, 27164, 1]]
+      # all
+      - conditions: "{{ option == 'all' }}"
+        sequence:
+          action: vacuum.start
+          entity_id: vacuum.valetudo_vacuum
+      # stop
+      - conditions: "{{ option == 'stop' }}"
+        sequence:
+          action: vacuum.return_to_base
+          entity_id: vacuum.valetudo_vacuum
 
-# turn_on_lights:
-#   alias: Turn on lights with Adaptive Lighting
-#   icon: mdi:lamp
-#   fields:
-#     entity_id:
-#       description: entity_id of light
-#       example: light.bedroom_lights
-#   sequence:
-#     action: adaptive_lighting.apply
-#     data:
-#       entity_id: switch.adaptive_lighting_living_room
-#       lights: "{{ entity_id }}"
-#       turn_on_lights: true
+turn_on_lights:
+  alias: Turn on lights with Adaptive Lighting
+  icon: mdi:lamp
+  fields:
+    entity_id:
+      description: entity_id of light
+      example: light.bedroom_lights
+  sequence:
+    action: adaptive_lighting.apply
+    data:
+      entity_id: switch.adaptive_lighting_living_room
+      lights: "{{ entity_id }}"
+      turn_on_lights: true
 
-# reset_adaptive_lighting_bedroom:
-#   alias: Reset 'manual control'
-#   sequence:
-#     - action: adaptive_lighting.set_manual_control
-#       data:
-#         entity_id: switch.adaptive_lighting_bedroom
-#         manual_control: false
-#     - action: adaptive_lighting.set_manual_control
-#       data:
-#         entity_id: switch.adaptive_lighting_bedroom_led
-#         manual_control: false
+reset_adaptive_lighting_bedroom:
+  alias: Reset 'manual control'
+  sequence:
+    - action: adaptive_lighting.set_manual_control
+      data:
+        entity_id: switch.adaptive_lighting_bedroom
+        manual_control: false
+    - action: adaptive_lighting.set_manual_control
+      data:
+        entity_id: switch.adaptive_lighting_bedroom_led
+        manual_control: false
 
-# reset_adaptive_lighting:
-#   alias: Reset 'manual control'
-#   sequence:
-#     - action: script.reset_adaptive_lighting_bedroom
-#     - action: adaptive_lighting.set_manual_control
-#       data:
-#         entity_id: switch.adaptive_lighting_living_room
-#         manual_control: false
-#     - action: adaptive_lighting.set_manual_control
-#       data:
-#         entity_id: switch.adaptive_lighting_never_sleep
-#         manual_control: false
+reset_adaptive_lighting:
+  alias: Reset 'manual control'
+  sequence:
+    - action: script.reset_adaptive_lighting_bedroom
+    - action: adaptive_lighting.set_manual_control
+      data:
+        entity_id: switch.adaptive_lighting_living_room
+        manual_control: false
+    - action: adaptive_lighting.set_manual_control
+      data:
+        entity_id: switch.adaptive_lighting_never_sleep
+        manual_control: false
 
-# sync_z2m_to_ha_lights:
-#   alias: Update Zigbee2MQTT to HA Lights States
-#   sequence:
-#     - choose:
-#         - conditions:
-#             - "{{ 'None' not in state_attr('input_select.z2m_lights', 'options') }}"
-#           sequence:
-#             repeat:
-#               count: "{{ state_attr('input_select.z2m_lights', 'options') | length }}"
-#               sequence:
-#                 - variables:
-#                     friendly_name: "{{ state_attr('input_select.z2m_lights', 'options')[repeat.index - 1] }}"
-#                 - action: mqtt.publish
-#                   data:
-#                     topic: "zigbee2mqtt/{{ friendly_name }}/get"
-#                     payload: '{"state": ""}'
-#       default: []
+sync_z2m_to_ha_lights:
+  alias: Update Zigbee2MQTT to HA Lights States
+  sequence:
+    - choose:
+        - conditions:
+            - "{{ 'None' not in state_attr('input_select.z2m_lights', 'options') }}"
+          sequence:
+            repeat:
+              count: "{{ state_attr('input_select.z2m_lights', 'options') | length }}"
+              sequence:
+                - variables:
+                    friendly_name: "{{ state_attr('input_select.z2m_lights', 'options')[repeat.index - 1] }}"
+                - action: mqtt.publish
+                  data:
+                    topic: "zigbee2mqtt/{{ friendly_name }}/get"
+                    payload: '{"state": ""}'
+      default: []
 
-# sync_ha_to_z2m_lights:
-#   alias: Sync HA to Zigbee2MQTT Lights States
-#   sequence:
-#     - choose:
-#         - conditions:
-#             - "{{ 'None' not in state_attr('input_select.z2m_lights', 'options') }}"
-#           sequence:
-#             repeat:
-#               count: "{{ state_attr('input_select.z2m_lights', 'options') | length }}"
-#               sequence:
-#                 - variables:
-#                     friendly_name: "{{ state_attr('input_select.z2m_lights', 'options')[repeat.index - 1] }}"
-#                     entity_id: "{{ states.light | selectattr('attributes.friendly_name', 'eq', friendly_name) | map(attribute='entity_id') | first }}"
-#                     current_state: "{{ states(entity_id) }}"
-#                 - action: mqtt.publish
-#                   data:
-#                     topic: "zigbee2mqtt/{{ friendly_name }}/set"
-#                     payload: '{"state": "{{ current_state }}" }'
-#       default: []
+sync_ha_to_z2m_lights:
+  alias: Sync HA to Zigbee2MQTT Lights States
+  sequence:
+    - choose:
+        - conditions:
+            - "{{ 'None' not in state_attr('input_select.z2m_lights', 'options') }}"
+          sequence:
+            repeat:
+              count: "{{ state_attr('input_select.z2m_lights', 'options') | length }}"
+              sequence:
+                - variables:
+                    friendly_name: "{{ state_attr('input_select.z2m_lights', 'options')[repeat.index - 1] }}"
+                    entity_id: "{{ states.light | selectattr('attributes.friendly_name', 'eq', friendly_name) | map(attribute='entity_id') | first }}"
+                    current_state: "{{ states(entity_id) }}"
+                - action: mqtt.publish
+                  data:
+                    topic: "zigbee2mqtt/{{ friendly_name }}/set"
+                    payload: '{"state": "{{ current_state }}" }'
+      default: []
 
-# log_start_contraction:
-#   alias: "Log start of contraction"
-#   fields:
-#     intensity:
-#       description: intensity
-#       example: "5"
-#   sequence:
-#     - action: input_number.set_value
-#       data:
-#         entity_id: input_number.contraction_intensity
-#         value: "{{ intensity | int }}"
-#     - action: shell_command.log_start_contraction
+log_start_contraction:
+  alias: "Log start of contraction"
+  fields:
+    intensity:
+      description: intensity
+      example: "5"
+  sequence:
+    - action: input_number.set_value
+      data:
+        entity_id: input_number.contraction_intensity
+        value: "{{ intensity | int }}"
+    - action: shell_command.log_start_contraction

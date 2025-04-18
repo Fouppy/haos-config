@@ -1,17 +1,7 @@
----
-#-
-#
-#  _ __   ___ _ __ ___  ___  _ __  ___
-# | '_ \ / _ \ '__/ __|/ _ \| '_ \/ __|
-# | |_) |  __/ |  \__ \ (_) | | | \__ \
-# | .__/ \___|_|  |___/\___/|_| |_|___/
-# |_|
-#
-#- from github.com/basnijholt/home-assistant-config
 - name: Bas
   id: bas
   user_id: 13984b139dd9426ca31369725c9e23e0
-#   picture: !secret profile_photo_bas
+  picture: !secret profile_photo_bas
   device_trackers:
     # iPhone X
     - device_tracker.basnijholt_iphone_10 # from iOS app
@@ -22,7 +12,7 @@
 - name: Marcella
   id: marcella
   user_id: 0d8b36da29974dec9a30f767931bde2c
-#   picture: !secret profile_photo_marcella
+  picture: !secret profile_photo_marcella
   device_trackers:
     - device_tracker.marcella_iphone_se2 # from iOS app
     - device_tracker.marcella_iphone_ping

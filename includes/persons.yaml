@@ -1,18 +1,15 @@
-- name: Bas
-  id: bas
-  user_id: 13984b139dd9426ca31369725c9e23e0
+- name: Fouppy
+  id: fouppy
+  user_id: e5b82f87b00d41a3be748acb037910bd
   # picture: !secret profile_photo_bas
   device_trackers:
-    # iPhone X
-    - device_tracker.basnijholt_iphone_10 # from iOS app
-    - device_tracker.basnijholt_iphone_10_ping
-    # iPhone 13
-    - device_tracker.basnijholt_iphone_13 # from iOS app
-    - device_tracker.basnijholt_iphone_13_ping
-- name: Marcella
-  id: marcella
-  user_id: 0d8b36da29974dec9a30f767931bde2c
+    # 1+8
+    - device_tracker.in2023 # from Android app
+    - device_tracker.in2023_ping
+- name: MooM
+  id: moom
+  user_id: 7e4128d9bf5041e68d6afb646267dc22
   # picture: !secret profile_photo_marcella
   device_trackers:
-    - device_tracker.marcella_iphone_se2 # from iOS app
-    - device_tracker.marcella_iphone_ping
+    - device_tracker.cph2465 # from Android app
+    - device_tracker.cph2465_ping

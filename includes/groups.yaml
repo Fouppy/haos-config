@@ -1,8 +1,8 @@
 persons:
   name: People
   entities:
-    - person.bas
-    - person.marcella
+    - person.fouppy
+    - person.moom
 
 iphone_bas:
   # iPhone X

@@ -20,7 +20,7 @@ scene: !include scenes.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
 # Others
-# person: !include includes/persons.yaml
+person: !include includes/persons.yaml
 zone: !include includes/zones.yaml
 # group: !include includes/groups.yaml
 # automation old: !include_dir_merge_list automations

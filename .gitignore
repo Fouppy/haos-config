@@ -16,7 +16,7 @@
 # Ignore these files/folders
 secrets.yaml
 home-assistant.log
-home-assistant.log1
+home-assistant.log.1
 home-assistant.log.fault
 home-assistant_v2.db
 home-assistant_v2.db-shm

@@ -282,6 +282,11 @@
         {% set duration = t_off - t_start %}
         {{ duration }}
 
+    vacuum_battery_level:
+      unit_of_measurement: "%"
+      device_class: battery
+      state: "{{ state_attr('vacuum.chambre_aspirateur', 'battery_level') }}"
+
 - platform: statistics
   name: Humidity bathroom stats
   entity_id: sensor.humidity_bathroom

@@ -1,6 +1,7 @@
 host: 192.168.1.91
 username: hass@pve
 password: !secret pve_password
+verify_ssl: false
 nodes:
   - node: proxmox
     vms:

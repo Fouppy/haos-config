@@ -1,0 +1,15 @@
+proxmoxve:
+  - host: https://192.168.1.91:8006
+    username: hass@pve
+    password: !secret pve_password
+    nodes:
+      - node: proxmox
+        vms:
+          - 300 # haos
+        containers:
+          - 100 # vault
+          - 101 # servarr
+          - 102 # proxy
+          - 103 # cloud
+          - 200 # jellyfin
+          - 400 # adguard

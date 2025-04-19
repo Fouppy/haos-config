@@ -18,6 +18,7 @@
 - platform: group
   name: Kitchen lights
   entities:
+    - light.cuisine_lampe_principale_light
     - light.cuisine_plans_de_travail
 
 - platform: group

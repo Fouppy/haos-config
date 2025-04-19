@@ -20,6 +20,7 @@
   entities:
     - light.cuisine_lampe_principale_light
     - light.cuisine_plans_de_travail
+    - light.cuisine_evier
 
 - platform: group
   name: Office lights

@@ -95,7 +95,7 @@
 - alias: "System: SpeedTest"
   triggers:
     - trigger: time_pattern
-      minutes: /10
+      hours: /1
   conditions: []
   actions:
     - action: hassio.addon_start

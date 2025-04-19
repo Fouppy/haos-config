@@ -1,0 +1,105 @@
+---
+- alias: "System: warning about high CPU usage"
+  triggers:
+    trigger: numeric_state
+    entity_id: sensor.processor_use
+    above: 70
+    for:
+      hours: 4
+  actions:
+    action: notify.iphone_bas
+    data:
+      title: "System"
+      message: "CPU usage has been above 70% for 4 hours! ⚠️🖥"
+
+- alias: "System: warning about high CPU temperature"
+  triggers:
+    trigger: numeric_state
+    entity_id: sensor.cpu_temperature
+    above: 70
+    for:
+      hours: 4
+  actions:
+    action: notify.iphone_bas
+    data:
+      title: "System"
+      message: "CPU temperature has been above 70 °C for 4 hours! ⚠️"
+
+- alias: "System: warning about high Xbox temperature"
+  triggers:
+    trigger: numeric_state
+    entity_id: sensor.temperature_xbox
+    above: 50
+  actions:
+    - action: notify.iphone_bas
+      data:
+        title: "System"
+        message: >
+          Temperature in the Xbox cabinet is {{ states("sensor.temperature_xbox") }} °C! ⚠️
+    - condition: state
+      entity_id: media_player.tv
+      state: "on"
+    - action: notify.tv
+      data:
+        message: >
+          Temperature in the Xbox cabinet is {{ states("sensor.temperature_xbox") }} °C! ⚠️
+
+# - alias: "System: update DNS"
+#   description: Update the DNS at Gandi to point my domain to my Home Assistant instance.
+#   triggers:
+#     trigger: time_pattern # XXX: trigger on IP change
+#     minutes: "/15"
+#   actions:
+#     action: script.update_dns
+
+# - alias: "System: run chores"
+#   description: Run shell and Python scripts in utils folder.
+#   triggers:
+#     trigger: time_pattern
+#     minutes: "/15"
+#   actions:
+#     action: shell_command.chores
+
+- alias: "System: battery level low"
+  triggers:
+    trigger: time
+    at: "14:30:00"
+  variables:
+    min_battery_level: 50
+    notify_service: notify.iphone_bas
+    battery_ids: ""
+    current: ""
+  actions:
+    - variables:
+        battery_ids: >
+          {% set ns = namespace(battery=[]) %}
+          {% for s in states.sensor if 'battery_level' in s.entity_id %}
+            {% set ns.battery = ns.battery + [s] %}
+          {% endfor %}
+          {{ ns.battery | map(attribute='entity_id') | list }}
+    - alias: Repeat
+      repeat:
+        count: "{{ battery_ids | length }}"
+        sequence:
+          - variables:
+              current: "{{ battery_ids[repeat.index - 1] }}"
+          - condition: template
+            value_template: "{{ 'iphone' not in current and 'ipad' not in current }}"
+          - condition: template
+            value_template: "{{ 0 < (states(current) | float) < (min_battery_level | float ) }}"
+          - action: "{{ notify_service }}"
+            data:
+              title: "System"
+              message: "Battery level low of {{ current }}: {{ states(current) }}%! ⚠️"
+
+- alias: "System: SpeedTest"
+  triggers:
+    - trigger: time_pattern
+      minutes: /10
+  conditions: []
+  actions:
+    - action: hassio.addon_start
+      metadata: {}
+      data:
+        addon: 6b87c29e_speedtest_addon
+  mode: single

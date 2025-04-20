@@ -505,7 +505,7 @@ utility_notification:
         minutes: "{{ (total_time / 60) | round(0) }}"
         total_kwh_rounded: "{{ (total_kwh) | round(2) }}"
         price: "{{ (states('sensor.electricity_price_peak')|float(0) * total_kwh) | round(2) }}"
-    - action: "{{ states('sensor.nearest_iphone_notify') }}"
+    - action: "{{ states('sensor.nearest_phone_notify') }}"
       data:
         title: "Utilities"
         message: "{{ friendly_name }} is done after {{ minutes }} minutes and it used {{ total_kwh_rounded }} kWh (€{{ price }}) {{ emojis }}"

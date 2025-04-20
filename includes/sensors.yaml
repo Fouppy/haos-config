@@ -177,15 +177,15 @@
       value_template: >
         {{ states("sensor.daily_energy_fixed_cost")|float(0) * states("sensor.n_days_last_month")|int(0) }}
 
-    nearest_iphone_notify:
-      friendly_name: Nearest iPhone's notify service
+    nearest_phone_notify:
+      friendly_name: Nearest phone's notify service
       value_template: >
         {% if is_state("person.fouppy", "home") and is_state("person.moom", "home") %}
-          notify.all_iphones
+          notify.all_phones
         {% elif is_state_attr("sensor.home_nearest_device", "Bas") %}
-          notify.iphone_bas
+          notify.phone_fouppy
         {% else %}
-          notify.mobile_app_marcella_iphone
+          notify.mobile_app_cph2465
         {% endif %}
 
     half_hour_before_alarm:

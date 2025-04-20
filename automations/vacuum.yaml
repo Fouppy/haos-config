@@ -5,7 +5,7 @@
     from: docked
     to: cleaning
   actions:
-    - action: notify.all_iphones
+    - action: notify.all_phones
       data:
         title: "Robot"
         message: "Robot started to clean!"
@@ -27,7 +27,7 @@
       data:
         entity_id: input_datetime.vacuum_off
         datetime: "{{ now().isoformat() }}"
-    - action: notify.all_iphones
+    - action: notify.all_phones
       data:
         title: "Robot"
         message: "Cleanup successful after {{ (states('sensor.robot_vacuum_last_clean_duration') | int / 60) | round }} minutes"
@@ -41,7 +41,7 @@
     entity_id: binary_sensor.vacuum_day
     state: "on"
   actions:
-    action: notify.all_iphones
+    action: notify.all_phones
     data:
       title: "Robot"
       message: "Vacuum will go today, make sure to leave the doors open and leave nothing on the floor!"

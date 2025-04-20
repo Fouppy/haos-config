@@ -13,7 +13,7 @@
       entity_id: sensor.power_consumption
       above: 0.7
   actions:
-    action: notify.all_iphones
+    action: notify.all_phones
     data:
       title: "Security"
       message: >

@@ -12,7 +12,7 @@
       entity_id: input_boolean.work_hour_notification_sent
       state: "off"
   actions:
-    - action: notify.iphone_bas
+    - action: notify.phone_fouppy
       data:
         title: "Work"
         message: "You have worked 8 hours today, very good! Go home 🎉"
@@ -41,8 +41,7 @@
     after: "15:00:00"
     before: "22:00:00"
   actions:
-    # action: notify.mobile_app_marcella_iphone
-    action: notify.all_iphones
+    action: notify.phone_fouppy
     data:
       title: "Work"
       message: "MooM has left work! ♥️🎉"

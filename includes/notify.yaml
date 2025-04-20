@@ -1,31 +1,29 @@
 - platform: group
-  name: all_iphones
+  name: all_phones
   services:
-    - service: mobile_app_basnijholt_iphone_10
-    - service: mobile_app_basnijholt_iphone_13
-    - service: mobile_app_marcella_iphone_se2
-    - service: mobile_app_marcella_iphone_14_pro
+    - service: mobile_app_fouppy_s_1_8
+    - service: mobile_app_fouppys_iphone
+    - service: mobile_app_cph2465
 
 - platform: group
-  name: bas
+  name: fouppy
   services:
-    - service: mobile_app_basnijholt_iphone_10
-    - service: mobile_app_basnijholt_iphone_13
+    - service: mobile_app_fouppy_s_1_8
+    - service: mobile_app_fouppys_iphone
     - service: chrome
 
 - platform: group
-  name: iphone_bas
+  name: phone_fouppy
   services:
-    - service: mobile_app_basnijholt_iphone_10
-    - service: mobile_app_basnijholt_iphone_13
+    - service: mobile_app_fouppy_s_1_8
+    - service: mobile_app_fouppys_iphone
 
 - platform: group
   name: all
   services:
-    - service: mobile_app_basnijholt_iphone_10
-    - service: mobile_app_basnijholt_iphone_13
-    - service: mobile_app_basnijholt_macbook
-    - service: mobile_app_marcella_iphone_se2
-    - service: mobile_app_marcella_iphone_14_pro
+    - service: mobile_app_fouppy_s_1_8
+    - service: mobile_app_fouppys_iphone
+    - service: mobile_app_fouppy_s_mbp
+    - service: mobile_app_cph2465
     - service: tv
     - service: chrome

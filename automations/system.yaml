@@ -7,7 +7,7 @@
     for:
       hours: 4
   actions:
-    action: notify.iphone_bas
+    action: notify.phone_fouppy
     data:
       title: "System"
       message: "CPU usage has been above 70% for 4 hours! ⚠️🖥"
@@ -20,7 +20,7 @@
     for:
       hours: 4
   actions:
-    action: notify.iphone_bas
+    action: notify.phone_fouppy
     data:
       title: "System"
       message: "CPU temperature has been above 70 °C for 4 hours! ⚠️"
@@ -47,7 +47,7 @@
     at: "14:30:00"
   variables:
     min_battery_level: 50
-    notify_service: notify.iphone_bas
+    notify_service: notify.phone_fouppy
     battery_ids: ""
     current: ""
   actions:
@@ -65,7 +65,7 @@
           - variables:
               current: "{{ battery_ids[repeat.index - 1] }}"
           - condition: template
-            value_template: "{{ 'iphone' not in current and 'ipad' not in current }}"
+            value_template: "{{ 'iphone' not in current and '1+8' not in current }}"
           - condition: template
             value_template: "{{ 0 < (states(current) | float) < (min_battery_level | float ) }}"
           - action: "{{ notify_service }}"

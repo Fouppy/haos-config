@@ -42,7 +42,7 @@
       entity_id: input_select.sleep_mode
       data:
         option: "total"
-    - action: notify.iphone_bas
+    - action: notify.phone_fouppy
       data:
         title: "Sleep mode"
         message: "Automatically switched from 'half' to 'total' sleeping mode! 💤🛌"

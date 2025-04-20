@@ -32,7 +32,7 @@
       state: "off"
   actions:
     - action: script.leaving
-    - action: notify.all_iphones
+    - action: notify.all_phones
       data:
         title: "Leaving"
         message: "Everything automatically turned off!"
@@ -60,7 +60,7 @@
     - condition: state
       entity_id: binary_sensor.no_one_home
       state: "on"
-    - action: notify.all_iphones
+    - action: notify.all_phones
       data:
         message: "No one is home, turn off everything?"
         data:
@@ -95,7 +95,7 @@
 #       timeout: "00:01:00"
 #       continue_on_timeout: false
 #     - action: script.turn_off_everything
-#     - action: notify.all_iphones
+#     - action: notify.all_phones
 #       data:
 #         title: "Bye 👋"
 #         message: "See you soon!"

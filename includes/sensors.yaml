@@ -404,7 +404,7 @@
   end: "{{ now() }}"
 
 - platform: history_stats
-  name: Hours office light has been on last 7 days
+  name: Hours office lights has been on last 7 days
   entity_id: light.office_lights
   state: "on"
   type: time

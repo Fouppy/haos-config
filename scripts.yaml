@@ -40,30 +40,30 @@ start_spotify:
     media_content_id: "spotify:{{ id }}"
   sequence:
     - action: homeassistant.update_entity
-      entity_id: media_player.spotify
+      entity_id: media_player.spotify_fouppy
     - if: >
-        {{ not (is_state('media_player.spotify', 'playing')
-                and is_state_attr('media_player.spotify', 'source', 'KEF LS50')) }}"
+        {{ not (is_state('media_player.spotify_fouppy', 'playing')
+                and is_state_attr('media_player.spotify_fouppy', 'source', 'KEF LS50')) }}"
       then:
-        - wait_template: '{{ source in state_attr("media_player.spotify", "source_list")  }}'
+        - wait_template: '{{ source in state_attr("media_player.spotify_fouppy", "source_list")  }}'
           timeout: 00:01:00
           continue_on_timeout: false
         - action: media_player.select_source
-          entity_id: media_player.spotify
+          entity_id: media_player.spotify_fouppy
           data:
             source: "{{ source }}"
     - action: media_player.shuffle_set
-      entity_id: media_player.spotify
+      entity_id: media_player.spotify_fouppy
       data:
         shuffle: true
-    - entity_id: media_player.spotify
+    - entity_id: media_player.spotify_fouppy
       action: media_player.play_media
       data:
-        entity_id: media_player.spotify
+        entity_id: media_player.spotify_fouppy
         media_content_type: "{{ media_content_type }}"
         media_content_id: "{{ media_content_id }}"
     - action: media_player.media_play
-      entity_id: media_player.spotify
+      entity_id: media_player.spotify_fouppy
 
 start_spotify_playlist_of_nearest_person:
   alias: Start Spotify

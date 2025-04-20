@@ -21,7 +21,6 @@ filter:
     - light.hall_lights
     - light.office_lights
     - media_player.chromecast
-    - media_player.living_room_xbox
     - media_player.kef_ls50
     - input_select.sleep_mode
     - input_boolean.start_the_music

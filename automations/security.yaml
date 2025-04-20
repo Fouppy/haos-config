@@ -1,0 +1,21 @@
+- alias: "Security: no one is home but high power usage"
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.no_one_home
+      to: "on"
+    - trigger: time_pattern
+      minutes: "/10"
+  conditions:
+    - condition: state
+      entity_id: binary_sensor.no_one_home
+      state: "on"
+    - condition: numeric_state
+      entity_id: sensor.power_consumption
+      above: 0.7
+  actions:
+    action: notify.all_iphones
+    data:
+      title: "Security"
+      message: >
+        No one is home and we are using a lot of energy
+        ({{ states('sensor.power_consumption') }} kW now)! ⚡️

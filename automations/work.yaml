@@ -1,0 +1,48 @@
+- alias: "Work: go home notification"
+  triggers:
+    trigger: state
+    entity_id: binary_sensor.worked_enough_today
+    from: "off"
+    to: "on"
+  conditions:
+    - condition: state
+      entity_id: binary_sensor.workday_sensor
+      state: "on"
+    - condition: state
+      entity_id: input_boolean.work_hour_notification_sent
+      state: "off"
+  actions:
+    - action: notify.iphone_bas
+      data:
+        title: "Work"
+        message: "You have worked 8 hours today, very good! Go home 🎉"
+    - action: input_boolean.turn_on
+      entity_id: input_boolean.work_hour_notification_sent
+
+- alias: "Work: reset input_boolean at midnight"
+  triggers:
+    trigger: time
+    at: "00:00"
+  conditions:
+    condition: state
+    entity_id: input_boolean.work_hour_notification_sent
+    state: "on"
+  actions:
+    action: input_boolean.turn_off
+    entity_id: input_boolean.work_hour_notification_sent
+
+- alias: "Work: MooM left work notification for Fouppy"
+  triggers:
+    trigger: state
+    entity_id: person.moom
+    from: "Work"
+  conditions:
+    condition: time
+    after: "15:00:00"
+    before: "22:00:00"
+  actions:
+    # action: notify.mobile_app_marcella_iphone
+    action: notify.all_iphones
+    data:
+      title: "Work"
+      message: "MooM has left work! ♥️🎉"

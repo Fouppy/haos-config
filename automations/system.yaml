@@ -25,25 +25,6 @@
       title: "System"
       message: "CPU temperature has been above 70 °C for 4 hours! ⚠️"
 
-- alias: "System: warning about high Xbox temperature"
-  triggers:
-    trigger: numeric_state
-    entity_id: sensor.temperature_xbox
-    above: 50
-  actions:
-    - action: notify.iphone_bas
-      data:
-        title: "System"
-        message: >
-          Temperature in the Xbox cabinet is {{ states("sensor.temperature_xbox") }} °C! ⚠️
-    - condition: state
-      entity_id: media_player.chromecast
-      state: "on"
-    - action: notify.tv
-      data:
-        message: >
-          Temperature in the Xbox cabinet is {{ states("sensor.temperature_xbox") }} °C! ⚠️
-
 # - alias: "System: update DNS"
 #   description: Update the DNS at Gandi to point my domain to my Home Assistant instance.
 #   triggers:

@@ -1,0 +1,135 @@
+- alias: "Media player: turn on Opt when TV is on and Spotify is not playing and not Usb"
+  description: |
+    The speaker is connected via an optical cable to the TV. Whenever the speakers
+    aren't playing Spotify (via WiFi) directly, switch the source of the speakers
+    to "Opt".
+  triggers:
+    - trigger: state
+      entity_id: media_player.chromecast
+    - trigger: state
+      entity_id: media_player.spotify_fouppy
+      to: paused
+  conditions:
+    - condition: state
+      entity_id: media_player.chromecast
+      state: "on"
+    - "{{ not is_state_attr('media_player.kef_ls50', 'source', 'Optical Input 1') }}"
+    - "{{ not is_state_attr('media_player.kef_ls50', 'source', 'HDMI ARC') }}"
+    - "{{ not is_state_attr('media_player.chromecast', 'source', 'GALLERY') }}"
+    - >
+      {{ not (is_state_attr('media_player.kef_ls50', 'source', 'Usb')
+              and is_state_attr('media_player.chromecast', 'source', 'HDMI 3')) }}
+    - >
+      {{ not (is_state_attr('media_player.spotify_fouppy', 'source', 'KEF LS50')
+              and is_state('media_player.spotify_fouppy', 'playing')) }}
+  actions:
+    action: media_player.select_source
+    entity_id: media_player.kef_ls50
+    data:
+      source: Optical Input 1
+
+- alias: "Media player: turn off speakers when turning off TV"
+  triggers:
+    trigger: state
+    entity_id: media_player.chromecast
+    to: "off"
+  conditions:
+    condition: state
+    entity_id: media_player.kef_ls50
+    state: "on"
+  actions:
+    - action: homeassistant.update_entity
+      entity_id: media_player.kef_ls50
+    - condition: template
+      value_template: >
+        {{ is_state_attr("media_player.kef_ls50", "source", "HDMI ARC")
+           or is_state_attr("media_player.kef_ls50", "source", "Optical Input 1") }}
+    - action: media_player.turn_off
+      entity_id: media_player.kef_ls50
+
+- alias: "Media player: if speakers off and TV on, turn on the speaker on TV state change"
+  triggers:
+    trigger: state
+    entity_id: media_player.chromecast
+  conditions: # Happens e.g., when speakers auto-shutdown and the TV is on but idle
+    - condition: state
+      entity_id: media_player.kef_ls50
+      state: "off"
+    - condition: state
+      entity_id: media_player.chromecast
+      state: "on"
+    # only consider meaningful changes to the state
+    - >
+      {{ trigger.from_state.state != trigger.to_state.state
+          or trigger.from_state.attributes["volume_level"] != trigger.to_state.attributes["volume_level"]
+          or trigger.from_state.attributes["source"] != trigger.to_state.attributes["source"] }}
+  actions:
+    - action: media_player.turn_on
+      entity_id: media_player.kef_ls50
+    - action: media_player.select_source
+      entity_id: media_player.kef_ls50
+      data:
+        source: Optical Input 1
+
+- alias: "Media player: update Spotify entity when TV is on every 5 seconds"
+  triggers:
+    trigger: time_pattern
+    seconds: "/5"
+  conditions:
+    - condition: state
+      entity_id: media_player.spotify_fouppy
+      state: playing
+    - condition: state
+      entity_id: media_player.chromecast
+      state: "on"
+  actions:
+    action: homeassistant.update_entity
+    entity_id: media_player.spotify_fouppy
+
+- alias: "Media player: sync KEF LS50 and TV volume"
+  mode: single
+  max_exceeded: silent
+  triggers:
+    - trigger: state
+      entity_id: media_player.kef_ls50
+      attribute: volume_level
+    - trigger: state
+      entity_id: media_player.chromecast
+      attribute: volume_level
+  conditions:
+    - "{{ trigger.to_state.state != 'off' }}"
+    - "{{ state_attr('media_player.kef_ls50', 'source') in ('Optical Input 1', 'HDMI ARC', 'Usb') }}"
+  actions:
+    repeat:
+      sequence:
+        - action: media_player.volume_set
+          data:
+            entity_id: >
+              media_player.{{ "tv" if (trigger.entity_id == "media_player.kef_ls50") else "kef_ls50" }}
+            volume_level: >
+              {{ state_attr(trigger.entity_id, "volume_level") }}
+        - delay:
+            milliseconds: 200
+      until:
+        - >
+          {{ state_attr("media_player.chromecast", "volume_level") == state_attr("media_player.kef_ls50", "volume_level")
+              or not (is_state("media_player.chromecast", "on") and is_state("media_player.kef_ls50", "on")) }}
+
+- alias: "Media player: automatically turn off TV after two hours of inactivity"
+  triggers:
+    trigger: state
+    entity_id: binary_sensor.motion_sensor_living_room_klok
+    to: "off"
+    for: "02:00:00"
+  actions:
+    - action: media_player.turn_off
+      entity_id: media_player.chromecast
+
+- alias: "Media player: Turn On Living Room TV with WakeOnLan"
+  triggers:
+    trigger: webostv.turn_on
+    entity_id: media_player.chromecast
+  actions:
+    - action: wake_on_lan.send_magic_packet
+      data:
+        mac: "!secret tv_mac_address"

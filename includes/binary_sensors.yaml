@@ -29,8 +29,7 @@
     activity_in_living_room:
       friendly_name: Activity in the living room
       value_template: >
-        {{ is_state("media_player.chromecast", "on")
-            or is_state("media_player.living_room_xbox", "on") }}
+        {{ is_state("media_player.chromecast", "on") }}
       delay_off: "00:30:00"
 
     activity_in_guest_room:

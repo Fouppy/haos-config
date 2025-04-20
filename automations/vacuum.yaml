@@ -1,0 +1,98 @@
+- alias: "Vacuum: started cleaning"
+  triggers:
+    trigger: state
+    entity_id: vacuum.hoover
+    from: docked
+    to: cleaning
+  actions:
+    - action: notify.all_iphones
+      data:
+        title: "Robot"
+        message: "Robot started to clean!"
+    - action: input_datetime.set_datetime
+      data:
+        entity_id: input_datetime.vacuum_on
+        datetime: "{{ now().isoformat() }}"
+
+- alias: "Vacuum: stopped cleaning"
+  triggers:
+    trigger: state
+    entity_id: vacuum.hoover
+    from: returning
+    to: docked
+  actions:
+    - action: input_boolean.turn_on
+      entity_id: input_boolean.cleaned_today
+    - action: input_datetime.set_datetime
+      data:
+        entity_id: input_datetime.vacuum_off
+        datetime: "{{ now().isoformat() }}"
+    - action: notify.all_iphones
+      data:
+        title: "Robot"
+        message: "Cleanup successful after {{ (states('sensor.robot_vacuum_last_clean_duration') | int / 60) | round }} minutes"
+
+- alias: "Vacuum: reminder notification"
+  triggers:
+    trigger: time
+    at: "08:00"
+  conditions:
+    condition: state
+    entity_id: binary_sensor.vacuum_day
+    state: "on"
+  actions:
+    action: notify.all_iphones
+    data:
+      title: "Robot"
+      message: "Vacuum will go today, make sure to leave the doors open and leave nothing on the floor!"
+
+- alias: "Vacuum: cleanup if nobody is home"
+  triggers:
+    - trigger: time
+      at: "13:00"
+    - trigger: state
+      entity_id: group.persons
+      from: home
+      to: not_home
+  conditions:
+    - condition: time
+      after: "13:00:00"
+      before: "22:00:00"
+    - condition: state
+      entity_id: binary_sensor.vacuum_day
+      state: "on"
+    - condition: state
+      entity_id: group.persons
+      state: not_home
+    - condition: state
+      entity_id: input_boolean.cleaned_today
+      state: "off"
+    - condition: state
+      entity_id: input_boolean.guest_mode
+      state: "off"
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: "off"
+  actions:
+    action: vacuum.start
+    entity_id: vacuum.hoover
+
+- alias: "Vacuum: reset cleaned today"
+  initial_state: "on"
+  triggers:
+    trigger: time
+    at: "00:00:00"
+  actions:
+    action: input_boolean.turn_off
+    entity_id: input_boolean.cleaned_today
+
+- alias: "Vacuum: reset to standard mode"
+  triggers:
+    trigger: state
+    entity_id: vacuum.living_room
+    to: docked
+  actions:
+    action: vacuum.set_fan_speed
+    entity_id: vacuum.hoover
+    data:
+      fan_speed: Standard

@@ -262,8 +262,6 @@ turn_off_everything_non_automatic:
           - light.bedroom_lights
     - action: media_player.turn_off
       entity_id: media_player.chromecast
-    - action: media_player.turn_off
-      entity_id: media_player.living_room_xbox
 
 turn_off_everything:
   alias: Turn off everything
@@ -359,34 +357,6 @@ start_fireplace_netflix:
       data:
         entity_id: media_player.chromecast
         volume_level: 0.08
-
-start_xbox:
-  alias: Start Xbox on TV
-  sequence:
-    - if: "{{ is_state('media_player.living_room_xbox', 'off') }}"
-      then:
-        - action: media_player.turn_on
-          entity_id: media_player.living_room_xbox
-        - delay:
-            milliseconds: 5000
-        # This seems to be useful for when the Xbox is in a weird state
-        - action: media_player.media_play_pause
-          entity_id: media_player.living_room_xbox
-    - action: script.start_tv
-    - action: media_player.select_source
-      data:
-        source: XBOX
-        entity_id: media_player.chromecast
-
-start_hogwarts_legacy:
-  alias: Start Hogwarts Legacy on the Xbox
-  sequence:
-    - action: script.start_xbox
-    - action: media_player.play_media
-      data:
-        entity_id: media_player.living_room_xbox
-        media_content_id: 9MT5NJ5W7B8Z
-        media_content_type: game
 
 set_low_temperature:
   alias: Set low temperature

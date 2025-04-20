@@ -243,7 +243,7 @@
       value_template: >
         {{ states('sensor.hours_bedroom_lights_have_been_on_last_7_days')|float(0) * 3
             + states('sensor.hours_living_room_lights_have_been_on_last_7_days')|float(0) * 6
-            + states('sensor.hours_office_light_has_been_on_last_7_days')|float(0) * 1
+            + states('sensor.hours_office_lights_has_been_on_last_7_days')|float(0) * 1
             + states('sensor.hours_kitchen_lights_have_been_on_last_7_days')|float(0) * 3
             + states('sensor.hours_hall_lights_have_been_on_last_7_days')|float(0) * 1 }}
 

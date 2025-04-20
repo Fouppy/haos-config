@@ -20,7 +20,7 @@ filter:
     - light.kitchen_lights
     - light.hall_lights
     - light.office_lights
-    - media_player.tv
+    - media_player.living_room_tv
     - media_player.living_room_xbox
     - media_player.kef_ls50
     - input_select.sleep_mode
@@ -30,7 +30,7 @@ entity_config:
     name: Living room speakers
     feature_list:
       - feature: toggle_mute
-  media_player.tv:
+  media_player.living_room_tv:
     name: TV
     feature_list:
       - feature: on_off

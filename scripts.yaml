@@ -261,7 +261,7 @@ turn_off_everything_non_automatic:
           - light.living_room_lights
           - light.bedroom_lights
     - action: media_player.turn_off
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
     - action: media_player.turn_off
       entity_id: media_player.living_room_xbox
 
@@ -299,11 +299,11 @@ next_colors:
 start_tv:
   alias: Start TV
   sequence:
-    if: "{{ is_state('media_player.tv', 'off') }}"
+    if: "{{ is_state('media_player.living_room_tv', 'off') }}"
     then:
       - action: media_player.turn_on
         data:
-          entity_id: media_player.tv
+          entity_id: media_player.living_room_tv
       - delay:
           milliseconds: 5000
 
@@ -313,7 +313,7 @@ start_netflix:
     - action: script.start_tv
     - data:
         source: Netflix
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
       action: media_player.select_source
 
 start_fireplace:
@@ -326,16 +326,16 @@ start_fireplace:
         payload:
           id: youtube.leanback.v4
           contentId: v=cdKop6aixVE
-        entity_id: media_player.tv
+        entity_id: media_player.living_room_tv
     - delay:
         milliseconds: 3000
     - action: webostv.button
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
       data:
         button: ENTER # enter into "All settings"
     - action: media_player.volume_set
       data:
-        entity_id: media_player.tv
+        entity_id: media_player.living_room_tv
         volume_level: 0.2
 
 start_fireplace_netflix:
@@ -348,16 +348,16 @@ start_fireplace_netflix:
         payload:
           id: netflix
           contentId: m=http://api.netflix.com/catalog/titles/movies/80092835&source_type=4
-        entity_id: media_player.tv
+        entity_id: media_player.living_room_tv
     - delay:
         milliseconds: 3000
     - action: webostv.button
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
       data:
         button: ENTER # enter into "All settings"
     - action: media_player.volume_set
       data:
-        entity_id: media_player.tv
+        entity_id: media_player.living_room_tv
         volume_level: 0.08
 
 start_xbox:
@@ -376,7 +376,7 @@ start_xbox:
     - action: media_player.select_source
       data:
         source: XBOX
-        entity_id: media_player.tv
+        entity_id: media_player.living_room_tv
 
 start_hogwarts_legacy:
   alias: Start Hogwarts Legacy on the Xbox
@@ -431,73 +431,73 @@ fix_sound:
   alias: Fix Opt LG Sound Sync bug
   sequence:
     - action: webostv.button
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
       data:
         button: MENU # Open "Menu"
     - delay:
         milliseconds: 1000
     - action: webostv.button
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
       data:
         button: UP # Navigate to "All settings"
     - delay:
         milliseconds: 500
     - action: webostv.button
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
       data:
         button: ENTER # enter into "All settings"
     - delay:
         milliseconds: 1500
     - action: webostv.button
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
       data:
         button: DOWN # Navigate to "Sound"
     - delay:
         milliseconds: 1500
     - action: webostv.button
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
       data:
         button: RIGHT # Move into "Sound" menu
     - delay:
         milliseconds: 500
     - action: webostv.button
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
       data:
         button: ENTER # Enter "Sound Out" menu
     - delay:
         milliseconds: 1500
     - action: webostv.button
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
       data:
         button: DOWN # Move to "Optical"
     - delay:
         milliseconds: 500
     - action: webostv.button
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
       data:
         button: DOWN # Move to "Optical - LG Sound Sync"
     - delay:
         milliseconds: 500
     - action: webostv.button
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
       data:
         button: ENTER # Disable "LG Sound Sync"
     - delay:
         milliseconds: 500
     - action: webostv.button
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
       data:
         button: ENTER # Enable "LG Sound Sync"
     - delay:
         milliseconds: 500
     - action: webostv.button
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
       data:
         button: BACK # Go up one menu in "All settings"
     - delay:
         milliseconds: 500
     - action: webostv.button
-      entity_id: media_player.tv
+      entity_id: media_player.living_room_tv
       data:
         button: BACK # Close the "All settings" window
 

@@ -405,7 +405,7 @@
 
 - platform: history_stats
   name: Hours office light has been on last 7 days
-  entity_id: light.office_light
+  entity_id: light.office_lights
   state: "on"
   type: time
   duration:

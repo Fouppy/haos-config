@@ -19,7 +19,7 @@ filter:
     - light.bedroom_lights
     - light.kitchen_lights
     - light.hall_lights
-    - light.office
+    - light.office_lights
     - media_player.tv
     - media_player.living_room_xbox
     - media_player.kef_ls50

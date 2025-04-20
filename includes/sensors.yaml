@@ -205,10 +205,10 @@
         {{ before_alarm | timestamp_custom("%H:%M", True) }}
 
     # Includes fix from https://github.com/basnijholt/home-assistant-config/issues/32
-    hours_outside_per_day_marcella:
-      friendly_name: Hours outside per day (Marcella)
+    hours_outside_per_day_moom:
+      friendly_name: Hours outside per day (MooM)
       value_template: >
-        {% set value = state_attr("sensor.quarantine_meter_marcella", "value") %}
+        {% set value = state_attr("sensor.quarantine_meter_moom", "value") %}
         {% if value != None %}
 
         {% set nargs = 1 + (value | length) - (value.replace(' ', '') | length) %}
@@ -222,10 +222,10 @@
         {% endif %}
 
     # Includes fix from https://github.com/basnijholt/home-assistant-config/issues/32
-    hours_outside_per_day_bas:
-      friendly_name: Hours outside per day (Marcella)
+    hours_outside_per_day_fouppy:
+      friendly_name: Hours outside per day (Fouppy)
       value_template: >
-        {% set value = state_attr("sensor.quarantine_meter_bas", "value") %}
+        {% set value = state_attr("sensor.quarantine_meter_fouppy", "value") %}
         {% if value != None %}
 
         {% set nargs = 1 + (value | length) - (value.replace(' ', '') | length) %}
@@ -241,13 +241,11 @@
     lights_on_total_hours:
       unit_of_measurement: h
       value_template: >
-        {{ states('sensor.hours_bedroom_lights_have_been_on_last_7_days')|float(0) * 7
-            + states('sensor.hours_living_room_lights_have_been_on_last_7_days')|float(0) * 5
-            + states('sensor.hours_toilet_light_has_been_on_last_7_days')|float(0) * 1
-            + states('sensor.hours_bathroom_light_has_been_on_last_7_days')|float(0) * 1
-            + states('sensor.hours_kitchen_lights_have_been_on_last_7_days')|float(0) * 2
-            + states('sensor.hours_hall_lights_have_been_on_last_7_days')|float(0) * 5
-            + states('sensor.hours_bathroom_light_has_been_on_last_7_days')|float(0) * 1 }}
+        {{ states('sensor.hours_bedroom_lights_have_been_on_last_7_days')|float(0) * 3
+            + states('sensor.hours_living_room_lights_have_been_on_last_7_days')|float(0) * 6
+            + states('sensor.hours_office_light_has_been_on_last_7_days')|float(0) * 1
+            + states('sensor.hours_kitchen_lights_have_been_on_last_7_days')|float(0) * 3
+            + states('sensor.hours_hall_lights_have_been_on_last_7_days')|float(0) * 1 }}
 
     lights_on_total_kwh:
       unit_of_measurement: h
@@ -280,10 +278,8 @@
   name: Temperature mean
   type: mean
   entity_ids:
-    - sensor.temperature_living_room
-    - sensor.temperature_bedroom
-    - sensor.temperature_bathroom
-    - sensor.temperature_hall
+    - sensor.salon_thermostat_temperature
+    - sensor.bureau_thermostat_temperature
 
 - platform: time_date
   display_options:
@@ -399,15 +395,6 @@
   end: "{{ now() }}"
 
 - platform: history_stats
-  name: Hours toilet light has been on last 7 days
-  entity_id: light.toilet
-  state: "on"
-  type: time
-  duration:
-    days: 7
-  end: "{{ now() }}"
-
-- platform: history_stats
   name: Hours kitchen lights have been on last 7 days
   entity_id: light.kitchen_lights
   state: "on"
@@ -417,8 +404,8 @@
   end: "{{ now() }}"
 
 - platform: history_stats
-  name: Hours hall lights have been on last 7 days
-  entity_id: light.hall_lights
+  name: Hours office light has been on last 7 days
+  entity_id: light.office_light
   state: "on"
   type: time
   duration:
@@ -426,8 +413,8 @@
   end: "{{ now() }}"
 
 - platform: history_stats
-  name: Hours bathroom light has been on last 7 days
-  entity_id: light.bathroom_ceiling
+  name: Hours hall lights have been on last 7 days
+  entity_id: light.hall_lights
   state: "on"
   type: time
   duration:

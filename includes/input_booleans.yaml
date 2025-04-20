@@ -12,27 +12,11 @@ vacation_mode:
 guest_mode:
   name: Guest mode
   icon: mdi:human-male-female
-bathroom_door_open_warning:
-  name: Bathroom door is open warning
-  icon: mdi:door-open
-front_door_open_warning:
-  name: Front door opened
-  icon: mdi:door-open
-bedroom_lights_automatically_turned_on:
-  name: Will automatically turn off
-  icon: mdi:ceiling-light
-  initial: "off"
 dark_mode:
   name: Dark mode
   icon: mdi:theme-light-dark
 theme_alternative:
   name: Theme alternative
-automatic_bedroom_lights:
-  name: Automatic bedroom lights
-  icon: mdi:lamp
-automatic_dinner_area_light:
-  name: Automatic dinner area light
-  icon: mdi:lamp
 automatic_temperature:
   name: Automatic temperature
   icon: mdi:thermometer

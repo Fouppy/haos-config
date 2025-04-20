@@ -26,6 +26,11 @@
   name: Office lights
   entities:
     - light.bureau_lampe_light
+
+- platform: group
+  name: Hall lights
+  entities:
+    - light.couloir_lampe
 # - platform: group
 #   name: Baby room lights
 #   entities:

@@ -1,4 +1,4 @@
-- alias: "Night mode: automatically turn off when alarm turns off or at 7AM"
+- alias: "Sleep mode: automatically turn off when alarm turns off or at 7AM"
   triggers:
     - trigger: time
       at: "07:00"
@@ -16,7 +16,7 @@
     data:
       option: "half"
 
-- alias: "Night mode: set low temperature when sleep mode turns on"
+- alias: "Sleep mode: set low temperature when sleep mode turns on"
   triggers:
     trigger: state
     entity_id: input_select.sleep_mode
@@ -24,7 +24,7 @@
   actions:
     action: script.set_low_temperature
 
-- alias: "Night mode: go from half to total sleeping mode"
+- alias: "Sleep mode: go from half to total sleeping mode"
   description: >
     When it is half sleeping mode and there is no activity in
     the house for more than an hour go to total sleeping mode.
@@ -44,10 +44,10 @@
         option: "total"
     - action: notify.iphone_bas
       data:
-        title: "Night mode"
+        title: "Sleep mode"
         message: "Automatically switched from 'half' to 'total' sleeping mode! 💤🛌"
 
-- alias: "Night mode: set sleeping mode in the living room"
+- alias: "Sleep mode: set sleeping mode in the living room"
   description: >
     Set the living room lights to sleep mode only when no-one is there anymore.
   triggers:

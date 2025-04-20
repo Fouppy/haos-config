@@ -302,13 +302,6 @@
 #           - action: light.turn_off
 #             entity_id: light.living_room_lights
 
-#       # Reset adaptive_lighting
-#       - conditions:
-#           - "{{ action == 'up_hold' }}" # Second from highest button
-#           - "{{ trigger.payload_json.action_duration > 2 }}" # Hold for more than two seconds
-#         sequence:
-#           - action: script.reset_adaptive_lighting
-
 # - alias: "Control switches: bedroom Philips Hue dimmer switch"
 #   mode: parallel
 #   triggers:
@@ -364,13 +357,6 @@
 #         sequence:
 #           - action: light.turn_off
 #             entity_id: light.bedroom_lights
-
-#       # Reset adaptive_lighting
-#       - conditions:
-#           - "{{ action == 'up_hold' }}" # Second from highest button
-#           - "{{ trigger.payload_json.action_duration > 2 }}" # Hold for more than two seconds
-#         sequence:
-#           - action: script.reset_adaptive_lighting
 
 # # This automation is set up to control the lighting in your bedroom using two different IKEA remotes.
 # # Here's a simplified explanation of the different actions that the automation performs:
@@ -729,12 +715,6 @@
 #           data:
 #             entity_id: light.guest_room_lights
 
-#       # Toggle sleep mode
-#       - conditions: "{{ action == 'double' }}"
-#         sequence:
-#           action: switch.toggle
-#           entity_id: switch.adaptive_lighting_sleep_mode_guest_room
-
 # - alias: "Control switches: Guest Room Space heater"
 #   mode: parallel
 #   triggers:
@@ -767,12 +747,6 @@
 #           data:
 #             entity_id:
 #               - light.baby_room_lights
-
-#       # Toggle sleep mode
-#       - conditions: "{{ action == 'double' }}"
-#         sequence:
-#           action: switch.toggle
-#           entity_id: switch.adaptive_lighting_sleep_mode_baby_room
 
 # - alias: "Control switches: Mid Room Changing Table Light"
 #   mode: parallel

@@ -80,15 +80,6 @@ actions:
       icon: movie
       color: "#ffffff"
 
-  - name: Reset adaptive lighting
-    background_color: "#000000"
-    label:
-      text: Reset adaptive lighting
-      color: "#ff0000"
-    icon:
-      icon: weather-sunset-up
-      color: "#ffffff"
-
   - name: Where is
     background_color: "#000000"
     label:

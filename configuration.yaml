@@ -38,6 +38,7 @@ influxdb: !include includes/influxdb.yaml
 intent:
 # intent_script: !include includes/intent_script.yaml
 # proxmoxve: !include includes/proxmoxve.yaml
+spotcast: !include includes/spotcast.yaml
 
 # Custom components
 pyscript: !include includes/pyscript.yaml

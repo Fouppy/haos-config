@@ -37,7 +37,7 @@ homekit: !include includes/homekit.yaml
 influxdb: !include includes/influxdb.yaml
 intent:
 # intent_script: !include includes/intent_script.yaml
-proxmoxve: !include includes/proxmoxve.yaml
+# proxmoxve: !include includes/proxmoxve.yaml
 
 # Custom components
 pyscript: !include includes/pyscript.yaml

@@ -64,7 +64,7 @@
 
     tv_volume:
       value_template: >
-        {{ state_attr("media_player.living_room_tv", "volume_level") }}
+        {{ state_attr("media_player.chromecast", "volume_level") }}
       unit_of_measurement: "%"
 
     kef_ls50_volume:
@@ -288,7 +288,7 @@
 
 - platform: history_stats
   name: Hours TV has been on last 7 days
-  entity_id: media_player.living_room_tv
+  entity_id: media_player.chromecast
   state: "on"
   type: time
   duration:
@@ -297,7 +297,7 @@
 
 - platform: history_stats
   name: Times TV has been on last 7 days
-  entity_id: media_player.living_room_tv
+  entity_id: media_player.chromecast
   state: "on"
   type: count
   duration:

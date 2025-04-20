@@ -37,7 +37,7 @@
         message: >
           Temperature in the Xbox cabinet is {{ states("sensor.temperature_xbox") }} °C! ⚠️
     - condition: state
-      entity_id: media_player.living_room_tv
+      entity_id: media_player.chromecast
       state: "on"
     - action: notify.tv
       data:

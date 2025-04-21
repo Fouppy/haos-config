@@ -78,6 +78,7 @@
       unit_of_measurement: "s"
 
     time_at_work_prognosis:
+      friendly_name: Time at work prognosis
       value_template: >
         {% set day = [now().weekday(), 4] | min %}
         {% set t_total = states("sensor.time_at_work_this_week")|float(0) %}

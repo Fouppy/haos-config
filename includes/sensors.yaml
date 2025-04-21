@@ -111,52 +111,43 @@
       friendly_name: Daily Power
       unit_of_measurement: kWh
       value_template: >
-        {{ states("sensor.daily_power_offpeak")|float(0) + states("sensor.daily_power_peak")|float(0) }}
+        {{ states("sensor.daily_power")|float(0) }}
 
     monthly_power:
       friendly_name: Monthly Power
       unit_of_measurement: kWh
       value_template: >
-        {{ states("sensor.monthly_power_offpeak")|float(0) + states("sensor.monthly_power_peak")|float(0) }}
+        {{ states("sensor.monthly_power")|float(0) }}
 
     monthly_power_last_period:
       friendly_name: Monthly Power (Last period)
       unit_of_measurement: kWh
       value_template: >
-        {{ state_attr("sensor.monthly_power_offpeak", "last_period")|float(0) + state_attr("sensor.monthly_power_peak", "last_period")|float(0) }}
+        {{ state_attr("sensor.monthly_power", "last_period")|float(0) }}
 
     monthly_power_cost_last_period:
       friendly_name: Monthly Power (Last period)
       unit_of_measurement: €
       value_template: >
-        {{ (state_attr("sensor.monthly_power_offpeak", "last_period")|float(0) * states("sensor.electricity_price_offpeak")|float(0)
-            + state_attr("sensor.monthly_power_peak", "last_period")|float(0) * states("sensor.electricity_price_peak")|float(0)) | round(2) }}
+        {{ (state_attr("sensor.monthly_power")|float(0)) | round(2) }}
 
-    electricity_price_offpeak:
+    electricity_price:
       friendly_name: Electricity price
       unit_of_measurement: €/kWh
       value_template: >
-        {{ 0.2307 }}
-
-    electricity_price_peak:
-      friendly_name: Electricity price
-      unit_of_measurement: €/kWh
-      value_template: >
-        {{ 0.2479 }}
+        {{ 0.2016 }}
 
     daily_power_cost:
       friendly_name: Daily Power
       unit_of_measurement: €
       value_template: >
-        {{ (states("sensor.daily_power_offpeak")|float(0) * states("sensor.electricity_price_offpeak")|float(0)
-            + states("sensor.daily_power_peak")|float(0) * states("sensor.electricity_price_peak")|float(0)) | round(2) }}
+        {{ (states("sensor.daily_power")|float(0) * states("sensor.electricity_price")|float(0)) | round(2) }}
 
     monthly_power_cost:
       friendly_name: Monthly Power
       unit_of_measurement: €
       value_template: >
-        {{ (states("sensor.monthly_power_offpeak")|float(0) * states("sensor.electricity_price_offpeak")|float(0)
-            + states("sensor.monthly_power_peak")|float(0) * states("sensor.electricity_price_peak")|float(0)) | round(2) }}
+        {{ (states("sensor.monthly_power")|float(0) * states("sensor.electricity_price")|float(0)) | round(2) }}
 
     daily_energy_fixed_cost:
       friendly_name: Fixed daily energy cost (power)

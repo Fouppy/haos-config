@@ -9,6 +9,7 @@ filter:
     - media_player
     - persistent_notification
     - person
+    - remote
     - script
     - sensor
     - sun

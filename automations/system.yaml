@@ -2,7 +2,7 @@
 - alias: "System: warning about high CPU usage"
   triggers:
     trigger: numeric_state
-    entity_id: sensor.sensor.system_monitor_processor_use
+    entity_id: sensor.system_monitor_processor_use
     above: 70
     for:
       hours: 4

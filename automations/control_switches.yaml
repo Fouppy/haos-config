@@ -41,7 +41,7 @@
     helper_force_brightness: false
     helper_hold_delay: 0.1
     helper_hold_dim_step: 4
-    light: light.cuisine_evier
+    light: light.kitchen_sink
     remote_devices:
       - df5b9b63c997a2417895397f2d10f3bf
     remote_devices_names: "{{ remote_devices | map('device_attr', 'name') | list }}"
@@ -58,13 +58,13 @@
                   sequence:
                     - action: light.turn_on
                       target:
-                        entity_id: light.cuisine_evier
+                        entity_id: light.kitchen_sink
                       data:
                         brightness_pct: 50
               default:
                 - action: light.turn_on
                   target:
-                    entity_id: light.cuisine_evier
+                    entity_id: light.kitchen_sink
                   data: {}
         - conditions:
             - condition: trigger
@@ -72,7 +72,7 @@
           sequence:
             - action: light.turn_off
               target:
-                entity_id: light.cuisine_evier
+                entity_id: light.kitchen_sink
               data: {}
         - conditions:
             - condition: trigger
@@ -86,7 +86,7 @@
                   - parallel:
                       - action: light.turn_on
                         target:
-                          entity_id: light.cuisine_evier
+                          entity_id: light.kitchen_sink
                         data:
                           brightness_step_pct: "{{ helper_hold_dim_step }}"
                           transition: "{{ helper_hold_delay }}"
@@ -106,14 +106,14 @@
                   - parallel:
                       - action: light.turn_on
                         target:
-                          entity_id: light.cuisine_evier
+                          entity_id: light.kitchen_sink
                         data:
                           brightness_step_pct: "{{ helper_hold_dim_step | int * -1 }}"
                           transition: "{{ helper_hold_delay }}"
                       - delay: "{{ helper_hold_delay }}"
             - action: light.turn_on
               target:
-                entity_id: light.cuisine_evier
+                entity_id: light.kitchen_sink
               data:
                 brightness_pct: 1
                 transition: "{{ helper_hold_delay }}"
@@ -165,7 +165,7 @@
     helper_force_brightness: false
     helper_hold_delay: 0.1
     helper_hold_dim_step: 4
-    light: light.cuisine_plans_de_travail
+    light: light.kitchen_countertop
     remote_devices:
       - df5b9b63c997a2417895397f2d10f3bf
     remote_devices_names: "{{ remote_devices | map('device_attr', 'name') | list }}"
@@ -182,13 +182,13 @@
                   sequence:
                     - action: light.turn_on
                       target:
-                        entity_id: light.cuisine_plans_de_travail
+                        entity_id: light.kitchen_countertop
                       data:
                         brightness_pct: 50
               default:
                 - action: light.turn_on
                   target:
-                    entity_id: light.cuisine_plans_de_travail
+                    entity_id: light.kitchen_countertop
                   data: {}
         - conditions:
             - condition: trigger
@@ -196,7 +196,7 @@
           sequence:
             - action: light.turn_off
               target:
-                entity_id: light.cuisine_plans_de_travail
+                entity_id: light.kitchen_countertop
               data: {}
         - conditions:
             - condition: trigger
@@ -210,7 +210,7 @@
                   - parallel:
                       - action: light.turn_on
                         target:
-                          entity_id: light.cuisine_plans_de_travail
+                          entity_id: light.kitchen_countertop
                         data:
                           brightness_step_pct: "{{ helper_hold_dim_step }}"
                           transition: "{{ helper_hold_delay }}"
@@ -230,14 +230,14 @@
                   - parallel:
                       - action: light.turn_on
                         target:
-                          entity_id: light.cuisine_plans_de_travail
+                          entity_id: light.kitchen_countertop
                         data:
                           brightness_step_pct: "{{ helper_hold_dim_step | int * -1 }}"
                           transition: "{{ helper_hold_delay }}"
                       - delay: "{{ helper_hold_delay }}"
             - action: light.turn_on
               target:
-                entity_id: light.cuisine_plans_de_travail
+                entity_id: light.kitchen_countertop
               data:
                 brightness_pct: 1
                 transition: "{{ helper_hold_delay }}"

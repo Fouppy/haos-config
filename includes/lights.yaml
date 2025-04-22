@@ -1,33 +1,33 @@
 - platform: group
   name: Living room lights
   entities:
+    - light.living_room_main_light
+    - light.living_room_tv_light
     - light.living_room_string_lights
-    - light.salon_lampe_principale_light
-    - light.salon_lampe_rouge_light
-    - light.salon_lampe_tv_light
-    - light.salon_lava_lampe_rouge_light
-    - light.salon_lava_lampe_bleue_light
+    - light.living_room_red_lamp
+    - light.living_room_red_lava_lamp
+    - light.living_room_blue_lava_lamp
 
 - platform: group
   name: Bedroom lights
   entities:
-    - light.chambre_lampe_principale_light
-    - light.chambre_lampe_rouge_light
-    - light.chambre_guirlande_light
+    - light.bedroom_main_lamp
+    - light.bedroom_red_lamp
+    - light.bedroom_string_lights
 
 - platform: group
   name: Kitchen lights
   entities:
-    - light.cuisine_lampe_principale_light
-    - light.cuisine_plans_de_travail
-    - light.cuisine_evier
+    - light.kitchen_ceiling
+    - light.kitchen_countertop
+    - light.kitchen_sink
 
 - platform: group
   name: Office lights
   entities:
-    - light.bureau_lampe_light
+    - light.office_lamp
 
 - platform: group
   name: Hall lights
   entities:
-    - light.couloir_lampe
+    - light.hall_ceiling

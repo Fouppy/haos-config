@@ -94,22 +94,22 @@ night_lights_living_room:
   sequence:
     - data:
         entity_id:
-          - light.salon_lampe_principale_light
+          - light.living_room_main_light
       action: light.turn_off
     - data:
         entity_id:
-          - light.salon_lampe_tv_light
+          - light.living_room_tv_light
       action: light.turn_off
     - data:
         entity_id:
-          - light.salon_lava_lampe_rouge_light
+          - light.living_room_red_lamp
       action: light.turn_off
     - data:
         entity_id:
-          - light.salon_lava_lampe_bleue_light
+          - light.living_room_red_lava_lamp
       action: light.turn_off
     - data:
-        entity_id: light.salon_lampe_rouge_light
+        entity_id: light.living_room_blue_lava_lamp
       action: light.turn_on
     - data:
         entity_id: light.living_room_string_lights
@@ -124,22 +124,22 @@ cozy_lights_living_room:
   mode: parallel
   sequence:
     - data:
-        entity_id: light.salon_lampe_principale_light
+        entity_id: light.living_room_main_light
       action: light.turn_off
     - data:
-        entity_id: light.salon_lampe_rouge_light
+        entity_id: light.living_room_red_lamp
       action: light.turn_on
     - data:
         entity_id: light.living_room_string_lights
       action: light.turn_on
     - data:
-        entity_id: light.salon_lava_lampe_bleue_light
+        entity_id: light.living_room_blue_lava_lamp
       action: light.turn_on
     - data:
-        entity_id: light.salon_lava_lampe_rouge_light
+        entity_id: light.living_room_red_lava_lamp
       action: light.turn_on
     - data:
-        entity_id: light.salon_lampe_tv_light
+        entity_id: light.living_room_tv_light
       action: light.turn_on
     - action: input_select.select_option
       entity_id: input_select.last_script_living_room
@@ -151,22 +151,22 @@ white_lights_living_room:
   mode: parallel
   sequence:
     - data:
-        entity_id: light.salon_lampe_principale_light
+        entity_id: light.living_room_main_light
       action: light.turn_on
     - data:
-        entity_id: light.salon_lampe_rouge_light
+        entity_id: light.living_room_red_lamp
       action: light.turn_off
     - data:
         entity_id: light.living_room_string_lights
       action: light.turn_off
     - data:
-        entity_id: light.salon_lava_lampe_bleue_light
+        entity_id: light.living_room_blue_lava_lamp
       action: light.turn_off
     - data:
-        entity_id: light.salon_lava_lampe_rouge_light
+        entity_id: light.living_room_red_lava_lamp
       action: light.turn_off
     - data:
-        entity_id: light.salon_lampe_tv_light
+        entity_id: light.living_room_tv_light
       action: light.turn_on
     - action: input_select.select_option
       entity_id: input_select.last_script_living_room

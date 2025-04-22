@@ -102,7 +102,7 @@ night_lights_living_room:
       action: light.turn_off
     - data:
         entity_id:
-          - light.salon_lampe_rouge_light
+          - light.salon_lava_lampe_rouge_light
       action: light.turn_off
     - data:
         entity_id:

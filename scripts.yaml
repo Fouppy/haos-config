@@ -124,8 +124,7 @@ cozy_lights_living_room:
   mode: parallel
   sequence:
     - data:
-        entity_id:
-          - light.salon_lampe_principale_light
+        entity_id: light.salon_lampe_principale_light
       action: light.turn_off
     - data:
         entity_id: light.salon_lampe_rouge_light
@@ -151,10 +150,24 @@ white_lights_living_room:
   alias: Set white lights in the living room
   mode: parallel
   sequence:
-    - action: light.turn_on
-      data:
-        entity_id:
-          - light.living_room_lights
+    - data:
+        entity_id: light.salon_lampe_principale_light
+      action: light.turn_on
+    - data:
+        entity_id: light.salon_lampe_rouge_light
+      action: light.turn_off
+    - data:
+        entity_id: light.living_room_string_lights
+      action: light.turn_off
+    - data:
+        entity_id: light.salon_lava_lampe_bleue_light
+      action: light.turn_off
+    - data:
+        entity_id: light.salon_lava_lampe_rouge_light
+      action: light.turn_off
+    - data:
+        entity_id: light.salon_lampe_tv_light
+      action: light.turn_on
     - action: input_select.select_option
       entity_id: input_select.last_script_living_room
       data:

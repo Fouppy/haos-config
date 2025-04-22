@@ -217,7 +217,7 @@
   type: mean
   entity_ids:
     - sensor.bathroom_thermostat_temperature
-    - sensor.bureau_thermostat_temperature
+    - sensor.dyson_temperature
 
 - platform: min_max
   name: CPU Temperature mean

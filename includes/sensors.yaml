@@ -64,7 +64,7 @@
 
     tv_volume:
       value_template: >
-        {{ state_attr("media_player.chromecast_2", "volume_level") }}
+        {{ state_attr("media_player.samsung_6_series_40", "volume_level") * 100 }}
       unit_of_measurement: "%"
 
     kef_ls50_volume:

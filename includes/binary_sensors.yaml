@@ -89,8 +89,7 @@
         {% set light_on = is_state("binary_sensor.any_light_on", "on") %}
         {% set tv_on = is_state("media_player.chromecast_2", "on") %}
         {% set kef_on = is_state("media_player.kef_ls50", "on") %}
-        {% set kef_lsx_on = is_state("media_player.kef_lsx", "on") %}
-        {{ light_on or tv_on or kef_on or kef_lsx_on }}
+        {{ light_on or tv_on or kef_on }}
 
     vacuum_day:
       # XXX: was '("Mon", "Wed", "Sun")'  pre-corona because now we're mostly at home

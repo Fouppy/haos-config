@@ -176,40 +176,6 @@
         {% set before_alarm = t_alarm + t_start - 60 * 10 %}
         {{ before_alarm | timestamp_custom("%H:%M", True) }}
 
-    # Includes fix from https://github.com/basnijholt/home-assistant-config/issues/32
-    hours_outside_per_day_moom:
-      friendly_name: Hours outside per day (MooM)
-      value_template: >
-        {% set value = state_attr("sensor.quarantine_meter_moom", "value") %}
-        {% if value != None %}
-
-        {% set nargs = 1 + (value | length) - (value.replace(' ', '') | length) %}
-        {% if nargs < 2 %}{% set value = "0h " ~ value %}{% endif %}
-        {% if nargs < 3 %}{% set value = "0d " ~ value %}{% endif %}
-
-        {% set d, h, m = value.split() %}
-        {% set d, h, m = d[:-1] | int, h[:-1] | int, m[:-1] | int %}
-        {% set hours_outside = ((14 - d) * 86400 - h * 3600 - m * 60) / 3600 %}
-        {{ (hours_outside / 14) | round(1) }}
-        {% endif %}
-
-    # Includes fix from https://github.com/basnijholt/home-assistant-config/issues/32
-    hours_outside_per_day_fouppy:
-      friendly_name: Hours outside per day (Fouppy)
-      value_template: >
-        {% set value = state_attr("sensor.quarantine_meter_fouppy", "value") %}
-        {% if value != None %}
-
-        {% set nargs = 1 + (value | length) - (value.replace(' ', '') | length) %}
-        {% if nargs < 2 %}{% set value = "0h " ~ value %}{% endif %}
-        {% if nargs < 3 %}{% set value = "0d " ~ value %}{% endif %}
-
-        {% set d, h, m = value.split() %}
-        {% set d, h, m = d[:-1] | int, h[:-1] | int, m[:-1] | int %}
-        {% set hours_outside = ((14 - d) * 86400 - h * 3600 - m * 60) / 3600 %}
-        {{ (hours_outside / 14) | round(1) }}
-        {% endif %}
-
     lights_on_total_hours:
       unit_of_measurement: h
       value_template: >
@@ -317,42 +283,6 @@
   type: count
   duration:
     days: 7
-  end: "{{ now() }}"
-
-- platform: history_stats
-  name: Quarantine meter Fouppy
-  entity_id: person.fouppy
-  state: "home"
-  type: ratio
-  duration:
-    days: 14
-  end: "{{ now() }}"
-
-- platform: history_stats
-  name: Quarantine meter MooM
-  entity_id: person.moom
-  state: "home"
-  type: ratio
-  duration:
-    days: 14
-  end: "{{ now() }}"
-
-- platform: history_stats
-  name: Quarantine meter Fouppy times left
-  entity_id: person.fouppy
-  state: "home"
-  type: count
-  duration:
-    days: 14
-  end: "{{ now() }}"
-
-- platform: history_stats
-  name: Quarantine meter MooM times left
-  entity_id: person.moom
-  state: "home"
-  type: count
-  duration:
-    days: 14
   end: "{{ now() }}"
 
 - platform: history_stats

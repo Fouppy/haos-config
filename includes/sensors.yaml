@@ -180,7 +180,7 @@
     hours_outside_per_day_moom:
       friendly_name: Hours outside per day (MooM)
       value_template: >
-        {% set value = state_attr("sensor.quarantine_meter_moom", "value") %}
+        {% set value = states("sensor.quarantine_meter_moom") %}
         {% if value != None %}
 
         {% set nargs = 1 + (value | length) - (value.replace(' ', '') | length) %}
@@ -197,7 +197,7 @@
     hours_outside_per_day_fouppy:
       friendly_name: Hours outside per day (Fouppy)
       value_template: >
-        {% set value = state_attr("sensor.quarantine_meter_fouppy", "value") %}
+        {% set value = states("sensor.quarantine_meter_fouppy") %}
         {% if value != None %}
 
         {% set nargs = 1 + (value | length) - (value.replace(' ', '') | length) %}

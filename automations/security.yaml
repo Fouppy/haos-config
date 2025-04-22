@@ -10,12 +10,12 @@
       entity_id: binary_sensor.no_one_home
       state: "on"
     - condition: numeric_state
-      entity_id: sensor.power_consumption
-      above: 0.7
+      entity_id: sensor.all_power
+      above: 300
   actions:
     action: notify.all_phones
     data:
       title: "Security"
       message: >
         No one is home and we are using a lot of energy
-        ({{ states('sensor.power_consumption') }} kW now)! ⚡️
+        ({{ (states('sensor.all_power') / 1000) | round(2) }} kW now)! ⚡️

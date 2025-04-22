@@ -3,10 +3,6 @@
     trigger: state
     entity_id: binary_sensor.activity_in_living_room
     to: "on"
-  conditions:
-    condition: state
-    entity_id: input_boolean.guest_mode
-    state: "off"
   actions:
     action: light.turn_on
     entity_id: light.living_room_lights
@@ -19,27 +15,9 @@
     - trigger: state
       entity_id: input_select.sleep_mode
       from: total
-  conditions:
-    condition: state
-    entity_id: input_boolean.guest_mode
-    state: "off"
   actions:
     action: light.turn_off
     entity_id: light.living_room_lights
-
-- alias: "Light: toggle guest room"
-  triggers:
-    trigger: state
-    entity_id: binary_sensor.activity_in_guest_room
-  conditions:
-    - condition: state
-      entity_id: input_boolean.guest_mode
-      state: "off"
-  actions:
-    action: light.turn_{{ trigger.to_state.state }}
-    data:
-      entity_id: light.guest_room_lights
-      transition: 1
 
 - alias: "Light: turn off living room (extra check)"
   description: In case the other automation failed
@@ -56,19 +34,3 @@
   actions:
     action: light.turn_off
     entity_id: light.living_room_lights
-
-- alias: "Light: turn off guest room (extra check)"
-  description: In case the other automation failed
-  triggers:
-    trigger: time_pattern
-    minutes: "/10"
-  conditions:
-    - condition: state
-      entity_id: binary_sensor.activity_in_guest_room
-      state: "off"
-    - condition: state
-      entity_id: light.guest_room_lights
-      state: "on"
-  actions:
-    action: light.turn_off
-    entity_id: light.guest_room_lights

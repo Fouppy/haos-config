@@ -25,14 +25,6 @@
       title: "System"
       message: "CPU temperature has been above 70 °C for 4 hours! ⚠️"
 
-# - alias: "System: update DNS"
-#   description: Update the DNS at Gandi to point my domain to my Home Assistant instance.
-#   triggers:
-#     trigger: time_pattern # XXX: trigger on IP change
-#     minutes: "/15"
-#   actions:
-#     action: script.update_dns
-
 # - alias: "System: run chores"
 #   description: Run shell and Python scripts in utils folder.
 #   triggers:

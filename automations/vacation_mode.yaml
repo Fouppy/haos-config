@@ -6,10 +6,6 @@
     from: home
     to: not_home
     for: "24:00:00"
-  conditions:
-    - condition: state
-      entity_id: input_boolean.guest_mode
-      state: "off"
   actions:
     - action: input_boolean.turn_on
       entity_id: input_boolean.vacation_mode
@@ -29,9 +25,6 @@
     - condition: state
       entity_id: input_boolean.vacation_mode
       state: "on"
-    - condition: state
-      entity_id: input_boolean.guest_mode
-      state: "off"
   actions:
     - action: input_boolean.turn_off
       entity_id: input_boolean.vacation_mode

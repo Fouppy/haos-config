@@ -68,9 +68,6 @@
       entity_id: input_boolean.cleaned_today
       state: "off"
     - condition: state
-      entity_id: input_boolean.guest_mode
-      state: "off"
-    - condition: state
       entity_id: input_boolean.vacation_mode
       state: "off"
   actions:

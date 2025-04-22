@@ -11,8 +11,7 @@
     motion_detected:
       friendly_name: Any motion detected
       value_template: >
-        {{ is_state("binary_sensor.activity_in_living_room", "on")
-            or is_state("binary_sensor.activity_in_guest_room", "on") }}
+        {{ is_state("binary_sensor.activity_in_living_room", "on") }}
 
     motion_detected_in_last_hour:
       friendly_name: Any motion detected in last hour
@@ -32,17 +31,10 @@
         {{ is_state("media_player.chromecast_2", "on") }}
       delay_off: "00:30:00"
 
-    activity_in_guest_room:
-      friendly_name: Activity in the guest room
-      value_template: >
-        {{ is_state("binary_sensor.using_macbook_in_guest_room", "on") }}
-      delay_off: "00:10:00"
-
     activity_outside_bedroom:
       friendly_name: Activity outside the bedroom
       value_template: >
-        {{ is_state("binary_sensor.activity_in_living_room", "on")
-            or is_state("binary_sensor.activity_in_guest_room", "on") }}
+        {{ is_state("binary_sensor.activity_in_living_room", "on") }}
       delay_off: "00:01:00"
 
     washing_machine:
@@ -102,13 +94,6 @@
       value_template: >
         {{ not is_state("person.fouppy", "home")
             and not is_state("person.moom", "home") }}
-
-    using_macbook_in_guest_room:
-      friendly_name: Activity in the guest room
-      value_template: >
-        {{ is_state("sensor.basnijholt_macbook_primary_display_name", "DELL U4021QW")
-            and is_state("binary_sensor.basnijholt_macbook_active", "on") }}
-      delay_off: "00:01:00"
 
 - platform: trend
   sensors:

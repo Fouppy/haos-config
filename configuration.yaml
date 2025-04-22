@@ -19,6 +19,7 @@ recorder: !include includes/recorder.yaml
 scene: !include scenes.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
+
 # Others
 person: !include includes/persons.yaml
 zone: !include includes/zones.yaml
@@ -37,7 +38,6 @@ homekit: !include includes/homekit.yaml
 influxdb: !include includes/influxdb.yaml
 intent:
 # intent_script: !include includes/intent_script.yaml
-# proxmoxve: !include includes/proxmoxve.yaml
 spotcast: !include includes/spotcast.yaml
 
 # Custom components

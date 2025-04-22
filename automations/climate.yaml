@@ -69,23 +69,3 @@
       timeout: "00:00:20"
       continue_on_timeout: false
     - action: script.set_high_temperature
-# - alias: "Climate: set outside temperature every hour"
-#   triggers:
-#     trigger: time_pattern
-#     hours: "/1"
-#   actions:
-#     action: mqtt.publish
-#     data:
-#       topic: actions/otmonitor/outside
-#       payload: >
-#         {{ state_attr("weather.liberte", "temperature") }}
-
-# - alias: "Climate: set temperature setpoint to 50 °C"
-#   triggers:
-#     trigger: time_pattern
-#     hours: "/2"
-#   actions:
-#     action: mqtt.publish
-#     data:
-#       topic: actions/otmonitor/maxdhwsetpt
-#       payload: "50"

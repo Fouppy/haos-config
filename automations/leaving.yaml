@@ -17,7 +17,6 @@
     - condition: state
       entity_id:
         - binary_sensor.someone_in_the_house_in_last_hour
-        - input_boolean.guest_mode
       state: "off"
   actions:
     - action: script.leaving
@@ -41,9 +40,6 @@
         - binary_sensor.no_one_home
         - binary_sensor.anything_on
       state: "on"
-    - condition: state
-      entity_id: input_boolean.guest_mode
-      state: "off"
   actions:
     - delay: "00:05:00" # something still needs to be on in 5 min
     - condition: state
@@ -68,23 +64,3 @@
       action: TURN_OFF_EVERYTHING
   actions:
     action: script.leaving
-# - alias: "Leaving: downstairs Aqara Wireless Mini Switch"
-#   triggers:
-#     trigger: event
-#     event_type: deconz_event
-#     event_data:
-#       id: smart_switch_door
-#       event: 1002  # single click
-#   actions:
-#     - wait_for_trigger:  # when the door closes, turn off everything
-#         trigger: state
-#         entity_id: binary_sensor.openclose_front_door
-#         from: "on"
-#         to: "off"
-#       timeout: "00:01:00"
-#       continue_on_timeout: false
-#     - action: script.turn_off_everything
-#     - action: notify.all_phones
-#       data:
-#         title: "Bye 👋"
-#         message: "See you soon!"

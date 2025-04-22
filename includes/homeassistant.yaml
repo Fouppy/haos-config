@@ -1,7 +1,5 @@
 latitude: !secret latitude_home
 longitude: !secret longitude_home
-# internal_url:
-# external_url:  # XXX: take from .storage config
 elevation: 0
 unit_system: metric
 country: FR
@@ -14,8 +12,6 @@ customize:
     friendly_name: Vacuum
   sensor.temperature_mean:
     icon: mdi:temperature-celsius
-  # light.automatic_lights:
-  #   icon: mdi:robot
   light.living_room_lights:
     icon: mdi:sofa-outline
   light.bedroom_lights:

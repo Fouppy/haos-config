@@ -129,7 +129,7 @@
       friendly_name: Monthly Power Cost (Last period)
       unit_of_measurement: €
       value_template: >
-        {{ state_attr("sensor.monthly_power_cost", "last_period"")|float(0) }}
+        {{ state_attr("sensor.monthly_power_cost", "last_period")|float(0) }}
 
     electricity_price:
       friendly_name: Electricity price

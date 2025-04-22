@@ -126,10 +126,10 @@
         {{ state_attr("sensor.monthly_power", "last_period")|float(0) }}
 
     monthly_power_cost_last_period:
-      friendly_name: Monthly Power (Last period)
+      friendly_name: Monthly Power Cost (Last period)
       unit_of_measurement: €
       value_template: >
-        {{ (state_attr("sensor.monthly_power")|float(0)) | round(2) }}
+        {{ state_attr("sensor.monthly_power_cost", "last_period"")|float(0) }}
 
     electricity_price:
       friendly_name: Electricity price
@@ -138,36 +138,16 @@
         {{ 0.2016 }}
 
     daily_power_cost:
-      friendly_name: Daily Power
+      friendly_name: Daily Power Cost
       unit_of_measurement: €
       value_template: >
         {{ (states("sensor.daily_power")|float(0) * states("sensor.electricity_price")|float(0)) | round(2) }}
 
     monthly_power_cost:
-      friendly_name: Monthly Power
+      friendly_name: Monthly Power Cost
       unit_of_measurement: €
       value_template: >
         {{ (states("sensor.monthly_power")|float(0) * states("sensor.electricity_price")|float(0)) | round(2) }}
-
-    daily_energy_fixed_cost:
-      friendly_name: Fixed daily energy cost (power)
-      unit_of_measurement: €
-      # XXX: remove _ when 0.117
-      value_template: >
-        {% set _ = states("sensor.date") %}
-        {{ (0.1480 + 0.3554) + (0.1480 + 0.6293) }}
-
-    monthly_energy_fixed_cost:
-      friendly_name: Fixed daily energy cost (power)
-      unit_of_measurement: €
-      value_template: >
-        {{ states("sensor.daily_energy_fixed_cost")|float(0) * now().day }}
-
-    monthly_energy_fixed_cost_last_period:
-      friendly_name: Fixed energy cost (power) (Last period)
-      unit_of_measurement: €
-      value_template: >
-        {{ states("sensor.daily_energy_fixed_cost")|float(0) * states("sensor.n_days_last_month")|int(0) }}
 
     nearest_phone_notify:
       friendly_name: Nearest phone's notify service

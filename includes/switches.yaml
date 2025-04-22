@@ -3,7 +3,7 @@
     vacuum_mode:
       value_template: >
         # standby, smart, wall_follow, spiral, chargego
-        {{ is_state_attr("vacuum.hoover", "cleaning_mode", "smart") or is_state_attr("vacuum.hoover", "cleaning_mode", "wall_follow") or is_state_attr("vacuum.hoover", "cleaning_mode", "spiral") }}
+        {{ is_state_attr("vacuum.hoover", "cleaning_mode", "smart") }}
       turn_on:
         action: vacuum.start
         entity_id: vacuum.hoover

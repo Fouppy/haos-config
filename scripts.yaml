@@ -88,116 +88,44 @@ start_spotify_playlist_of_nearest_person:
           playlist:{{ states("sensor.favorite_playlist_of_nearest_person") }}
         volume: 0.25
 
+night_lights_living_room:
+  alias: Set night lights in the living room
+  mode: parallel
+  sequence:
+    - data:
+        entity_id: light.salon_lampe_rouge_light
+      action: light.turn_on
+    - data:
+        entity_id: light.living_room_string_lights
+      action: light.turn_on
+    - action: input_select.select_option
+      entity_id: input_select.last_script_living_room
+      data:
+        option: script.night_lights_living_room
+
 cozy_lights_living_room:
   alias: Set cozy lights in the living room
   mode: parallel
   sequence:
     - data:
-        entity_id: light.cabinet_led
-        hs_color:
-          - 268.267
-          - 88.235
+        entity_id: light.salon_lampe_rouge_light
       action: light.turn_on
     - data:
-        entity_id: light.sphere_tv
-        hs_color:
-          - 299.147
-          - 82.745
+        entity_id: light.living_room_string_lights
       action: light.turn_on
     - data:
-        entity_id: light.sphere_2
-        hs_color:
-          - 26.667
-          - 88.235
+        entity_id: light.salon_lava_lampe_bleue_light
       action: light.turn_on
     - data:
-        entity_id: light.tv_led
-        hs_color:
-          - 26.725
-          - 89.804
+        entity_id: light.salon_lava_lampe_rouge_light
       action: light.turn_on
     - data:
-        entity_id: light.mid_room
-        hs_color:
-          - 336.293
-          - 80.392
-      action: light.turn_on
-    - data:
-        entity_id: light.living_room_corner
-        hs_color:
-          - 224.64
-          - 98.039
-      action: light.turn_on
-    - data:
-        entity_id: light.shelve
-        hs_color:
-          - 224.64
-          - 98.039
-      action: light.turn_on
-    - data:
-        entity_id: light.marble
-        hs_color:
-          - 25
-          - 80
+        entity_id: light.salon_lampe_tv_light
       action: light.turn_on
     - action: input_select.select_option
       entity_id: input_select.last_script_living_room
       data:
         option: script.cozy_lights_living_room
-
-cozy_lights_bedroom:
-  alias: Set cozy lights in the bedroom
-  mode: parallel
-  sequence:
-    - data:
-        entity_id: light.philips_go
-        hs_color:
-          - 0
-          - 100
-      action: light.turn_on
-    # - data:
-    #     entity_id: light.desk_led
-    #     hs_color:
-    #       - 299.72
-    #       - 83.922
-    #   action: light.turn_on
-    # - data:
-    #     entity_id: light.bamboo
-    #   action: light.turn_on
-    # - data:
-    #     entity_id: light.bed_reading_up
-    #     hs_color:
-    #       - 26.725
-    #       - 89.804
-    #   action: light.turn_on
-    # - data:
-    #     entity_id: light.bed_reading_down
-    #     hs_color:
-    #       - 26.725
-    #       - 89.804
-    #   action: light.turn_on
-    # - data:
-    #     entity_id: light.lampan
-    #     hs_color:
-    #       - 269.86
-    #       - 84.314
-    #   action: light.turn_on
-    # - data:
-    #     entity_id: light.ceiling_bedroom
-    #     hs_color:
-    #       - 22
-    #       - 100
-    #   action: light.turn_on
-    - data:
-        entity_id: light.bed_led
-        hs_color:
-          - 10
-          - 100
-      action: light.turn_on
-    - action: input_select.select_option
-      entity_id: input_select.last_script_bedroom
-      data:
-        option: script.cozy_lights_bedroom
 
 white_lights_living_room:
   alias: Set white lights in the living room
@@ -207,48 +135,10 @@ white_lights_living_room:
       data:
         entity_id:
           - light.living_room_lights
-        color_temp: 366
     - action: input_select.select_option
       entity_id: input_select.last_script_living_room
       data:
         option: script.white_lights_living_room
-
-white_lights_bedroom:
-  alias: Set white lights in the bedroom
-  mode: parallel
-  sequence:
-    - data:
-        color_temp: 366
-        entity_id:
-          - light.bedroom_lights
-      action: light.turn_on
-    - action: input_select.select_option
-      entity_id: input_select.last_script_bedroom
-      data:
-        option: script.white_lights_bedroom
-
-increase_brightness:
-  alias: Increase the brightness of a group of lights
-  mode: parallel
-  fields:
-    group:
-      description: The group to apply the light increase to.
-      example: light.living_room_lights
-  sequence:
-    - action: light.turn_on
-      data:
-        entity_id: "{{ group }}"
-        brightness: >
-          {% set b = state_attr(group, 'brightness') %}
-          {% if b == None %}
-            10
-          {% elif b < 20 %}
-            128
-          {% elif b < 140 %}
-            255
-          {% else %}
-            10
-          {% endif %}
 
 turn_off_everything_non_automatic:
   alias: Turn off everything
@@ -260,6 +150,9 @@ turn_off_everything_non_automatic:
         entity_id:
           - light.living_room_lights
           - light.bedroom_lights
+          - light.office_lights
+          - light.hall_lights
+          - light.kitchen_lights
     - action: media_player.turn_off
       entity_id: media_player.chromecast_2
 

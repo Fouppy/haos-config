@@ -9,27 +9,6 @@ SetLivingRoomLightState:
     entity_id: light.living_room_lights
     service: "light.turn_{{ state }}"
 
-SetLightColor:
-  action:
-    data:
-      entity_id: "{{ name }}"
-      color_name: "{{ color }}"
-    service: light.turn_on
-
-SetLivingRoomLightColor:
-  action:
-    data:
-      entity_id: light.living_room_lights
-      color_name: "{{ color }}"
-    service: light.turn_on
-
-SetLivingRoomBrightness:
-  action:
-    data:
-      entity_id: light.living_room_lights
-      brightness_pct: "{{ brightness }}"
-    service: light.turn_on
-
 SetMediaPlayerState:
   action:
     data:
@@ -58,7 +37,7 @@ SetVolume:
       volume_level: >
         {{ (volume|float(0) / 100)|round(2) }}
 
-SetWhiteCozyLights:
+SetWhiteCozyNightLights:
   action:
     service: "script.{{ state }}_lights_living_room"
 

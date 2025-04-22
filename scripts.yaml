@@ -93,6 +93,10 @@ night_lights_living_room:
   mode: parallel
   sequence:
     - data:
+        entity_id:
+          - light.living_room_lights
+      action: light.turn_off
+    - data:
         entity_id: light.salon_lampe_rouge_light
       action: light.turn_on
     - data:
@@ -107,6 +111,10 @@ cozy_lights_living_room:
   alias: Set cozy lights in the living room
   mode: parallel
   sequence:
+    - data:
+        entity_id:
+          - light.living_room_lights
+      action: light.turn_off
     - data:
         entity_id: light.salon_lampe_rouge_light
       action: light.turn_on

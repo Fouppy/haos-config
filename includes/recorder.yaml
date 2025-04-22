@@ -5,5 +5,5 @@ exclude:
     - sun
   entities:
     - sensor.n_days_last_month
-    - sensor.monthly_power_last_period
-    - sensor.monthly_power_cost_last_period
+    - sensor.monthly_energy_last_period
+    - sensor.monthly_energy_cost_last_period

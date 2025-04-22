@@ -107,47 +107,47 @@
         {% set start_of_last_month = start_of_month.replace(month=now().month-1) %}
         {{ ((start_of_month - start_of_last_month).total_seconds() / 86400) | round }}
 
-    daily_power:
-      friendly_name: Daily Power
+    daily_energy:
+      friendly_name: Daily Energy
       unit_of_measurement: kWh
       value_template: >
-        {{ states("sensor.daily_power")|float(0) }}
+        {{ states("sensor.all_energy_daily")|float(0) }}
 
-    monthly_power:
-      friendly_name: Monthly Power
+    monthly_energy:
+      friendly_name: Monthly Energy
       unit_of_measurement: kWh
       value_template: >
-        {{ states("sensor.monthly_power")|float(0) }}
+        {{ states("sensor.all_energy_monthly")|float(0) }}
 
-    monthly_power_last_period:
-      friendly_name: Monthly Power (Last period)
+    monthly_energy_last_period:
+      friendly_name: Monthly Energy (Last period)
       unit_of_measurement: kWh
       value_template: >
-        {{ state_attr("sensor.monthly_power", "last_period")|float(0) }}
+        {{ state_attr("sensor.monthly_energy", "last_period")|float(0) }}
 
-    monthly_power_cost_last_period:
-      friendly_name: Monthly Power Cost (Last period)
+    monthly_energy_cost_last_period:
+      friendly_name: Monthly Energy Cost (Last period)
       unit_of_measurement: €
       value_template: >
-        {{ state_attr("sensor.monthly_power_cost", "last_period")|float(0) }}
+        {{ state_attr("sensor.monthly_energy_cost", "last_period")|float(0) }}
 
-    electricity_price:
-      friendly_name: Electricity price
+    energy_price:
+      friendly_name: Energy price
       unit_of_measurement: €/kWh
       value_template: >
         {{ 0.2016 }}
 
-    daily_power_cost:
-      friendly_name: Daily Power Cost
+    daily_energy_cost:
+      friendly_name: Daily Energy Cost
       unit_of_measurement: €
       value_template: >
-        {{ (states("sensor.daily_power")|float(0) * states("sensor.electricity_price")|float(0)) | round(2) }}
+        {{ (states("sensor.daily_energy")|float(0) * states("sensor.energy_price")|float(0)) | round(2) }}
 
-    monthly_power_cost:
-      friendly_name: Monthly Power Cost
+    monthly_energy_cost:
+      friendly_name: Monthly Energy Cost
       unit_of_measurement: €
       value_template: >
-        {{ (states("sensor.monthly_power")|float(0) * states("sensor.electricity_price")|float(0)) | round(2) }}
+        {{ (states("sensor.monthly_energy")|float(0) * states("sensor.energy_price")|float(0)) | round(2) }}
 
     nearest_phone_notify:
       friendly_name: Nearest phone's notify service

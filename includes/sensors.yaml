@@ -177,6 +177,7 @@
         {{ before_alarm | timestamp_custom("%H:%M", True) }}
 
     lights_on_total_hours:
+      friendly_name: Lights on total hours
       unit_of_measurement: h
       value_template: >
         {{ states('sensor.hours_bedroom_lights_have_been_on_last_7_days')|float(0) * 3

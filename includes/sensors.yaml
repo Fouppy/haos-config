@@ -233,15 +233,15 @@
         {{ duration }}
 
 - platform: statistics
-  name: Humidity bathroom stats
-  entity_id: sensor.humidity_bathroom
+  name: Bathroom thermostat humidity stats
+  entity_id: sensor.bathroom_thermostat_humidity
   sampling_size: 86400 # make sure all data points of the last 24hrs are included
   max_age: "24:00:00"
   state_characteristic: mean
 
 - platform: derivative
-  source: sensor.humidity_bathroom
-  name: Humidity bathroom derivative
+  source: sensor.bathroom_thermostat_humidity
+  name: Bathroom thermostat humidity derivative
   unit_time: min
   time_window: "00:10:00"
 

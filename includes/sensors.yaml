@@ -142,13 +142,13 @@
       friendly_name: Daily Energy Cost
       unit_of_measurement: €
       value_template: >
-        {{ (states("sensor.daily_energy")|float(0) * states("sensor.energy_price")|float(0)) | round(2) }}
+        {{ (states("sensor.daily_energy")|float(0) * states("sensor.energy_price")|float(0)) | round(4) }}
 
     monthly_energy_cost:
       friendly_name: Monthly Energy Cost
       unit_of_measurement: €
       value_template: >
-        {{ (states("sensor.monthly_energy")|float(0) * states("sensor.energy_price")|float(0)) | round(2) }}
+        {{ (states("sensor.monthly_energy")|float(0) * states("sensor.energy_price")|float(0)) | round(4) }}
 
     nearest_phone_notify:
       friendly_name: Nearest phone's notify service

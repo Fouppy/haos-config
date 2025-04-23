@@ -408,7 +408,7 @@ utility_notification:
     - variables:
         minutes: "{{ (total_time / 60) | round(0) }}"
         total_kwh_rounded: "{{ (total_kwh) | round(4) }}"
-        price: "{{ (states('sensor.energy_price')|float(0) * total_kwh_rounded) | round(2) }}"
+        price: "{{ (states('sensor.energy_price')|float(0) * total_kwh_rounded) | round(4) }}"
     - action: "{{ states('sensor.nearest_phone_notify') }}"
       data:
         title: "Utilities"

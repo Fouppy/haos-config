@@ -2,13 +2,13 @@
   sensors:
     dishwasher_watts:
       value_template: >
-        {{ states("sensor.dishwasher_power") | float("Unavailable") }}
+        {{ states("sensor.dishwasher_device_power") | float("Unavailable") }}
       unit_of_measurement: Watt
       friendly_name: Dishwasher usage
 
     washing_machine_watts:
       value_template: >
-        {{ states("sensor.washing_machine_power") | float("Unavailable") }}
+        {{ states("sensor.washing_machine_device_power") | float("Unavailable") }}
       unit_of_measurement: Watt
       friendly_name: Washing machine usage
 
@@ -62,7 +62,7 @@
 
     favorite_playlist_of_nearest_person:
       value_template: >
-        {% if is_state("sensor.home_nearest_device", "Fouppy") %}
+        {% if 'Fouppy' in states('sensor.home_nearest_device') %}
         6rPTm9dYftKcFAfwyRqmDZ
         {% else %}
         6rPTm9dYftKcFAfwyRqmDZ

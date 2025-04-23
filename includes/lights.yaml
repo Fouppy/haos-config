@@ -25,7 +25,7 @@
 - platform: group
   name: Office lights
   entities:
-    - light.office_lamp_light
+    - light.office_lamp
 
 - platform: group
   name: Hall lights

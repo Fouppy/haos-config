@@ -6,6 +6,12 @@
       unit_of_measurement: Watt
       friendly_name: Dishwasher usage
 
+    washing_maching_watts:
+      value_template: >
+        {{ state_attr("switch.washing_machine", "power") | float("Unavailable") }}
+      unit_of_measurement: Watt
+      friendly_name: Washing machine usage
+
     count_automations:
       icon_template: mdi:autorenew
       value_template: "{{ states.automation | count }}"

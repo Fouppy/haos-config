@@ -22,14 +22,16 @@ filter:
     - light.hall_lights
     - light.office_lights
     - media_player.chromecast_2
-    # - media_player.kef_ls50
+    - media_player.tv_samsung
     - input_select.sleep_mode
     - input_boolean.start_the_music
 entity_config:
-  # media_player.kef_ls50:
-  #   name: Living room speakers
-  #   feature_list:
-  #     - feature: toggle_mute
+  media_player.tv_samsung:
+    name: TV Samsung
+    feature_list:
+      - feature: volume_mute
+      - feature: volume_up
+      - feature: toggle_down
   media_player.chromecast_2:
     name: TV
     feature_list:

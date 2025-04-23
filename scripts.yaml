@@ -1,6 +1,6 @@
 start_speakers:
   alias: Start speakers
-  description: Start a Spotify playlist on Living Room TV
+  description: Start a Spotify playlist on Chromecast
   fields:
     volume:
       description: Volume at which to play
@@ -27,11 +27,11 @@ start_speakers:
 
 start_spotify:
   alias: Start Spotify
-  description: Start a Spotify playlist on KEF speakers
+  description: Start a Spotify playlist on Chromecast
   fields:
     source:
       description: The name of the speaker as it appears in Spotify
-      example: Living Room TV
+      example: Chromecast
     id:
       description: The playlist/album/podcast URI from Spotify
       example: playlist:6rPTm9dYftKcFAfwyRqmDZ
@@ -43,7 +43,7 @@ start_spotify:
       entity_id: media_player.spotify_fouppy
     - if: >
         {{ not (is_state('media_player.spotify_fouppy', 'playing')
-                and is_state_attr('media_player.spotify_fouppy', 'source', 'Living Room TV')) }}"
+                and is_state_attr('media_player.spotify_fouppy', 'source', 'Chromecast')) }}"
       then:
         - wait_template: '{{ source in state_attr("media_player.spotify_fouppy", "source_list")  }}'
           timeout: 00:01:00
@@ -67,11 +67,11 @@ start_spotify:
 
 start_spotify_playlist_of_nearest_person:
   alias: Start Spotify
-  description: Start a Spotify playlist on Living Room TV
+  description: Start a Spotify playlist on Chromecast
   fields:
     source:
       description: The name of the speaker as it appears in Spotify
-      example: Living Room TV
+      example: Chromecast
     entity_id:
       description: entity_id of the speaker
       example: media_player.chromecast_2

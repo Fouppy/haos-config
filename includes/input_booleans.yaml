@@ -33,12 +33,8 @@ demo_wake_up_light:
   name: Demo - Start wake up light
   initial: "off"
   icon: mdi:weather-sunset-up
-start_kef_ls50:
-  name: Start KEF LS50
-  initial: "off"
-  icon: mdi:music
-start_spotify_on_kef_ls50:
-  name: Play Spotify on KEF LS50
+start_spotify_on_living_room_tv:
+  name: Play Spotify on Chromecast
   initial: "off"
   icon: mdi:music
 wake_up_with_spotify:

@@ -45,8 +45,8 @@ StartTheMusic:
   action:
     service: script.start_spotify_playlist_of_nearest_person
     data:
-      source: KEF LS50
-      entity_id: media_player.kef_ls50
+      source: TV Samsung
+      entity_id: media_player.tv_samsung
 
 SleepMode:
   action:

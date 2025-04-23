@@ -13,7 +13,7 @@
   entities:
     - light.bedroom_main_lamp
     - light.bedroom_red_lamp
-    - light.bedroom_string_lights_light
+    - light.bedroom_string_lights
 
 - platform: group
   name: Kitchen lights

@@ -99,5 +99,6 @@
   sensors:
     bathroom_thermostat_humidity_trend:
       entity_id: sensor.bathroom_thermostat_humidity
+      friendly_name: Bathroom thermostat humidity trend
       sample_duration: 300
       max_samples: 3

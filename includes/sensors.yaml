@@ -6,7 +6,7 @@
       unit_of_measurement: Watt
       friendly_name: Dishwasher usage
 
-    washing_maching_watts:
+    washing_machine_watts:
       value_template: >
         {{ states("sensor.washing_machine_power") | float("Unavailable") }}
       unit_of_measurement: Watt

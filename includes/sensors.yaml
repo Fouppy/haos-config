@@ -2,13 +2,13 @@
   sensors:
     dishwasher_watts:
       value_template: >
-        {{ state_attr("sensor.dishwasher", "power") | float("Unavailable") }}
+        {{ states("sensor.dishwasher_power") | float("Unavailable") }}
       unit_of_measurement: Watt
       friendly_name: Dishwasher usage
 
     washing_maching_watts:
       value_template: >
-        {{ state_attr("sensor.washing_machine", "power") | float("Unavailable") }}
+        {{ states("sensor.washing_machine_power") | float("Unavailable") }}
       unit_of_measurement: Watt
       friendly_name: Washing machine usage
 

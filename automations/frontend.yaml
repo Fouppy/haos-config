@@ -26,8 +26,8 @@
       entity_id: input_select.theme
     - trigger: state
       entity_id: input_boolean.dark_mode
-    - trigger: state
-      entity_id: input_boolean.theme_alternative
+    # - trigger: state
+    #   entity_id: input_boolean.theme_alternative
     - trigger: homeassistant
       event: start
   actions:
@@ -36,5 +36,6 @@
       name: >
         {% set which = "dark" if is_state("input_boolean.dark_mode", "on") else "light" -%}
         {% set name = states("input_select.theme") -%}
-        {% set suffix = "-alternative" if is_state("input_boolean.theme_alternative", "on") else "" -%}
+        # {% set suffix = "-alternative" if is_state("input_boolean.theme_alternative", "on") else "" -%}
+        {% set suffix = "-alternative" if is_state("input_boolean.dark_mode", "on") else "" -%}
         ios-{{ which }}-mode-{{ name }}{{ suffix }}

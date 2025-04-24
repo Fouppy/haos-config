@@ -1328,7 +1328,7 @@ views:
         title: Temperature sensors
         type: entities
       - type: custom:firemote-card
-        entity: media_player.android_tv_192_168_1_191
+        entity: media_player.android_tv
         device_family: chromecast
         device_type: chromecast-4k
         compatibility_mode: default

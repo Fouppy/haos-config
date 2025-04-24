@@ -302,6 +302,7 @@ arriving:
     - action: script.cozy_lights_living_room
 
 utility_notification:
+  alias: Utility notification
   fields:
     name:
       description: name

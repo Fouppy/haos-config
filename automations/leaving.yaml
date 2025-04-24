@@ -20,7 +20,7 @@
       state: "off"
   actions:
     - action: script.leaving
-    - action: notify.all_phones
+    - action: notify.phone_fouppy
       data:
         title: "Leaving"
         message: "Everything automatically turned off!"
@@ -45,7 +45,7 @@
     - condition: state
       entity_id: binary_sensor.no_one_home
       state: "on"
-    - action: notify.all_phones
+    - action: notify.phone_fouppy
       data:
         message: "No one is home, turn off everything?"
         data:

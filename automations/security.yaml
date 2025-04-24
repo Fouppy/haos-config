@@ -13,7 +13,7 @@
       entity_id: sensor.all_power
       above: 300
   actions:
-    action: notify.all_phones
+    action: notify.phone_fouppy
     data:
       title: "Security"
       message: >

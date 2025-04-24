@@ -19,22 +19,22 @@
   triggers:
     trigger: state
     entity_id: binary_sensor.washing_machine
-    from: "off"
-    to: "on"
+    from: "on"
+    to: "off"
   actions:
     action: script.utility_notification
     data:
-      name: "washing_machine"
+      name: "Washing machine"
       emojis: "👚👕"
 
 - alias: "Utilities: dishwasher notification"
   triggers:
     trigger: state
     entity_id: binary_sensor.dishwasher
-    from: "off"
-    to: "on"
+    from: "on"
+    to: "off"
   actions:
     action: script.utility_notification
     data:
-      name: "dishwasher"
+      name: "Dishwasher"
       emojis: "🍽🍳"

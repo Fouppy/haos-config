@@ -302,8 +302,6 @@ arriving:
     - action: script.cozy_lights_living_room
 
 utility_notification:
-  mode: parallel
-  max: 20
   fields:
     name:
       description: name
@@ -311,31 +309,8 @@ utility_notification:
     emojis:
       description: emojis
       example: "👚👕"
-  variables:
-    switch: "{{ 'switch.{}'.format(name) }}"
-    binary_sensor: "{{ 'binary_sensor.{}'.format(name) }}"
-    friendly_name: "{{ name.capitalize().replace('_', ' ') }}"
-    energy_sensor: "{{ 'sensor.{}_energy'.format(name) }}"
   sequence:
-    - variables:
-        start_time: "{{ as_timestamp(now()) }}"
-        start_kwh: "{{ states(energy_sensor)|float }}"
-    - wait_for_trigger:
-        trigger: template
-        value_template: "{{ is_state(binary_sensor, 'off') }}"
-      timeout: "04:00:00"
-      continue_on_timeout: false
-    - variables:
-        end_time: "{{ as_timestamp(now()) }}"
-        end_kwh: "{{ states(energy_sensor)|float }}"
-    - variables:
-        total_time: "{{ (end_time - start_time) }}"
-        total_kwh: "{{ end_kwh - start_kwh }}"
-    - variables:
-        minutes: "{{ (total_time / 60) | round(0) }}"
-        total_kwh_rounded: "{{ (total_kwh) | round(4) }}"
-        price: "{{ (states('sensor.energy_price')|float(0) * total_kwh_rounded) | round(4) }}"
     - action: "{{ states('sensor.nearest_phone_notify') }}"
       data:
         title: "Utilities"
-        message: "{{ friendly_name }} is done after {{ minutes }} minutes and it used {{ total_kwh_rounded }} kWh (€{{ price }}) {{ emojis }}"
+        message: "{{ name }} is done {{ emojis }}"

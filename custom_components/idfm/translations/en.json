@@ -1,0 +1,45 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "API Token",
+        "description": "Create an account on the PRIM platform and get your API token here:\n\nhttps://prim.iledefrance-mobilites.fr/fr/mon-jeton-api",
+        "data": {
+          "api_token": "Paste your token here",
+          "exclude_elevator_issues": "Exclude elevator issues",
+          "number_time_entities": "Number of time entities"
+        }
+      },
+      "transport": {
+        "title": "Transport Type",
+        "description": "Select the transport type",
+        "data": {
+          "transport_mode": "Transport"
+        }
+      },
+      "line": {
+        "title": "Transport Line",
+        "description": "Select the transport line",
+        "data": {
+          "transport_line": "Transport Line"
+        }
+      },
+      "stop": {
+        "title": "Transport Stop Area",
+        "description": "Select the transport stop",
+        "data": {
+          "stop_area": "Transport"
+        }
+      },
+      "direction": {
+        "title": "Transport Direction",
+        "description": "Select the transport direction",
+        "data": {
+          "direction": "Transport"
+        }
+      }
+    },
+    "error": {},
+    "abort": {}
+  }
+}

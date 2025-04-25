@@ -315,3 +315,11 @@ utility_notification:
       data:
         title: "Utilities"
         message: "{{ name }} is done {{ emojis }}"
+
+update_speedtest:
+  alias: Update SpeedTest
+  sequence:
+    - action: hassio.addon_start
+      metadata: {}
+      data:
+        addon: 6b87c29e_speedtest_addon

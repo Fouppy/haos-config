@@ -71,8 +71,5 @@
       hours: /1
   conditions: []
   actions:
-    - action: hassio.addon_start
-      metadata: {}
-      data:
-        addon: 6b87c29e_speedtest_addon
+    - action: script.update_speedtest
   mode: single

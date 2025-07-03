@@ -293,6 +293,16 @@ BINARY_SENSORS: dict[str, tuple[LocalTuyaEntity, ...]] = {
         ),
         *FAULT_SENSOR,
     ),
+    # Door Window Sensor
+    # https://developer.tuya.com/en/docs/iot/s?id=K9gf48hm02l8m
+    "mcs": (
+        LocalTuyaEntity(
+            id=DPCode.DOORCONTACT_STATE,
+            device_class=BinarySensorDeviceClass.DOOR,
+            custom_configs=STATE_TRUE,
+        ),
+        TAMPER_BINARY_SENSOR,
+    ),
     # Access Control
     # https://developer.tuya.com/en/docs/iot/s?id=Kb0o2xhlkxbet
     "mk": (
@@ -457,6 +467,9 @@ BINARY_SENSORS: dict[str, tuple[LocalTuyaEntity, ...]] = {
             condition_contains_any=["tilt", "true"],
         ),
     ),
+    # EV Charcher
+    # https://developer.tuya.com/en/docs/iot/categoryqn?id=Kaiuz18kih0sm
+    "qccdz": (*FAULT_SENSOR,),
 }
 
 BINARY_SENSORS["cl"] = FAULT_SENSOR

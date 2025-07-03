@@ -314,6 +314,11 @@ SWITCHES: dict[str, tuple[LocalTuyaEntity, ...]] = {
             id=DPCode.SWITCH,
         ),
         LocalTuyaEntity(
+            id=DPCode.MANUAL_CLEAN,
+            name="Manual Cleaning",
+            entity_category=EntityCategory.CONFIG,
+        ),
+        LocalTuyaEntity(
             id=DPCode.CLEANING,
             name="Cleaning",
             icon="mdi:power",
@@ -487,6 +492,13 @@ SWITCHES: dict[str, tuple[LocalTuyaEntity, ...]] = {
             id=DPCode.SWITCH_WELCOME,
             name="Welcome",
             icon="mdi:human-greeting",
+        ),
+    ),
+    # EV Charcher
+    # https://developer.tuya.com/en/docs/iot/categoryqn?id=Kaiuz18kih0sm
+    "qccdz": (
+        LocalTuyaEntity(
+            id=DPCode.SWITCH,
         ),
     ),
     # Unknown product with switch capabilities

@@ -421,6 +421,63 @@ SELECTS: dict[str, tuple[LocalTuyaEntity, ...]] = {
             name="Light Mode",
         ),
     ),
+    # Cat litter box
+    # https://developer.tuya.com/en/docs/iot/f?id=Kakg309qkmuit
+    "msp": (
+        LocalTuyaEntity(
+            id=DPCode.LEVEL,
+            name="Doorbell song",
+            icon="mdi:thermometer-lines",
+            custom_configs=localtuya_selector(
+                {
+                    "red": "Red",
+                    "greed": "Green",
+                    "blue": "Blue",
+                    "yellow": "Yellow",
+                    "purple": "Purple",
+                    "white": "White",
+                }
+            ),
+        ),
+    ),
+    # EV Charcher
+    # https://developer.tuya.com/en/docs/iot/categoryqn?id=Kaiuz18kih0sm
+    "qccdz": (
+        LocalTuyaEntity(
+            id=DPCode.WORK_MODE,
+            name="Mode",
+            icon="mdi:cog",
+            custom_configs=localtuya_selector(
+                {
+                    "charge_now": "NOW",
+                    "charge_pct": "PCT",
+                    "charge_energy": "Energy",
+                    "charge_schedule": "Schedule",
+                }
+            ),
+        ),
+        LocalTuyaEntity(
+            id=DPCode.ONLINE_STATE,
+            name="Online state",
+            icon="mdi:cog",
+            custom_configs=localtuya_selector(
+                {"online": "online", "offline": "offline"}
+            ),
+        ),
+        LocalTuyaEntity(
+            id=DPCode.CHARGINGOPERATION,
+            name="Charge State",
+            icon="mdi:cog",
+            custom_configs=localtuya_selector(
+                {
+                    "OpenCharging": "Open charging",
+                    "CloseCharging": "Close charging",
+                    "WaitOperation": "Wait for operation",
+                }
+            ),
+            entity_category=EntityCategory.CONFIG,
+        ),
+    ),
     # Heater
     # https://developer.tuya.com/en/docs/iot/categoryqn?id=Kaiuz18kih0sm
     "qn": (
@@ -492,6 +549,43 @@ SELECTS: dict[str, tuple[LocalTuyaEntity, ...]] = {
             name="Network",
             entity_category=EntityCategory.CONFIG,
             custom_configs=localtuya_selector({"LAN": "LAN", "4G": "4G"}),
+        ),
+    ),
+    # Weather Station
+    "qxj": (
+        LocalTuyaEntity(
+            id=DPCode.TEMP_UNIT_CONVERT,
+            name="Temperature unit",
+            entity_category=EntityCategory.CONFIG,
+            custom_configs=localtuya_selector({"c": "c", "f": "f"}),
+        ),
+        LocalTuyaEntity(
+            id=DPCode.WINDSPEED_UNIT_CONVERT,
+            name="Windspeed unit",
+            entity_category=EntityCategory.CONFIG,
+            custom_configs=localtuya_selector(
+                {"kmph": "kmph", "mph": "mph", "mps": "mps", "knots": "knots"}
+            ),
+        ),
+        LocalTuyaEntity(
+            id=DPCode.PRESSURE_UNIT_CONVERT,
+            name="Pressure unit",
+            entity_category=EntityCategory.CONFIG,
+            custom_configs=localtuya_selector(
+                {"hpa": "hpa", "inhg": "inhg", "mmhg": "mmhg"}
+            ),
+        ),
+        LocalTuyaEntity(
+            id=DPCode.TIME_FORMAT,
+            name="Time Format",
+            entity_category=EntityCategory.CONFIG,
+            custom_configs=localtuya_selector({"12Hr": "12Hr", "24Hr": "24Hr"}),
+        ),
+        LocalTuyaEntity(
+            id=DPCode.DM,
+            name="DM",
+            entity_category=EntityCategory.CONFIG,
+            custom_configs=localtuya_selector({"D_M": "D_M", "M_D": "M_D"}),
         ),
     ),
     # Siren Alarm

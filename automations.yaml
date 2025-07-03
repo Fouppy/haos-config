@@ -1,1 +1,14 @@
-[]
+- id: '1751245121302'
+  alias: New automation
+  description: ''
+  triggers:
+  - trigger: time
+    at: 05:00:00
+  conditions: []
+  actions:
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      device_id: 37d5dc0d0890903f16388ebb76db0d7e
+  mode: single

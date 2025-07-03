@@ -138,6 +138,15 @@ NUMBERS: dict[str, tuple[LocalTuyaEntity, ...]] = {
             custom_configs=localtuya_numbers(0, 10),
         ),
     ),
+    # Pet Water Feeder
+    # https://developer.tuya.com/en/docs/iot/f?id=K9gf46aewxem5
+    "cwysj": (
+        LocalTuyaEntity(
+            id=DPCode.PUMP_TIME,
+            name="Cleaning Time",
+            custom_configs=localtuya_numbers(0, 31, unit="d"),
+        ),
+    ),
     # Light
     # https://developer.tuya.com/en/docs/iot/categorydj?id=Kaiuyzy3eheyy
     "dj": (
@@ -432,6 +441,18 @@ NUMBERS: dict[str, tuple[LocalTuyaEntity, ...]] = {
             icon="mdi:timer-pause-outline",
             entity_category=EntityCategory.CONFIG,
             custom_configs=localtuya_numbers(1, 1439, 1, 1, UnitOfTime.MINUTES),
+        ),
+        LocalTuyaEntity(
+            id=DPCode.DIS_CURRENT,
+            name="DIS CURRENT",
+            entity_category=EntityCategory.CONFIG,
+            custom_configs=localtuya_numbers(0, 50, 1, 1),
+        ),
+        LocalTuyaEntity(
+            id=DPCode.FLOW_SET,
+            name="Flow",
+            entity_category=EntityCategory.CONFIG,
+            custom_configs=localtuya_numbers(0, 255, 1, 1),
         ),
     ),
     # Sous Vide Cooker
@@ -799,6 +820,58 @@ NUMBERS: dict[str, tuple[LocalTuyaEntity, ...]] = {
             name="Timer",
             custom_configs=localtuya_numbers(0, 24, unit=UnitOfTime.HOURS),
             icon="mdi:timer-outline",
+            entity_category=EntityCategory.CONFIG,
+        ),
+    ),
+    # EV Charcher
+    # https://developer.tuya.com/en/docs/iot/categoryqn?id=Kaiuz18kih0sm
+    "qccdz": (
+        LocalTuyaEntity(
+            id=DPCode.SETDELAYTIME,
+            name="Set Delay time",
+            custom_configs=localtuya_numbers(0, 15, unit=UnitOfTime.HOURS),
+            entity_category=EntityCategory.CONFIG,
+        ),
+        LocalTuyaEntity(
+            id=DPCode.SETDEFINETIME,
+            name="Set Define time",
+            custom_configs=localtuya_numbers(0, 15, unit=UnitOfTime.HOURS),
+            entity_category=EntityCategory.CONFIG,
+        ),
+        LocalTuyaEntity(
+            id=DPCode.SET16A,
+            name="Set 16A",
+            custom_configs=localtuya_numbers(8, 16, unit=UnitOfElectricCurrent.AMPERE),
+            entity_category=EntityCategory.CONFIG,
+        ),
+        LocalTuyaEntity(
+            id=DPCode.SET32A,
+            name="Set 32A",
+            custom_configs=localtuya_numbers(8, 32, unit=UnitOfElectricCurrent.AMPERE),
+            entity_category=EntityCategory.CONFIG,
+        ),
+        LocalTuyaEntity(
+            id=DPCode.SET40A,
+            name="Set 400A",
+            custom_configs=localtuya_numbers(12, 40, unit=UnitOfElectricCurrent.AMPERE),
+            entity_category=EntityCategory.CONFIG,
+        ),
+        LocalTuyaEntity(
+            id=DPCode.SET50A,
+            name="Set 50A",
+            custom_configs=localtuya_numbers(12, 50, unit=UnitOfElectricCurrent.AMPERE),
+            entity_category=EntityCategory.CONFIG,
+        ),
+        LocalTuyaEntity(
+            id=DPCode.SET60A,
+            name="Set 60A",
+            custom_configs=localtuya_numbers(6, 80, unit=UnitOfElectricCurrent.AMPERE),
+            entity_category=EntityCategory.CONFIG,
+        ),
+        LocalTuyaEntity(
+            id=DPCode.SET80A,
+            name="Set 80A",
+            custom_configs=localtuya_numbers(24, 80, unit=UnitOfElectricCurrent.AMPERE),
             entity_category=EntityCategory.CONFIG,
         ),
     ),

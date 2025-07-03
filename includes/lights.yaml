@@ -25,6 +25,7 @@
 - platform: group
   name: Office lights
   entities:
+    - light.office_main_lamp
     - light.office_lamp
 
 - platform: group

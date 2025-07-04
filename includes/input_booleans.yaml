@@ -17,9 +17,6 @@ theme_alternative:
 automatic_temperature:
   name: Automatic temperature
   icon: mdi:thermometer
-work_hour_notification_sent:
-  name: You've worked enough notification sent
-  icon: mdi:lamp
 alarm_clock:
   name: Alarm clock is on
   icon: mdi:alarm

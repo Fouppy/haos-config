@@ -63,19 +63,16 @@
           mdi:dishwasher-off
         {% endif %}
 
-    worked_enough_today:
-      friendly_name: Worked enough today
-      value_template: >
-        {{ states("sensor.time_at_work_today") | float(0) > 8 }}
-      icon_template: mdi:briefcase
-
     any_light_on:
       friendly_name: Any light is on
       value_template: >
         {% set automatic_lights_on = is_state("light.automatic_lights", "on") %}
         {% set bedroom_lights_on = is_state("light.bedroom_lights", "on") %}
+        {% set hall_lights_on = is_state("light.hall_lights", "on") %}
+        {% set kitchen_lights_on = is_state("light.kitchen_lights", "on") %}
         {% set living_room_lights_on = is_state("light.living_room_lights", "on") %}
-        {{ automatic_lights_on or bedroom_lights_on or living_room_lights_on }}
+        {% set office_lights_on = is_state("light.office_lights", "on") %}
+        {{ automatic_lights_on or bedroom_lights_on or hall_lights_on or kitchen_lights_on or living_room_lights_on or office_lights_on }}
 
     anything_on:
       friendly_name: Anything is on

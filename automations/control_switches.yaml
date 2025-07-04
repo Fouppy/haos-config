@@ -245,3 +245,127 @@
     - condition: template
       value_template: |-
         {{ (trigger.event.data.device_id in remote_devices) }}
+
+- alias: "Control switches: office Rodret dimmer switch bookcases"
+  mode: restart
+  max_exceeded: silent
+  triggers:
+    - trigger: event
+      event_type: zha_event
+      event_data:
+        command: "on"
+        cluster_id: 6
+        endpoint_id: 1
+      id: press-on-zha
+    - trigger: event
+      event_type: zha_event
+      event_data:
+        command: "off"
+        cluster_id: 6
+        endpoint_id: 1
+      id: press-off-zha
+    - trigger: event
+      event_type: zha_event
+      event_data:
+        command: move_with_on_off
+        cluster_id: 8
+        endpoint_id: 1
+      id: hold-on-zha
+    - trigger: event
+      event_type: zha_event
+      event_data:
+        command: move
+        cluster_id: 8
+        endpoint_id: 1
+      id: hold-off-zha
+    - trigger: event
+      event_type: zha_event
+      event_data:
+        command: stop_with_on_off
+        endpoint_id: 1
+        cluster_id: 8
+      id: release-zha
+  variables:
+    helper_force_brightness: false
+    helper_hold_delay: 0.1
+    helper_hold_dim_step: 4
+    light: light.office_bookcases
+    remote_devices:
+      - 8b9d1a82015ce6dcacc147b0beba435a
+    remote_devices_names: "{{ remote_devices | map('device_attr', 'name') | list }}"
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: press-on-zha
+          sequence:
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ helper_force_brightness }}"
+                  sequence:
+                    - action: light.turn_on
+                      target:
+                        entity_id: light.office_bookcases
+                      data:
+                        brightness_pct: 50
+              default:
+                - action: light.turn_on
+                  target:
+                    entity_id: light.office_bookcases
+                  data: {}
+        - conditions:
+            - condition: trigger
+              id: press-off-zha
+          sequence:
+            - action: light.turn_off
+              target:
+                entity_id: light.office_bookcases
+              data: {}
+        - conditions:
+            - condition: trigger
+              id: hold-on-zha
+          sequence:
+            - repeat:
+                while:
+                  - condition: trigger
+                    id: hold-on-zha
+                sequence:
+                  - parallel:
+                      - action: light.turn_on
+                        target:
+                          entity_id: light.office_bookcases
+                        data:
+                          brightness_step_pct: "{{ helper_hold_dim_step }}"
+                          transition: "{{ helper_hold_delay }}"
+                      - delay: "{{ helper_hold_delay }}"
+        - conditions:
+            - condition: trigger
+              id: hold-off-zha
+          sequence:
+            - variables:
+                brightness_pct: >-
+                  {{ iif(is_state(light, 'on'), state_attr(light, 'brightness'),
+                  0) * 100 / 255 }}
+                total_iterations_to_zero: "{{ (brightness_pct / helper_hold_dim_step) | round(0, 'ceil') }}"
+            - repeat:
+                count: "{{ total_iterations_to_zero - 1 }}"
+                sequence:
+                  - parallel:
+                      - action: light.turn_on
+                        target:
+                          entity_id: light.office_bookcases
+                        data:
+                          brightness_step_pct: "{{ helper_hold_dim_step | int * -1 }}"
+                          transition: "{{ helper_hold_delay }}"
+                      - delay: "{{ helper_hold_delay }}"
+            - action: light.turn_on
+              target:
+                entity_id: light.kitchen_countertop
+              data:
+                brightness_pct: 1
+                transition: "{{ helper_hold_delay }}"
+  conditions:
+    - condition: template
+      value_template: |-
+        {{ (trigger.event.data.device_id in remote_devices) }}

@@ -361,7 +361,7 @@
                       - delay: "{{ helper_hold_delay }}"
             - action: light.turn_on
               target:
-                entity_id: light.kitchen_countertop
+                entity_id: light.office_bookcases
               data:
                 brightness_pct: 1
                 transition: "{{ helper_hold_delay }}"

@@ -3,7 +3,7 @@
   description: ''
   triggers:
   - trigger: time
-    at: 05:00:00
+    at: 02:00:00
   conditions: []
   actions:
   - action: switch.turn_off

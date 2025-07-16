@@ -168,14 +168,6 @@
       value_template: >
         {{ states('sensor.lights_on_total_hours')|float(0) * 5.4 / 1000 }}
 
-    robot_vacuum_last_clean_duration:
-      unit_of_measurement: s
-      value_template: >
-        {% set t_start = state_attr("input_datetime.vacuum_on", "timestamp") | int %}
-        {% set t_off = state_attr("input_datetime.vacuum_off", "timestamp") | int %}
-        {% set duration = t_off - t_start %}
-        {{ duration }}
-
 - platform: statistics
   name: Bathroom thermostat humidity stats
   entity_id: sensor.bathroom_thermostat_humidity

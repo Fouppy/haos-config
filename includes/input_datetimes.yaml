@@ -22,13 +22,3 @@ dishwasher_off:
   name: Dishwasher last done
   has_date: true
   has_time: true
-
-vacuum_on:
-  name: Vacuum last started
-  has_date: true
-  has_time: true
-
-vacuum_off:
-  name: Vacuum last done
-  has_date: true
-  has_time: true

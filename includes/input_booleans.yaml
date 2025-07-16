@@ -3,9 +3,6 @@ start_the_music:
   name: Start speakers and music
   initial: "off"
   icon: mdi:music
-cleaned_today:
-  name: Vacuum cleaned today
-  icon: mdi:broom
 vacation_mode:
   name: On Vacation
   icon: mdi:airplane

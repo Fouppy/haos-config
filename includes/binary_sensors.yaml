@@ -82,12 +82,6 @@
         {% set chromecast_on = is_state("media_player.chromecast_2", "on") %}
         {{ light_on or tv_on or chromecast_on }}
 
-    vacuum_day:
-      # XXX: was '("Mon", "Wed", "Sun")'  pre-corona because now we're mostly at home
-      friendly_name: Vacuum day today
-      value_template: >
-        {{ as_timestamp(now()) | timestamp_custom("%a") in ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun") }}
-
     no_one_home:
       friendly_name: No one is home
       value_template: >

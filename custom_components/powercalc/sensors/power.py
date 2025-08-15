@@ -369,6 +369,7 @@ class VirtualPowerSensor(SensorEntity, PowerSensor):
         self._multiply_factor_standby = bool(sensor_config.get(CONF_MULTIPLY_FACTOR_STANDBY, False))
         self._ignore_unavailable_state = bool(sensor_config.get(CONF_IGNORE_UNAVAILABLE_STATE, False))
         self._rounding_digits = int(sensor_config.get(CONF_POWER_SENSOR_PRECISION, DEFAULT_POWER_SENSOR_PRECISION))
+        self._attr_suggested_display_precision = self._rounding_digits
         self.entity_id = entity_id
         self._sensor_config = sensor_config
         self._track_entities: set[str] = set()
@@ -520,7 +521,7 @@ class VirtualPowerSensor(SensorEntity, PowerSensor):
         trigger_entity_id: str,
         state: State | None,
     ) -> None:
-        """Update power sensor based on new dependant entity state."""
+        """Update power sensor based on new dependent entity state."""
         self._standby_sensors.pop(self.entity_id, None)
         if self._sleep_power_timer:
             self._sleep_power_timer()

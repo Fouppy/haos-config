@@ -12,6 +12,8 @@ customize:
     icon: mdi:temperature-celsius
   light.living_room_lights:
     icon: mdi:sofa-outline
+  light.bathroom_lights:
+    icon: mdi:bathtub-outline
   light.bedroom_lights:
     icon: mdi:bed-king-outline
   light.kitchen_lights:

@@ -1,5 +1,4 @@
 - alias: "Leaving: ask to turn off everything"
-  initial_state: "off"
   triggers:
     - trigger: state
       entity_id: person.fouppy

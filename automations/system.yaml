@@ -73,3 +73,14 @@
   actions:
     - action: script.update_speedtest
   mode: single
+
+- alias: HAOS Down
+  triggers:
+    - trigger: homeassistant
+      event: shutdown
+  conditions: []
+  actions:
+    - action: notify.phone_fouppy
+      data:
+        message: HAOS Down
+  mode: single

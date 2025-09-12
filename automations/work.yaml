@@ -1,8 +1,23 @@
+- alias: "Work: Fouppy left work notification for MooM"
+  triggers:
+    trigger: state
+    entity_id: person.fouppy
+    from: "Fouppy Work"
+  conditions:
+    condition: time
+    after: "15:00:00"
+    before: "22:00:00"
+  actions:
+    action: notify.phone_moom
+    data:
+      title: "Work"
+      message: "Fouppy has left work! ♥️🎉"
+
 - alias: "Work: MooM left work notification for Fouppy"
   triggers:
     trigger: state
     entity_id: person.moom
-    from: "Work"
+    from: "MooM Work"
   conditions:
     condition: time
     after: "15:00:00"

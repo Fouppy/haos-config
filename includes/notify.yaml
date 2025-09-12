@@ -19,6 +19,11 @@
     - service: mobile_app_fouppys_iphone
 
 - platform: group
+  name: phone_moom
+  services:
+    - service: mobile_app_cph2465
+
+- platform: group
   name: all
   services:
     - service: mobile_app_fouppy_s_1_8

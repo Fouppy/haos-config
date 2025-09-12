@@ -60,14 +60,6 @@
       icon_template: mdi:calendar-clock
       value_template: "{{ states.input_datetime | count }}"
 
-    favorite_playlist_of_nearest_person:
-      value_template: >
-        {% if 'Fouppy' in states('sensor.home_nearest_device') %}
-        6rPTm9dYftKcFAfwyRqmDZ
-        {% else %}
-        6rPTm9dYftKcFAfwyRqmDZ
-        {% endif %}
-
     tv_volume:
       value_template: >
         {{ state_attr("media_player.tv_samsung", "volume_level")|float(0) * 100 }}
@@ -137,22 +129,6 @@
           notify.mobile_app_cph2465
         {% endif %}
 
-    half_hour_before_alarm:
-      friendly_name: Half an hour before alarm
-      value_template: >
-        {% set t_alarm = state_attr("input_datetime.alarm_clock", "timestamp") | int %}
-        {% set t_start = states("sensor.timestamp_start_of_today") | int %}
-        {% set half_hour_before_alarm = t_alarm + t_start - 60 * 30 %}
-        {{ half_hour_before_alarm | timestamp_custom("%H:%M", True) }}
-
-    ten_minutes_before_alarm:
-      friendly_name: Ten minutes before alarm
-      value_template: >
-        {% set t_alarm = state_attr("input_datetime.alarm_clock", "timestamp") | int %}
-        {% set t_start = states("sensor.timestamp_start_of_today") | int %}
-        {% set before_alarm = t_alarm + t_start - 60 * 10 %}
-        {{ before_alarm | timestamp_custom("%H:%M", True) }}
-
     lights_on_total_hours:
       friendly_name: Lights on total hours
       unit_of_measurement: h
@@ -180,26 +156,6 @@
   name: Bathroom thermostat humidity derivative
   unit_time: min
   time_window: "00:10:00"
-
-# XXX: not used
-- platform: min_max
-  name: Temperature mean
-  type: mean
-  entity_ids:
-    - sensor.bathroom_thermostat_temperature
-    - sensor.dyson_temperature
-
-- platform: min_max
-  name: CPU Temperature mean
-  type: mean
-  entity_ids:
-    - sensor.proxmox_node_core_0_temperature
-    - sensor.proxmox_node_core_1_temperature
-
-- platform: time_date
-  display_options:
-    - date
-    - time
 
 - platform: history_stats
   name: Hours TV has been on last 7 days

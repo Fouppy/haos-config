@@ -4,8 +4,14 @@
   radius: 100
   icon: mdi:home-outline
 
-- name: Work
-  latitude: !secret latitude_work
-  longitude: !secret longitude_work
+- name: Fouppy Work
+  latitude: !secret latitude_fouppy_work
+  longitude: !secret longitude_fouppy_work
+  radius: 500
+  icon: mdi:briefcase-outline
+
+- name: MooM Work
+  latitude: !secret latitude_moom_work
+  longitude: !secret longitude_moom_work
   radius: 500
   icon: mdi:briefcase-outline

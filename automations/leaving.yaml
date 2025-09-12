@@ -1,32 +1,5 @@
-- alias: "Leaving: automatically turn off everything"
-  initial_state: "on"
-  triggers:
-    - trigger: state
-      entity_id: binary_sensor.someone_in_the_house_in_last_hour
-      from: "on"
-      to: "off"
-      for: "00:01:00"
-    - trigger: time_pattern
-      hours: "/1"
-  conditions:
-    - condition: state
-      entity_id:
-        - binary_sensor.no_one_home
-        - binary_sensor.anything_on
-      state: "on"
-    - condition: state
-      entity_id:
-        - binary_sensor.someone_in_the_house_in_last_hour
-      state: "off"
-  actions:
-    - action: script.leaving
-    - action: notify.phone_fouppy
-      data:
-        title: "Leaving"
-        message: "Everything automatically turned off!"
-
 - alias: "Leaving: ask to turn off everything"
-  initial_state: "on"
+  initial_state: "off"
   triggers:
     - trigger: state
       entity_id: person.fouppy

@@ -38,3 +38,23 @@
     data:
       name: "Dishwasher"
       emojis: "🍽🍳"
+
+- alias: "Utilities: switch mosquito plug on"
+  mode: single
+  triggers:
+    - trigger: time
+      at: "20:00:00"
+  actions:
+    - action: switch.turn_on
+      target:
+        entity_id: switch.living_room_mosquito_plug
+
+- alias: "Utilities: switch mosquito plug off"
+  mode: single
+  triggers:
+    - trigger: time
+      at: "08:00:00"
+  actions:
+    - action: switch.turn_off
+      target:
+        entity_id: switch.living_room_mosquito_plug

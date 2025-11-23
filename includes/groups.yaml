@@ -20,6 +20,22 @@ oneplus_8_fouppy:
   - sensor.in2023_internal_storage
   - device_tracker.in2023
 
+oneplus_15_fouppy:
+  # OnePlus 15
+  - sensor.fouppy_s_1_15_do_not_disturb_sensor
+  - sensor.fouppy_s_1_15_detected_activity
+  - sensor.fouppy_s_1_15_battery_level
+  - sensor.fouppy_s_1_15_battery_state
+  - sensor.fouppy_s_1_15_bssid
+  - sensor.fouppy_s_1_15_network_type
+  - sensor.fouppy_s_1_15_geocoded_location
+  - sensor.fouppy_s_1_15_last_update_trigger
+  - sensor.fouppy_s_1_15_sim_1
+  - sensor.fouppy_s_1_15_wifi_connection
+  - sensor.fouppy_s_1_15_steps
+  - sensor.fouppy_s_1_15_internal_storage
+  - device_tracker.fouppy_s_1_15
+
 iphone_fouppy:
   # iPhone XR
   - binary_sensor.fouppys_iphone_focus

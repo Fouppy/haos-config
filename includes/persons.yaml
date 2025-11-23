@@ -6,6 +6,9 @@
     # OnePlus 8 Pro
     - device_tracker.in2023 # from Android app
     - device_tracker.in2023_ping
+    # OnePlus 15
+    - device_tracker.fouppy_s_1_15 # from Android app
+    - device_tracker.fouppy_s_1_15_ping
     # iPhone XR
     - device_tracker.fouppys_iphone_2 # from iOS app
     - device_tracker.fouppys_iphone_2_ping

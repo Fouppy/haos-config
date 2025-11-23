@@ -2,6 +2,7 @@
   name: all_phones
   services:
     - service: mobile_app_fouppy_s_1_8
+    - service: mobile_app_fouppy_s_1_15
     - service: mobile_app_fouppys_iphone
     - service: mobile_app_cph2465
 
@@ -9,6 +10,7 @@
   name: fouppy
   services:
     - service: mobile_app_fouppy_s_1_8
+    - service: mobile_app_fouppy_s_1_15
     - service: mobile_app_fouppys_iphone
     - service: chrome
 
@@ -16,6 +18,7 @@
   name: phone_fouppy
   services:
     - service: mobile_app_fouppy_s_1_8
+    - service: mobile_app_fouppy_s_1_15
     - service: mobile_app_fouppys_iphone
 
 - platform: group
@@ -27,6 +30,7 @@
   name: all
   services:
     - service: mobile_app_fouppy_s_1_8
+    - service: mobile_app_fouppy_s_1_15
     - service: mobile_app_fouppys_iphone
     - service: mobile_app_fouppy_s_mbp
     - service: mobile_app_cph2465

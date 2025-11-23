@@ -3,14 +3,11 @@
 from __future__ import annotations
 
 import asyncio
+from datetime import timedelta
 import logging
 import random
 import time
-from datetime import timedelta
 
-import homeassistant.helpers.config_validation as cv
-import homeassistant.helpers.entity_registry as er
-import voluptuous as vol
 from awesomeversion.awesomeversion import AwesomeVersion
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 from homeassistant.components.utility_meter import DEFAULT_OFFSET, max_28_days
@@ -22,13 +19,16 @@ from homeassistant.const import (
     EVENT_HOMEASSISTANT_STARTED,
     EntityCategory,
     Platform,
+    __version__ as HA_VERSION,  # noqa: N812
 )
-from homeassistant.const import __version__ as HA_VERSION  # noqa: N812
 from homeassistant.core import HomeAssistant, ServiceCall
+import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.helpers.entity_platform import async_get_platforms
+import homeassistant.helpers.entity_registry as er
 from homeassistant.helpers.reload import async_integration_yaml_config
 from homeassistant.helpers.typing import ConfigType
+import voluptuous as vol
 
 from .common import validate_name_pattern
 from .const import (
@@ -39,6 +39,7 @@ from .const import (
     CONF_DISABLE_EXTENDED_ATTRIBUTES,
     CONF_DISABLE_LIBRARY_DOWNLOAD,
     CONF_DISCOVERY_EXCLUDE_DEVICE_TYPES,
+    CONF_DISCOVERY_EXCLUDE_SELF_USAGE,
     CONF_ENABLE_AUTODISCOVERY,
     CONF_ENERGY_INTEGRATION_METHOD,
     CONF_ENERGY_SENSOR_CATEGORY,
@@ -205,6 +206,7 @@ CONFIG_SCHEMA = vol.Schema(
                         cv.ensure_list,
                         [cls.value for cls in DeviceType],
                     ),
+                    vol.Optional(CONF_DISCOVERY_EXCLUDE_SELF_USAGE, default=False): cv.boolean,
                 },
             ),
         ),
@@ -260,8 +262,14 @@ async def create_discovery_manager_instance(
     global_powercalc_config: ConfigType,
 ) -> DiscoveryManager:
     exclude_device_types = [DeviceType(device_type) for device_type in global_powercalc_config.get(CONF_DISCOVERY_EXCLUDE_DEVICE_TYPES, [])]
+    exclude_self_usage = global_powercalc_config.get(CONF_DISCOVERY_EXCLUDE_SELF_USAGE, False)
 
-    manager = DiscoveryManager(hass, ha_config, exclude_device_types=exclude_device_types)
+    manager = DiscoveryManager(
+        hass,
+        ha_config,
+        exclude_device_types=exclude_device_types,
+        exclude_self_usage_profiles=exclude_self_usage,
+    )
     if global_powercalc_config.get(CONF_ENABLE_AUTODISCOVERY):
         await manager.setup()
     return manager

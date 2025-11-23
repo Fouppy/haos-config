@@ -16,7 +16,7 @@ from homeassistant.const import (
     EntityCategory,
 )
 
-MIN_HA_VERSION = "2024.4"
+MIN_HA_VERSION = "2025.1"
 
 DOMAIN = "powercalc"
 DOMAIN_CONFIG = "config"
@@ -55,6 +55,7 @@ CONF_DISABLE_EXTENDED_ATTRIBUTES = "disable_extended_attributes"
 CONF_DISABLE_LIBRARY_DOWNLOAD = "disable_library_download"
 CONF_DISABLE_STANDBY_POWER = "disable_standby_power"
 CONF_DISCOVERY_EXCLUDE_DEVICE_TYPES = "discovery_exclude_device_types"
+CONF_DISCOVERY_EXCLUDE_SELF_USAGE = "discovery_exclude_self_usage"
 CONF_ENABLE_AUTODISCOVERY = "enable_autodiscovery"
 CONF_ENERGY_INTEGRATION_METHOD = "energy_integration_method"
 CONF_ENERGY_SENSOR_CATEGORY = "energy_sensor_category"
@@ -179,6 +180,8 @@ DEFAULT_UTILITY_METER_TYPES = [DAILY, WEEKLY, MONTHLY]
 DISCOVERY_SOURCE_ENTITY = "source_entity"
 DISCOVERY_POWER_PROFILES = "power_profiles"
 DISCOVERY_TYPE = "discovery_type"
+
+LIBRARY_URL = "https://library.powercalc.nl"
 
 MANUFACTURER_WLED = "WLED"
 

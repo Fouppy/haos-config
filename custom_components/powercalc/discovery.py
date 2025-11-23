@@ -1,20 +1,20 @@
 from __future__ import annotations
 
-import logging
-import re
 from collections.abc import Awaitable, Callable
 from datetime import timedelta
+import logging
+import re
 from typing import Any
 
-import homeassistant.helpers.device_registry as dr
-import homeassistant.helpers.entity_registry as er
 from homeassistant.components.light import DOMAIN as LIGHT_DOMAIN
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 from homeassistant.config_entries import SOURCE_INTEGRATION_DISCOVERY, SOURCE_USER, ConfigEntry
 from homeassistant.const import CONF_ENTITY_ID, CONF_PLATFORM, CONF_UNIQUE_ID
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import discovery_flow
+import homeassistant.helpers.device_registry as dr
 from homeassistant.helpers.entity import EntityCategory
+import homeassistant.helpers.entity_registry as er
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.helpers.typing import ConfigType
 
@@ -65,6 +65,7 @@ class DiscoveryManager:
         hass: HomeAssistant,
         ha_config: ConfigType,
         exclude_device_types: list[DeviceType] | None = None,
+        exclude_self_usage_profiles: bool = False,
     ) -> None:
         self.hass = hass
         self.ha_config = ha_config
@@ -73,6 +74,7 @@ class DiscoveryManager:
         self.initialized_flows: set[str] = set()
         self.library: ProfileLibrary | None = None
         self._exclude_device_types = exclude_device_types or []
+        self._exclude_self_usage_profiles = exclude_self_usage_profiles or False
 
     async def setup(self) -> None:
         """Setup the discovery manager. Start initial discovery and setup interval based rediscovery."""
@@ -228,7 +230,7 @@ class DiscoveryManager:
 
         power_profiles = []
         for model_info in models:
-            profile = await get_power_profile(self.hass, {}, model_info=model_info, process_variables=False)
+            profile = await get_power_profile(self.hass, {}, source_entity, model_info=model_info, process_variables=False)
             if not profile or profile.discovery_by != discovery_type:  # pragma: no cover
                 continue
             if discovery_type == DiscoveryBy.ENTITY and not profile.is_entity_domain_supported(
@@ -236,6 +238,8 @@ class DiscoveryManager:
             ):
                 continue
             if profile.device_type in self._exclude_device_types:
+                continue
+            if self._exclude_self_usage_profiles and profile.only_self_usage:
                 continue
             power_profiles.append(profile)
 

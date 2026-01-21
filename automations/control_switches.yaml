@@ -369,19 +369,3 @@
     - condition: template
       value_template: |-
         {{ (trigger.event.data.device_id in remote_devices) }}
-
-- alias: "Control switches: living room remote control turn off lights"
-  mode: restart
-  triggers:
-    - device_id: 80774417407683d5c5d59e83bcefeea7
-      domain: zha
-      type: remote_button_short_press
-      subtype: button
-      trigger: device
-  conditions: []
-  actions:
-    - action: light.turn_off
-      metadata: {}
-      target:
-        entity_id: light.living_room_lights
-      data: {}

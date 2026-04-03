@@ -1,0 +1,87 @@
+- binary_sensor:
+  - default_entity_id: binary_sensor.someone_showering
+    name: Someone is showering
+    state: >-
+      {% set humidity = states("sensor.bathroom_thermostat_humidity") | float(0) %}
+      {% set treshold = 1.05 * state_attr("sensor.bathroom_thermostat_humidity_stats",
+      "median") | float(0) %} {% set derivative = states("sensor.bathroom_thermostat_humidity_derivative")
+      | float(0) %} {{ humidity > treshold and derivative > 0.25 }}
+- binary_sensor:
+  - default_entity_id: binary_sensor.motion_detected
+    name: Any motion detected
+    state: >-
+      {{ is_state("binary_sensor.activity_in_living_room", "on") }}
+- binary_sensor:
+  - delay_off: '1:00:00'
+    default_entity_id: binary_sensor.motion_detected_in_last_hour
+    name: Any motion detected in last hour
+    state: >-
+      {{ is_state("binary_sensor.motion_detected", "on") }}
+- binary_sensor:
+  - default_entity_id: binary_sensor.someone_in_the_house_in_last_hour
+    name: Someone in the house in the last hour
+    state: >-
+      {{ is_state("binary_sensor.motion_detected_in_last_hour", "on")
+          or is_state("group.persons", "home") }}
+- binary_sensor:
+  - delay_off: 0:30:00
+    default_entity_id: binary_sensor.activity_in_living_room
+    name: Activity in the living room
+    state: >-
+      {{ is_state("media_player.chromecast_2", "on") }}
+- binary_sensor:
+  - delay_off: 0:01:00
+    default_entity_id: binary_sensor.activity_outside_bedroom
+    name: Activity outside the bedroom
+    state: >-
+      {{ is_state("binary_sensor.activity_in_living_room", "on") }}
+- binary_sensor:
+  - delay_on: 0:05:00
+    delay_off: 0:05:00
+    default_entity_id: binary_sensor.washing_machine
+    icon: >-
+      {% if is_state("binary_sensor.washing_machine", "on") %}
+        mdi:washing-machine
+      {% else %}
+        mdi:washing-machine-off
+      {% endif %}
+    name: Washing machine
+    state: >-
+      {{ states("sensor.washing_machine_watts") | float(0) > 1 }}
+- binary_sensor:
+  - delay_on: 0:05:00
+    delay_off: 0:05:00
+    default_entity_id: binary_sensor.dishwasher
+    icon: >-
+      {% if is_state("binary_sensor.dishwasher", "on") %}
+        mdi:dishwasher
+      {% else %}
+        mdi:dishwasher-off
+      {% endif %}
+    name: Dishwasher
+    state: >-
+      {{ states("sensor.dishwasher_watts") | float(0) > 1 }}
+- binary_sensor:
+  - default_entity_id: binary_sensor.any_light_on
+    name: Any light is on
+    state: >-
+      {% set automatic_lights_on = is_state("light.automatic_lights", "on") %} {%
+      set bedroom_lights_on = is_state("light.bedroom_lights", "on") %} {% set hall_lights_on
+      = is_state("light.hall_lights", "on") %} {% set kitchen_lights_on = is_state("light.kitchen_lights",
+      "on") %} {% set living_room_lights_on = is_state("light.living_room_lights",
+      "on") %} {% set office_lights_on = is_state("light.office_lights", "on") %}
+      {{ automatic_lights_on or bedroom_lights_on or hall_lights_on or kitchen_lights_on
+      or living_room_lights_on or office_lights_on }}
+- binary_sensor:
+  - default_entity_id: binary_sensor.anything_on
+    name: Anything is on
+    state: >-
+      {% set light_on = is_state("binary_sensor.any_light_on", "on") %} {% set tv_on
+      = is_state("media_player.tv_samsung", "on") %} {% set chromecast_on = is_state("media_player.chromecast_2",
+      "on") %} {{ light_on or tv_on or chromecast_on }}
+- binary_sensor:
+  - default_entity_id: binary_sensor.no_one_home
+    name: No one is home
+    state: >-
+      {{ not is_state("person.fouppy", "home")
+          and not is_state("person.moom", "home") }}

@@ -1,92 +1,92 @@
-- platform: template
-  sensors:
-    someone_showering:
-      friendly_name: Someone is showering
-      value_template: >
-        {% set humidity = states("sensor.bathroom_thermostat_humidity") | float(0) %}
-        {% set treshold = 1.05 * state_attr("sensor.bathroom_thermostat_humidity_stats", "median") | float(0) %}
-        {% set derivative = states("sensor.bathroom_thermostat_humidity_derivative") | float(0) %}
-        {{ humidity > treshold and derivative > 0.25 }}
+# - platform: template
+#   sensors:
+#     someone_showering:
+#       friendly_name: Someone is showering
+#       value_template: >
+#         {% set humidity = states("sensor.bathroom_thermostat_humidity") | float(0) %}
+#         {% set treshold = 1.05 * state_attr("sensor.bathroom_thermostat_humidity_stats", "median") | float(0) %}
+#         {% set derivative = states("sensor.bathroom_thermostat_humidity_derivative") | float(0) %}
+#         {{ humidity > treshold and derivative > 0.25 }}
 
-    motion_detected:
-      friendly_name: Any motion detected
-      value_template: >
-        {{ is_state("binary_sensor.activity_in_living_room", "on") }}
+#     motion_detected:
+#       friendly_name: Any motion detected
+#       value_template: >
+#         {{ is_state("binary_sensor.activity_in_living_room", "on") }}
 
-    motion_detected_in_last_hour:
-      friendly_name: Any motion detected in last hour
-      value_template: >
-        {{ is_state("binary_sensor.motion_detected", "on") }}
-      delay_off: "01:00:00"
+#     motion_detected_in_last_hour:
+#       friendly_name: Any motion detected in last hour
+#       value_template: >
+#         {{ is_state("binary_sensor.motion_detected", "on") }}
+#       delay_off: "01:00:00"
 
-    someone_in_the_house_in_last_hour:
-      friendly_name: Someone in the house in the last hour
-      value_template: >
-        {{ is_state("binary_sensor.motion_detected_in_last_hour", "on")
-            or is_state("group.persons", "home") }}
+#     someone_in_the_house_in_last_hour:
+#       friendly_name: Someone in the house in the last hour
+#       value_template: >
+#         {{ is_state("binary_sensor.motion_detected_in_last_hour", "on")
+#             or is_state("group.persons", "home") }}
 
-    activity_in_living_room:
-      friendly_name: Activity in the living room
-      value_template: >
-        {{ is_state("media_player.chromecast_2", "on") }}
-      delay_off: "00:30:00"
+#     activity_in_living_room:
+#       friendly_name: Activity in the living room
+#       value_template: >
+#         {{ is_state("media_player.chromecast_2", "on") }}
+#       delay_off: "00:30:00"
 
-    activity_outside_bedroom:
-      friendly_name: Activity outside the bedroom
-      value_template: >
-        {{ is_state("binary_sensor.activity_in_living_room", "on") }}
-      delay_off: "00:01:00"
+#     activity_outside_bedroom:
+#       friendly_name: Activity outside the bedroom
+#       value_template: >
+#         {{ is_state("binary_sensor.activity_in_living_room", "on") }}
+#       delay_off: "00:01:00"
 
-    washing_machine:
-      friendly_name: Washing machine
-      value_template: >
-        {{ states("sensor.washing_machine_watts") | float(0) > 1 }}
-      delay_on: "00:05:00"
-      delay_off: "00:05:00"
-      icon_template: >
-        {% if is_state("binary_sensor.washing_machine", "on") %}
-          mdi:washing-machine
-        {% else %}
-          mdi:washing-machine-off
-        {% endif %}
+#     washing_machine:
+#       friendly_name: Washing machine
+#       value_template: >
+#         {{ states("sensor.washing_machine_watts") | float(0) > 1 }}
+#       delay_on: "00:05:00"
+#       delay_off: "00:05:00"
+#       icon_template: >
+#         {% if is_state("binary_sensor.washing_machine", "on") %}
+#           mdi:washing-machine
+#         {% else %}
+#           mdi:washing-machine-off
+#         {% endif %}
 
-    dishwasher:
-      friendly_name: Dishwasher
-      value_template: >
-        {{ states("sensor.dishwasher_watts") | float(0) > 1 }}
-      delay_on: "00:05:00"
-      delay_off: "00:05:00"
-      icon_template: >
-        {% if is_state("binary_sensor.dishwasher", "on") %}
-          mdi:dishwasher
-        {% else %}
-          mdi:dishwasher-off
-        {% endif %}
+#     dishwasher:
+#       friendly_name: Dishwasher
+#       value_template: >
+#         {{ states("sensor.dishwasher_watts") | float(0) > 1 }}
+#       delay_on: "00:05:00"
+#       delay_off: "00:05:00"
+#       icon_template: >
+#         {% if is_state("binary_sensor.dishwasher", "on") %}
+#           mdi:dishwasher
+#         {% else %}
+#           mdi:dishwasher-off
+#         {% endif %}
 
-    any_light_on:
-      friendly_name: Any light is on
-      value_template: >
-        {% set automatic_lights_on = is_state("light.automatic_lights", "on") %}
-        {% set bedroom_lights_on = is_state("light.bedroom_lights", "on") %}
-        {% set hall_lights_on = is_state("light.hall_lights", "on") %}
-        {% set kitchen_lights_on = is_state("light.kitchen_lights", "on") %}
-        {% set living_room_lights_on = is_state("light.living_room_lights", "on") %}
-        {% set office_lights_on = is_state("light.office_lights", "on") %}
-        {{ automatic_lights_on or bedroom_lights_on or hall_lights_on or kitchen_lights_on or living_room_lights_on or office_lights_on }}
+#     any_light_on:
+#       friendly_name: Any light is on
+#       value_template: >
+#         {% set automatic_lights_on = is_state("light.automatic_lights", "on") %}
+#         {% set bedroom_lights_on = is_state("light.bedroom_lights", "on") %}
+#         {% set hall_lights_on = is_state("light.hall_lights", "on") %}
+#         {% set kitchen_lights_on = is_state("light.kitchen_lights", "on") %}
+#         {% set living_room_lights_on = is_state("light.living_room_lights", "on") %}
+#         {% set office_lights_on = is_state("light.office_lights", "on") %}
+#         {{ automatic_lights_on or bedroom_lights_on or hall_lights_on or kitchen_lights_on or living_room_lights_on or office_lights_on }}
 
-    anything_on:
-      friendly_name: Anything is on
-      value_template: >
-        {% set light_on = is_state("binary_sensor.any_light_on", "on") %}
-        {% set tv_on = is_state("media_player.tv_samsung", "on") %}
-        {% set chromecast_on = is_state("media_player.chromecast_2", "on") %}
-        {{ light_on or tv_on or chromecast_on }}
+#     anything_on:
+#       friendly_name: Anything is on
+#       value_template: >
+#         {% set light_on = is_state("binary_sensor.any_light_on", "on") %}
+#         {% set tv_on = is_state("media_player.tv_samsung", "on") %}
+#         {% set chromecast_on = is_state("media_player.chromecast_2", "on") %}
+#         {{ light_on or tv_on or chromecast_on }}
 
-    no_one_home:
-      friendly_name: No one is home
-      value_template: >
-        {{ not is_state("person.fouppy", "home")
-            and not is_state("person.moom", "home") }}
+#     no_one_home:
+#       friendly_name: No one is home
+#       value_template: >
+#         {{ not is_state("person.fouppy", "home")
+#             and not is_state("person.moom", "home") }}
 
 - platform: trend
   sensors:

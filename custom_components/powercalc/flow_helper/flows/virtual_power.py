@@ -1,20 +1,22 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from homeassistant.const import CONF_ATTRIBUTE, CONF_ENTITIES, CONF_ENTITY_ID, CONF_NAME, Platform
+from homeassistant.const import CONF_ATTRIBUTE, CONF_ENTITIES, CONF_ENTITY_ID, CONF_ID, CONF_NAME, CONF_PATH, Platform
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
 from homeassistant.helpers.schema_config_entry_flow import SchemaFlowError
 import voluptuous as vol
 
-from custom_components.powercalc import CONF_CREATE_ENERGY_SENSOR, CONF_CREATE_UTILITY_METERS, DeviceType
 from custom_components.powercalc.common import create_source_entity
 from custom_components.powercalc.const import (
     CONF_AUTOSTART,
     CONF_CALCULATION_ENABLED_CONDITION,
     CONF_CALIBRATE,
+    CONF_CREATE_ENERGY_SENSOR,
+    CONF_CREATE_UTILITY_METERS,
     CONF_GAMMA_CURVE,
     CONF_IGNORE_UNAVAILABLE_STATE,
     CONF_MAX_POWER,
@@ -28,6 +30,7 @@ from custom_components.powercalc.const import (
     CONF_POWER_TEMPLATE,
     CONF_REPEAT,
     CONF_STANDBY_POWER,
+    CONF_STATE,
     CONF_STATE_TRIGGER,
     CONF_STATES_POWER,
     CONF_UNAVAILABLE_POWER,
@@ -38,7 +41,12 @@ from custom_components.powercalc.const import (
 from custom_components.powercalc.flow_helper.common import FlowType, PowercalcFormStep, Step, fill_schema_defaults
 from custom_components.powercalc.flow_helper.flows.global_configuration import get_global_powercalc_config
 from custom_components.powercalc.flow_helper.flows.library import SCHEMA_POWER_OPTIONS_LIBRARY, SCHEMA_POWER_SMART_SWITCH
-from custom_components.powercalc.flow_helper.schema import SCHEMA_ENERGY_OPTIONS, SCHEMA_ENERGY_SENSOR_TOGGLE, SCHEMA_UTILITY_METER_TOGGLE
+from custom_components.powercalc.flow_helper.schema import (
+    SCHEMA_ENERGY_SENSOR_TOGGLE,
+    SCHEMA_SENSOR_ENERGY_OPTIONS,
+    SCHEMA_UTILITY_METER_TOGGLE,
+)
+from custom_components.powercalc.power_profile.power_profile import DeviceType
 from custom_components.powercalc.strategy.wled import CONFIG_SCHEMA as SCHEMA_POWER_WLED
 
 if TYPE_CHECKING:
@@ -85,15 +93,6 @@ SCHEMA_POWER_LINEAR = vol.Schema(
     },
 )
 
-SCHEMA_POWER_PLAYBOOK = vol.Schema(
-    {
-        vol.Optional(CONF_PLAYBOOKS): selector.ObjectSelector(),
-        vol.Optional(CONF_REPEAT): selector.BooleanSelector(),
-        vol.Optional(CONF_AUTOSTART): selector.TextSelector(),
-        vol.Optional(CONF_STATE_TRIGGER): selector.ObjectSelector(),
-    },
-)
-
 SCHEMA_POWER_MULTI_SWITCH_MANUAL = vol.Schema(
     {
         vol.Required(CONF_POWER): vol.Coerce(float),
@@ -103,7 +102,6 @@ SCHEMA_POWER_MULTI_SWITCH_MANUAL = vol.Schema(
 
 STRATEGY_SCHEMAS: dict[CalculationStrategy, vol.Schema] = {
     CalculationStrategy.FIXED: SCHEMA_POWER_FIXED,
-    CalculationStrategy.PLAYBOOK: SCHEMA_POWER_PLAYBOOK,
     CalculationStrategy.WLED: SCHEMA_POWER_WLED,
 }
 
@@ -134,18 +132,18 @@ class VirtualPowerFlow:
     def __init__(self, flow: PowercalcCommonFlow) -> None:
         self.flow = flow
 
-    def create_strategy_schema(self) -> vol.Schema:
+    async def create_strategy_schema(self) -> vol.Schema:
         """Get the config schema for a given power calculation strategy."""
         if not self.flow.strategy:
             raise ValueError("No strategy selected")  # pragma: no cover
 
         create_schema_func = f"create_schema_{self.flow.strategy.lower()}"
         if hasattr(self, create_schema_func):
-            return getattr(self, create_schema_func)()  # type: ignore
+            return await getattr(self, create_schema_func)()  # type: ignore
 
         return STRATEGY_SCHEMAS[self.flow.strategy]
 
-    def create_schema_linear(self) -> vol.Schema:
+    async def create_schema_linear(self) -> vol.Schema:
         """Create the config schema for linear strategy."""
         return SCHEMA_POWER_LINEAR.extend(  # type: ignore
             {
@@ -158,7 +156,7 @@ class VirtualPowerFlow:
             },
         )
 
-    def create_schema_multi_switch(self) -> vol.Schema:
+    async def create_schema_multi_switch(self) -> vol.Schema:
         """Create the config schema for multi switch strategy."""
 
         switch_domains = [str(Platform.SWITCH), str(Platform.LIGHT), str(Platform.COVER)]
@@ -180,6 +178,36 @@ class VirtualPowerFlow:
 
         return schema
 
+    async def create_schema_playbook(self) -> vol.Schema:
+        """Create the config schema for playbook strategy."""
+        base_path = Path(self.flow.hass.config.path("powercalc/playbooks"))
+        playbook_files = [str(p.relative_to(base_path)) for p in base_path.rglob("*") if p.is_file()]
+
+        return vol.Schema(
+            {
+                vol.Optional(CONF_PLAYBOOKS): selector.ObjectSelector(
+                    {
+                        "multiple": True,
+                        "description_field": CONF_PATH,
+                        "label_field": CONF_ID,
+                        "fields": {
+                            CONF_ID: {
+                                "required": True,
+                                "selector": {"text": None},
+                            },
+                            CONF_PATH: {
+                                "required": True,
+                                "selector": {"select": {"options": playbook_files, "mode": "dropdown", "custom_value": True}},
+                            },
+                        },
+                    },
+                ),
+                vol.Optional(CONF_REPEAT): selector.BooleanSelector(),
+                vol.Optional(CONF_AUTOSTART): selector.TextSelector(),
+                vol.Optional(CONF_STATE_TRIGGER): selector.ObjectSelector(),
+            },
+        )
+
     async def handle_strategy_step(
         self,
         strategy: CalculationStrategy,
@@ -191,10 +219,19 @@ class VirtualPowerFlow:
         async def _validate(user_input: dict[str, Any]) -> dict[str, Any]:
             if validate:
                 validate(user_input)
+            # Convert states_power from dict to list to preserve order
+            if CONF_STATES_POWER in user_input and isinstance(user_input[CONF_STATES_POWER], dict):
+                user_input[CONF_STATES_POWER] = [{CONF_STATE: state, CONF_POWER: power} for state, power in user_input[CONF_STATES_POWER].items()]
             await self.flow.validate_strategy_config({strategy: user_input})
             return {strategy: user_input}
 
-        schema = self.create_strategy_schema()
+        schema = await self.create_strategy_schema()
+
+        description_placeholders = {}
+        if strategy == CalculationStrategy.WLED:
+            description_placeholders = {
+                "docs_uri": "https://docs.powercalc.nl/strategies/wled/",
+            }
 
         return await self.flow.handle_form_step(
             PowercalcFormStep(
@@ -202,6 +239,7 @@ class VirtualPowerFlow:
                 schema=schema,
                 next_step=Step.ASSIGN_GROUPS,
                 validate_user_input=_validate,
+                form_kwarg={"description_placeholders": description_placeholders},
             ),
             user_input,
         )
@@ -220,7 +258,7 @@ class VirtualPowerFlow:
 
         schema = SCHEMA_POWER_ADVANCED
         if self.flow.sensor_config.get(CONF_CREATE_ENERGY_SENSOR):
-            schema = schema.extend(SCHEMA_ENERGY_OPTIONS.schema)
+            schema = schema.extend(SCHEMA_SENSOR_ENERGY_OPTIONS.schema)
 
         return await self.flow.handle_form_step(
             PowercalcFormStep(
@@ -294,6 +332,9 @@ class VirtualPowerConfigFlow(VirtualPowerFlow):
         return self.flow.async_show_form(  # type: ignore
             step_id=Step.VIRTUAL_POWER,
             data_schema=self.create_schema_virtual_power(),
+            description_placeholders={
+                "doc_uri_states_power": "https://docs.powercalc.nl/strategies/fixed/#power-per-state",
+            },
             errors=errors,
             last_step=False,
         )
@@ -337,17 +378,22 @@ class VirtualPowerOptionsFlow(VirtualPowerFlow):
         super().__init__(flow)
         self.flow: PowercalcOptionsFlow = flow
 
-    def build_strategy_config(
+    async def build_strategy_config(
         self,
         user_input: dict[str, Any],
     ) -> dict[str, Any]:
         """Build the config dict needed for the configured strategy."""
-        strategy_schema = self.create_strategy_schema()
+        strategy_schema = await self.create_strategy_schema()
         strategy_options: dict[str, Any] = {}
         for key in strategy_schema.schema:
             if user_input.get(key) is None:
                 continue
             strategy_options[str(key)] = user_input.get(key)
+        # Convert states_power from dict to list to preserve order
+        if CONF_STATES_POWER in strategy_options and isinstance(strategy_options[CONF_STATES_POWER], dict):
+            strategy_options[CONF_STATES_POWER] = [
+                {CONF_STATE: state, CONF_POWER: power} for state, power in strategy_options[CONF_STATES_POWER].items()
+            ]
         return strategy_options
 
     async def async_step_fixed(self, user_input: dict[str, Any] | None = None) -> FlowResult:
@@ -374,7 +420,7 @@ class VirtualPowerOptionsFlow(VirtualPowerFlow):
         """Handle the option processing for the selected strategy."""
         step = STRATEGY_STEP_MAPPING.get(self.flow.strategy or CalculationStrategy.FIXED, Step.FIXED)
 
-        schema = self.create_strategy_schema()
+        schema = await self.create_strategy_schema()
         if self.flow.selected_profile and self.flow.selected_profile.device_type == DeviceType.SMART_SWITCH:
             schema = SCHEMA_POWER_SMART_SWITCH
 
@@ -383,5 +429,8 @@ class VirtualPowerOptionsFlow(VirtualPowerFlow):
             **self.flow.sensor_config,
             **{k: v for k, v in strategy_options.items() if k not in self.flow.sensor_config},
         }
+        # Convert states_power from list to dict for display in ObjectSelector
+        if CONF_STATES_POWER in merged_options and isinstance(merged_options[CONF_STATES_POWER], list):
+            merged_options[CONF_STATES_POWER] = {item[CONF_STATE]: item[CONF_POWER] for item in merged_options[CONF_STATES_POWER]}
         schema = fill_schema_defaults(schema, merged_options)
         return await self.flow.async_handle_options_step(user_input, schema, step)

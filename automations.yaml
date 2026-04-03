@@ -1,0 +1,57 @@
+- id: '1769004896192'
+  alias: Test placard
+  description: ''
+  triggers:
+  - type: opened
+    device_id: c48b6803052e5bd7962e466e688648b2
+    entity_id: 86f158f3b90480706729345d0506b0b7
+    domain: binary_sensor
+    trigger: device
+  conditions: []
+  actions:
+  - type: turn_on
+    device_id: 88c437d09b07481380bb1b5d331b0930
+    entity_id: 769b7c7d2e307219ee0844a78ae2488a
+    domain: light
+  mode: single
+- id: '1769005223143'
+  alias: Sonoff Zigbee Button
+  description: ''
+  use_blueprint:
+    path: sonoff/blueprint-zha-snzb-01p.yaml
+    input:
+      remote: 80774417407683d5c5d59e83bcefeea7
+      single_press:
+      - action: light.turn_off
+        metadata: {}
+        target:
+          entity_id: light.living_room_lights
+        data: {}
+      double_press:
+      - action: light.turn_off
+        metadata: {}
+        target:
+          entity_id: light.living_room_red_lamp
+        data: {}
+        enabled: false
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.living_room_red_lamp
+        data: {}
+- id: '1769007195923'
+  alias: Door
+  description: ''
+  use_blueprint:
+    path: Blackshome/sensor-light.yaml
+    input:
+      motion_trigger:
+      - binary_sensor.ewelink_snzb_04p
+      light_switch:
+        entity_id: light.tz3210_cieijuw1_ts0505b_2
+      time_delay: 0
+      include_light_control:
+      - use_brightness
+      motion_bypass_lights_on: []
+      include_bypass: []
+      motion_bypass_lights_off: []

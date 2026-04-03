@@ -37,12 +37,16 @@ class Step(StrEnum):
     MENU_GROUP = "menu_group"
     MODEL = "model"
     SUB_PROFILE = "sub_profile"
+    SUB_PROFILE_PER_DEVICE = "sub_profile_per_device"
     USER = "user"
     SMART_SWITCH = "smart_switch"
     INIT = "init"
+    ENERGY_OPTIONS = "energy_options"
     UTILITY_METER_OPTIONS = "utility_meter_options"
     GLOBAL_CONFIGURATION = "global_configuration"
+    GLOBAL_CONFIGURATION_DISCOVERY = "global_configuration_discovery"
     GLOBAL_CONFIGURATION_ENERGY = "global_configuration_energy"
+    GLOBAL_CONFIGURATION_THROTTLING = "global_configuration_throttling"
     GLOBAL_CONFIGURATION_UTILITY_METER = "global_configuration_utility_meter"
 
 
@@ -71,6 +75,7 @@ class PowercalcFormStep:
     continue_utility_meter_options_step: bool = False
     continue_advanced_step: bool = False
     form_kwarg: dict[str, Any] | None = None
+    form_data: dict[str, Any] | None = None
 
 
 def fill_schema_defaults(

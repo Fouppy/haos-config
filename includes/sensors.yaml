@@ -1,148 +1,148 @@
-- platform: template
-  sensors:
-    dishwasher_watts:
-      value_template: >
-        {{ states("sensor.dishwasher_power") | float(0) }}
-      unit_of_measurement: Watt
-      friendly_name: Dishwasher usage
+# - platform: template
+#   sensors:
+#     dishwasher_watts:
+#       value_template: >
+#         {{ states("sensor.dishwasher_power") | float(0) }}
+#       unit_of_measurement: Watt
+#       friendly_name: Dishwasher usage
 
-    washing_machine_watts:
-      value_template: >
-        {{ states("sensor.washing_machine_power") | float(0) }}
-      unit_of_measurement: Watt
-      friendly_name: Washing machine usage
+#     washing_machine_watts:
+#       value_template: >
+#         {{ states("sensor.washing_machine_power") | float(0) }}
+#       unit_of_measurement: Watt
+#       friendly_name: Washing machine usage
 
-    count_automations:
-      icon_template: mdi:autorenew
-      value_template: "{{ states.automation | count }}"
+#     count_automations:
+#       icon_template: mdi:autorenew
+#       value_template: "{{ states.automation | count }}"
 
-    count_scripts:
-      icon_template: mdi:script-text-outline
-      value_template: "{{ states.script| count }}"
+#     count_scripts:
+#       icon_template: mdi:script-text-outline
+#       value_template: "{{ states.script| count }}"
 
-    count_device_trackers:
-      icon_template: mdi:map-marker
-      value_template: "{{ states.device_tracker | count }}"
+#     count_device_trackers:
+#       icon_template: mdi:map-marker
+#       value_template: "{{ states.device_tracker | count }}"
 
-    count_binary_sensors:
-      icon_template: mdi:unfold-more-horizontal
-      value_template: "{{ states.binary_sensor| count }}"
+#     count_binary_sensors:
+#       icon_template: mdi:unfold-more-horizontal
+#       value_template: "{{ states.binary_sensor| count }}"
 
-    count_sensors:
-      icon_template: mdi:resistor
-      value_template: "{{ states.sensor | count }}"
+#     count_sensors:
+#       icon_template: mdi:resistor
+#       value_template: "{{ states.sensor | count }}"
 
-    count_switches:
-      icon_template: mdi:light-switch
-      value_template: "{{ states.switch | count }}"
+#     count_switches:
+#       icon_template: mdi:light-switch
+#       value_template: "{{ states.switch | count }}"
 
-    count_zones:
-      icon_template: mdi:map-marker-radius
-      value_template: "{{ states.zone | count }}"
+#     count_zones:
+#       icon_template: mdi:map-marker-radius
+#       value_template: "{{ states.zone | count }}"
 
-    count_input_booleans:
-      icon_template: mdi:toggle-switch
-      value_template: "{{ states.input_boolean | count }}"
+#     count_input_booleans:
+#       icon_template: mdi:toggle-switch
+#       value_template: "{{ states.input_boolean | count }}"
 
-    count_input_numbers:
-      icon_template: mdi:numeric
-      value_template: "{{ states.input_number | count }}"
+#     count_input_numbers:
+#       icon_template: mdi:numeric
+#       value_template: "{{ states.input_number | count }}"
 
-    count_input_texts:
-      icon_template: mdi:alphabetical
-      value_template: "{{ states.input_text | count }}"
+#     count_input_texts:
+#       icon_template: mdi:alphabetical
+#       value_template: "{{ states.input_text | count }}"
 
-    count_input_selects:
-      icon_template: mdi:view-list
-      value_template: "{{ states.input_select | count }}"
+#     count_input_selects:
+#       icon_template: mdi:view-list
+#       value_template: "{{ states.input_select | count }}"
 
-    count_input_datetimes:
-      icon_template: mdi:calendar-clock
-      value_template: "{{ states.input_datetime | count }}"
+#     count_input_datetimes:
+#       icon_template: mdi:calendar-clock
+#       value_template: "{{ states.input_datetime | count }}"
 
-    tv_volume:
-      value_template: >
-        {{ state_attr("media_player.tv_samsung", "volume_level")|float(0) * 100 }}
-      unit_of_measurement: "%"
+#     tv_volume:
+#       value_template: >
+#         {{ state_attr("media_player.tv_samsung", "volume_level")|float(0) * 100 }}
+#       unit_of_measurement: "%"
 
-    timestamp_start_of_today:
-      value_template: >
-        {{ as_timestamp(now().replace(hour=0).replace(minute=0).replace(second=0)) }}
-      unit_of_measurement: "s"
+#     timestamp_start_of_today:
+#       value_template: >
+#         {{ as_timestamp(now().replace(hour=0).replace(minute=0).replace(second=0)) }}
+#       unit_of_measurement: "s"
 
-    n_days_last_month:
-      value_template: >
-        {% set start_of_month = now().replace(day=1) %}
-        {% set start_of_last_month = start_of_month.replace(month=now().month-1) %}
-        {{ ((start_of_month - start_of_last_month).total_seconds() / 86400) | round }}
+#     n_days_last_month:
+#       value_template: >
+#         {% set start_of_month = now().replace(day=1) %}
+#         {% set start_of_last_month = start_of_month.replace(month=now().month-1) %}
+#         {{ ((start_of_month - start_of_last_month).total_seconds() / 86400) | round }}
 
-    daily_energy:
-      friendly_name: Daily Energy
-      unit_of_measurement: kWh
-      value_template: >
-        {{ states("sensor.all_energy_daily")|float(0) }}
+#     daily_energy:
+#       friendly_name: Daily Energy
+#       unit_of_measurement: kWh
+#       value_template: >
+#         {{ states("sensor.all_energy_daily")|float(0) }}
 
-    monthly_energy:
-      friendly_name: Monthly Energy
-      unit_of_measurement: kWh
-      value_template: >
-        {{ states("sensor.all_energy_monthly")|float(0) }}
+#     monthly_energy:
+#       friendly_name: Monthly Energy
+#       unit_of_measurement: kWh
+#       value_template: >
+#         {{ states("sensor.all_energy_monthly")|float(0) }}
 
-    monthly_energy_last_period:
-      friendly_name: Monthly Energy (Last period)
-      unit_of_measurement: kWh
-      value_template: >
-        {{ state_attr("sensor.monthly_energy", "last_period")|float(0) }}
+#     monthly_energy_last_period:
+#       friendly_name: Monthly Energy (Last period)
+#       unit_of_measurement: kWh
+#       value_template: >
+#         {{ state_attr("sensor.monthly_energy", "last_period")|float(0) }}
 
-    monthly_energy_cost_last_period:
-      friendly_name: Monthly Energy Cost (Last period)
-      unit_of_measurement: €
-      value_template: >
-        {{ state_attr("sensor.monthly_energy_cost", "last_period")|float(0) }}
+#     monthly_energy_cost_last_period:
+#       friendly_name: Monthly Energy Cost (Last period)
+#       unit_of_measurement: €
+#       value_template: >
+#         {{ state_attr("sensor.monthly_energy_cost", "last_period")|float(0) }}
 
-    energy_price:
-      friendly_name: Energy price
-      unit_of_measurement: €/kWh
-      value_template: >
-        {{ 0.2016 }}
+#     energy_price:
+#       friendly_name: Energy price
+#       unit_of_measurement: €/kWh
+#       value_template: >
+#         {{ 0.2016 }}
 
-    daily_energy_cost:
-      friendly_name: Daily Energy Cost
-      unit_of_measurement: €
-      value_template: >
-        {{ (states("sensor.daily_energy")|float(0) * states("sensor.energy_price")|float(0)) | round(4) }}
+#     daily_energy_cost:
+#       friendly_name: Daily Energy Cost
+#       unit_of_measurement: €
+#       value_template: >
+#         {{ (states("sensor.daily_energy")|float(0) * states("sensor.energy_price")|float(0)) | round(4) }}
 
-    monthly_energy_cost:
-      friendly_name: Monthly Energy Cost
-      unit_of_measurement: €
-      value_template: >
-        {{ (states("sensor.monthly_energy")|float(0) * states("sensor.energy_price")|float(0)) | round(4) }}
+#     monthly_energy_cost:
+#       friendly_name: Monthly Energy Cost
+#       unit_of_measurement: €
+#       value_template: >
+#         {{ (states("sensor.monthly_energy")|float(0) * states("sensor.energy_price")|float(0)) | round(4) }}
 
-    nearest_phone_notify:
-      friendly_name: Nearest phone's notify service
-      value_template: >
-        {% if is_state("person.fouppy", "home") and is_state("person.moom", "home") %}
-          notify.all_phones
-        {% elif 'Fouppy' in states('sensor.home_nearest_device') %}
-          notify.phone_fouppy
-        {% else %}
-          notify.mobile_app_cph2465
-        {% endif %}
+#     nearest_phone_notify:
+#       friendly_name: Nearest phone's notify service
+#       value_template: >
+#         {% if is_state("person.fouppy", "home") and is_state("person.moom", "home") %}
+#           notify.all_phones
+#         {% elif 'Fouppy' in states('sensor.home_nearest_device') %}
+#           notify.phone_fouppy
+#         {% else %}
+#           notify.mobile_app_cph2465
+#         {% endif %}
 
-    lights_on_total_hours:
-      friendly_name: Lights on total hours
-      unit_of_measurement: h
-      value_template: >
-        {{ states('sensor.hours_bedroom_lights_have_been_on_last_7_days')|float(0) * 3
-            + states('sensor.hours_living_room_lights_have_been_on_last_7_days')|float(0) * 6
-            + states('sensor.hours_office_lights_has_been_on_last_7_days')|float(0) * 3
-            + states('sensor.hours_kitchen_lights_have_been_on_last_7_days')|float(0) * 3
-            + states('sensor.hours_hall_lights_have_been_on_last_7_days')|float(0) * 1 }}
+#     lights_on_total_hours:
+#       friendly_name: Lights on total hours
+#       unit_of_measurement: h
+#       value_template: >
+#         {{ states('sensor.hours_bedroom_lights_have_been_on_last_7_days')|float(0) * 3
+#             + states('sensor.hours_living_room_lights_have_been_on_last_7_days')|float(0) * 6
+#             + states('sensor.hours_office_lights_has_been_on_last_7_days')|float(0) * 3
+#             + states('sensor.hours_kitchen_lights_have_been_on_last_7_days')|float(0) * 3
+#             + states('sensor.hours_hall_lights_have_been_on_last_7_days')|float(0) * 1 }}
 
-    lights_on_total_kwh:
-      unit_of_measurement: h
-      value_template: >
-        {{ states('sensor.lights_on_total_hours')|float(0) * 5.4 / 1000 }}
+#     lights_on_total_kwh:
+#       unit_of_measurement: h
+#       value_template: >
+#         {{ states('sensor.lights_on_total_hours')|float(0) * 5.4 / 1000 }}
 
 - platform: statistics
   name: Bathroom thermostat humidity stats

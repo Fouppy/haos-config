@@ -88,10 +88,10 @@
 #         {{ not is_state("person.fouppy", "home")
 #             and not is_state("person.moom", "home") }}
 
-- platform: trend
-  sensors:
-    bathroom_thermostat_humidity_trend:
-      entity_id: sensor.bathroom_thermostat_humidity
-      friendly_name: Bathroom thermostat humidity trend
-      sample_duration: 300
-      max_samples: 3
+# - platform: trend
+#   sensors:
+#     bathroom_thermostat_humidity_trend:
+#       entity_id: sensor.bathroom_thermostat_humidity
+#       friendly_name: Bathroom thermostat humidity trend
+#       sample_duration: 300
+#       max_samples: 3

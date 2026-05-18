@@ -1,11 +1,11 @@
-- binary_sensor:
-  - default_entity_id: binary_sensor.someone_showering
-    name: Someone is showering
-    state: >-
-      {% set humidity = states("sensor.bathroom_thermostat_humidity") | float(0) %}
-      {% set treshold = 1.05 * state_attr("sensor.bathroom_thermostat_humidity_stats",
-      "median") | float(0) %} {% set derivative = states("sensor.bathroom_thermostat_humidity_derivative")
-      | float(0) %} {{ humidity > treshold and derivative > 0.25 }}
+# - binary_sensor:
+#   - default_entity_id: binary_sensor.someone_showering
+#     name: Someone is showering
+#     state: >-
+#       {% set humidity = states("sensor.bathroom_thermostat_humidity") | float(0) %}
+#       {% set treshold = 1.05 * state_attr("sensor.bathroom_thermostat_humidity_stats",
+#       "median") | float(0) %} {% set derivative = states("sensor.bathroom_thermostat_humidity_derivative")
+#       | float(0) %} {{ humidity > treshold and derivative > 0.25 }}
 - binary_sensor:
   - default_entity_id: binary_sensor.motion_detected
     name: Any motion detected

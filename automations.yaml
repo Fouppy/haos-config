@@ -55,3 +55,60 @@
       motion_bypass_lights_on: []
       include_bypass: []
       motion_bypass_lights_off: []
+- id: '1778852485802'
+  alias: Pause when phone
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - sensor.fouppy_s_1_15_phone_state
+    to:
+    - ringing
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 2
+  conditions: []
+  actions:
+  - action: media_player.media_pause
+    metadata: {}
+    target:
+      device_id: c6468a7dcd11cd8f3b63a56ea4b2cc58
+    data: {}
+  mode: single
+- id: '1778948952897'
+  alias: Audio - Turn JVC on
+  description: Allume le JVC quand le WiiM commence à jouer
+  triggers:
+  - entity_id: media_player.wiim_living_room
+    to: playing
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: switch.jvc
+    state: 'off'
+  actions:
+  - target:
+      entity_id: switch.jvc
+    action: switch.turn_on
+  - delay:
+      seconds: 2
+  mode: single
+- id: '1778949139300'
+  alias: Audio - Turn JVC off
+  description: Éteint le JVC si le WiiM reste idle/paused/off/standby 20 min.
+  triggers:
+  - entity_id: media_player.wiim_living_room
+    to:
+    - idle
+    - paused
+    - 'off'
+    - standby
+    for:
+      minutes: 20
+    trigger: state
+  actions:
+  - target:
+      entity_id: switch.jvc
+    action: switch.turn_off
+  mode: restart

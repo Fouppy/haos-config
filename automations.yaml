@@ -14,6 +14,31 @@
     entity_id: 769b7c7d2e307219ee0844a78ae2488a
     domain: light
   mode: single
+# - id: '1769005223143'
+#   alias: Sonoff Zigbee Button
+#   description: ''
+#   use_blueprint:
+#     path: sonoff/blueprint-zha-snzb-01p.yaml
+#     input:
+#       remote: 80774417407683d5c5d59e83bcefeea7
+#       single_press:
+#       - action: light.turn_off
+#         metadata: {}
+#         target:
+#           entity_id: light.living_room_lights
+#         data: {}
+#       double_press:
+#       - action: light.turn_off
+#         metadata: {}
+#         target:
+#           entity_id: light.living_room_red_lamp
+#         data: {}
+#         enabled: false
+#       - action: light.toggle
+#         metadata: {}
+#         target:
+#           entity_id: light.living_room_red_lamp
+#         data: {}
 - id: '1769005223143'
   alias: Sonoff Zigbee Button
   description: ''
@@ -21,24 +46,31 @@
     path: sonoff/blueprint-zha-snzb-01p.yaml
     input:
       remote: 80774417407683d5c5d59e83bcefeea7
+
       single_press:
-      - action: light.turn_off
-        metadata: {}
-        target:
-          entity_id: light.living_room_lights
-        data: {}
+        - choose:
+            - conditions:
+                - condition: state
+                  entity_id: input_boolean.movie_mode_active
+                  state: "off"
+              sequence:
+                - action: script.audio_movie_mode_on
+          default:
+            - action: script.audio_movie_mode_off
+
       double_press:
-      - action: light.turn_off
-        metadata: {}
-        target:
-          entity_id: light.living_room_red_lamp
-        data: {}
-        enabled: false
-      - action: light.toggle
-        metadata: {}
-        target:
-          entity_id: light.living_room_red_lamp
-        data: {}
+        - choose:
+            - conditions:
+                - condition: state
+                  entity_id: input_boolean.music_mode_active
+                  state: "off"
+              sequence:
+                - action: script.audio_music_mode_on
+          default:
+            - action: script.audio_music_mode_off
+
+      long_press:
+        - action: script.audio_goodnight
 - id: '1769007195923'
   alias: Door
   description: ''

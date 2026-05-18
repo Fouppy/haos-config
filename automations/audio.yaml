@@ -1,0 +1,47 @@
+- id: audio_turn_jvc_on_when_wiim_plays
+  alias: Audio - Turn JVC on when WiiM plays
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: media_player.wiim_living_room
+      to: "playing"
+  condition:
+    - condition: state
+      entity_id: switch.jvc
+      state: "off"
+  action:
+    - action: script.audio_jvc_on
+
+- id: audio_turn_jvc_off_when_wiim_idle
+  alias: Audio - Turn JVC off when WiiM idle
+  mode: restart
+  trigger:
+    - platform: state
+      entity_id: media_player.wiim_living_room
+      to:
+        - "idle"
+        - "paused"
+        - "off"
+        - "standby"
+      for:
+        minutes: 20
+  action:
+    - action: script.audio_jvc_off
+
+- id: audio_pause_wiim_on_fouppy_call
+  alias: Audio - Pause WiiM on Fouppy call
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: sensor.fouppy_s_1_15_phone_state
+      to: "ringing"
+      for:
+        seconds: 2
+  condition:
+    - condition: state
+      entity_id: media_player.wiim_living_room
+      state: "playing"
+  action:
+    - action: media_player.media_pause
+      target:
+        entity_id: media_player.wiim_living_room

@@ -141,9 +141,15 @@ audio_music_mode_off:
   alias: Audio - Music Mode OFF
   mode: single
   sequence:
-    - action: media_player.media_pause
-      target:
-        entity_id: media_player.wiim_living_room
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: media_player.wiim_living_room
+              state: "playing"
+          sequence:
+            - action: media_player.media_pause
+              target:
+                entity_id: media_player.wiim_living_room
 
     - action: scene.turn_on
       target:
@@ -157,9 +163,15 @@ audio_goodnight:
   alias: Audio - Good Night
   mode: single
   sequence:
-    - action: media_player.media_pause
-      target:
-        entity_id: media_player.wiim_living_room
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: media_player.wiim_living_room
+              state: "playing"
+          sequence:
+            - action: media_player.media_pause
+              target:
+                entity_id: media_player.wiim_living_room
 
     - action: script.audio_jvc_off
 

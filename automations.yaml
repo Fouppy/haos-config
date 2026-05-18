@@ -37,9 +37,9 @@
     path: Blackshome/sensor-light.yaml
     input:
       motion_trigger:
-      - binary_sensor.ewelink_snzb_04p
+      - binary_sensor.closet_door
       light_switch:
-        entity_id: light.tz3210_cieijuw1_ts0505b_2
+        entity_id: light.closet_light
       time_delay: 0
       include_light_control:
       - use_brightness

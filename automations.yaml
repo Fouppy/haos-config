@@ -13,9 +13,9 @@
                   entity_id: input_boolean.movie_mode_active
                   state: "off"
               sequence:
-                - action: script.audio_movie_mode_on
+                - action: script.living_room_movie_mode_on
           default:
-            - action: script.audio_movie_mode_off
+            - action: script.living_room_movie_mode_off
 
       double_press:
         - choose:
@@ -24,12 +24,12 @@
                   entity_id: input_boolean.music_mode_active
                   state: "off"
               sequence:
-                - action: script.audio_music_mode_on
+                - action: script.living_room_music_mode_on
           default:
-            - action: script.audio_music_mode_off
+            - action: script.living_room_music_mode_off
 
       hold:
-        - action: script.audio_goodnight
+        - action: script.living_room_goodnight
 - id: '1769007195923'
   alias: "Presence & Access: Closet light"
   description: ''

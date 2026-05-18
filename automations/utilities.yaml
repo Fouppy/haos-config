@@ -22,7 +22,7 @@
     from: "on"
     to: "off"
   actions:
-    action: script.utility_notification
+    action: script.utilities_notification
     data:
       name: "Washing machine"
       emojis: "👚👕"
@@ -34,7 +34,7 @@
     from: "on"
     to: "off"
   actions:
-    action: script.utility_notification
+    action: script.utilities_notification
     data:
       name: "Dishwasher"
       emojis: "🍽🍳"

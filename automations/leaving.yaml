@@ -35,4 +35,4 @@
     event_data:
       action: TURN_OFF_EVERYTHING
   actions:
-    action: script.leaving
+    action: script.presence_access_leaving_home

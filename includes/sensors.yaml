@@ -62,7 +62,7 @@
 
 #     tv_volume:
 #       value_template: >
-#         {{ state_attr("media_player.tv_samsung", "volume_level")|float(0) * 100 }}
+#         {{ state_attr("media_player.living_room_tv", "volume_level")|float(0) * 100 }}
 #       unit_of_measurement: "%"
 
 #     timestamp_start_of_today:
@@ -159,7 +159,7 @@
 
 - platform: history_stats
   name: Hours TV has been on last 7 days
-  entity_id: media_player.chromecast_2
+  entity_id: media_player.living_room_chromecast
   state: "on"
   type: time
   duration:
@@ -168,7 +168,7 @@
 
 - platform: history_stats
   name: Times TV has been on last 7 days
-  entity_id: media_player.chromecast_2
+  entity_id: media_player.living_room_chromecast
   state: "on"
   type: count
   duration:

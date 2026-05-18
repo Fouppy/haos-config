@@ -13,7 +13,7 @@ presence_access_turn_off_everything_automatic:
           - light.kitchen_lights
 
     - action: media_player.turn_off
-      entity_id: media_player.chromecast_2
+      entity_id: media_player.living_room_chromecast
 
 presence_access_turn_off_everything:
   alias: "Presence & Access: Turn off everything (automatic)"
@@ -94,12 +94,12 @@ living_room_movie_mode_on:
     - choose:
         - conditions:
             - condition: state
-              entity_id: media_player.chromecast_2
+              entity_id: media_player.living_room_chromecast
               state: "off"
           sequence:
             - action: media_player.turn_on
               target:
-                entity_id: media_player.chromecast_2
+                entity_id: media_player.living_room_chromecast
 
     - action: input_boolean.turn_on
       target:
@@ -192,7 +192,7 @@ living_room_goodnight:
     - choose:
         - conditions:
             - condition: state
-              entity_id: media_player.chromecast_2
+              entity_id: media_player.living_room_chromecast
               state:
                 - "on"
                 - "playing"
@@ -200,7 +200,7 @@ living_room_goodnight:
           sequence:
             - action: media_player.turn_off
               target:
-                entity_id: media_player.chromecast_2
+                entity_id: media_player.living_room_chromecast
 
     - action: light.turn_off
       target:

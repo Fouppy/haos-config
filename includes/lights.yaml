@@ -32,9 +32,15 @@
   entities:
     - light.office_main_lamp
     - light.office_bookcases
-    - light.office_lamp
+    - light.office_moom_desk_light
+    - light.office_fouppy_desk_light
 
 - platform: group
   name: Hall lights
   entities:
     - light.hall_ceiling
+
+- platform: group
+  name: Closet lights
+  entities:
+    - light.closet_light

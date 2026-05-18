@@ -28,7 +28,7 @@
     default_entity_id: binary_sensor.activity_in_living_room
     name: Activity in the living room
     state: >-
-      {{ is_state("media_player.chromecast_2", "on") }}
+      {{ is_state("media_player.living_room_chromecast", "on") }}
 - binary_sensor:
   - delay_off: 0:01:00
     default_entity_id: binary_sensor.activity_outside_bedroom
@@ -77,7 +77,7 @@
     name: Anything is on
     state: >-
       {% set light_on = is_state("binary_sensor.any_light_on", "on") %} {% set tv_on
-      = is_state("media_player.tv_samsung", "on") %} {% set chromecast_on = is_state("media_player.chromecast_2",
+      = is_state("media_player.living_room_tv", "on") %} {% set chromecast_on = is_state("media_player.living_room_chromecast",
       "on") %} {{ light_on or tv_on or chromecast_on }}
 - binary_sensor:
   - default_entity_id: binary_sensor.no_one_home

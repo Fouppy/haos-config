@@ -1,4 +1,4 @@
-- alias: "Leaving: ask to turn off everything"
+- alias: "Presence & Access: ask to turn off everything"
   triggers:
     - trigger: state
       entity_id: person.fouppy
@@ -28,7 +28,7 @@
               authenticationRequired: false
               destructive: true
 
-- alias: "Leaving: turn off everything after notification"
+- alias: "Presence & Access: turn off everything after notification"
   triggers:
     trigger: event
     event_type: mobile_app_notification_action

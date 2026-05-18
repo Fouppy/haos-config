@@ -1,44 +1,3 @@
-- id: '1769004896192'
-  alias: Test placard
-  description: ''
-  triggers:
-  - type: opened
-    device_id: c48b6803052e5bd7962e466e688648b2
-    entity_id: 86f158f3b90480706729345d0506b0b7
-    domain: binary_sensor
-    trigger: device
-  conditions: []
-  actions:
-  - type: turn_on
-    device_id: 88c437d09b07481380bb1b5d331b0930
-    entity_id: 769b7c7d2e307219ee0844a78ae2488a
-    domain: light
-  mode: single
-# - id: '1769005223143'
-#   alias: Sonoff Zigbee Button
-#   description: ''
-#   use_blueprint:
-#     path: sonoff/blueprint-zha-snzb-01p.yaml
-#     input:
-#       remote: 80774417407683d5c5d59e83bcefeea7
-#       single_press:
-#       - action: light.turn_off
-#         metadata: {}
-#         target:
-#           entity_id: light.living_room_lights
-#         data: {}
-#       double_press:
-#       - action: light.turn_off
-#         metadata: {}
-#         target:
-#           entity_id: light.living_room_red_lamp
-#         data: {}
-#         enabled: false
-#       - action: light.toggle
-#         metadata: {}
-#         target:
-#           entity_id: light.living_room_red_lamp
-#         data: {}
 - id: '1769005223143'
   alias: Sonoff Zigbee Button
   description: ''
@@ -72,7 +31,7 @@
       hold:
         - action: script.audio_goodnight
 - id: '1769007195923'
-  alias: Door
+  alias: "Presence & Access: Closet light"
   description: ''
   use_blueprint:
     path: Blackshome/sensor-light.yaml
@@ -87,60 +46,3 @@
       motion_bypass_lights_on: []
       include_bypass: []
       motion_bypass_lights_off: []
-- id: '1778852485802'
-  alias: Pause when phone
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - sensor.fouppy_s_1_15_phone_state
-    to:
-    - ringing
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 2
-  conditions: []
-  actions:
-  - action: media_player.media_pause
-    metadata: {}
-    target:
-      device_id: c6468a7dcd11cd8f3b63a56ea4b2cc58
-    data: {}
-  mode: single
-- id: '1778948952897'
-  alias: Audio - Turn JVC on
-  description: Allume le JVC quand le WiiM commence à jouer
-  triggers:
-  - entity_id: media_player.wiim_living_room
-    to: playing
-    trigger: state
-  conditions:
-  - condition: state
-    entity_id: switch.jvc
-    state: 'off'
-  actions:
-  - target:
-      entity_id: switch.jvc
-    action: switch.turn_on
-  - delay:
-      seconds: 2
-  mode: single
-- id: '1778949139300'
-  alias: Audio - Turn JVC off
-  description: Éteint le JVC si le WiiM reste idle/paused/off/standby 20 min.
-  triggers:
-  - entity_id: media_player.wiim_living_room
-    to:
-    - idle
-    - paused
-    - 'off'
-    - standby
-    for:
-      minutes: 20
-    trigger: state
-  actions:
-  - target:
-      entity_id: switch.jvc
-    action: switch.turn_off
-  mode: restart

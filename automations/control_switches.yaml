@@ -1,4 +1,4 @@
-- alias: "Control switches: kitchen Rodret dimmer switch sink"
+- alias: "Buttons: kitchen Rodret dimmer switch sink"
   mode: restart
   max_exceeded: silent
   triggers:
@@ -122,7 +122,7 @@
       value_template: |-
         {{ (trigger.event.data.device_id in remote_devices) }}
 
-- alias: "Control switches: kitchen Rodret dimmer switch counters"
+- alias: "Buttons: kitchen Rodret dimmer switch counters"
   mode: restart
   max_exceeded: silent
   triggers:
@@ -246,7 +246,7 @@
       value_template: |-
         {{ (trigger.event.data.device_id in remote_devices) }}
 
-- alias: "Control switches: office Rodret dimmer switch bookcases"
+- alias: "Buttons: office Rodret dimmer switch bookcases"
   mode: restart
   max_exceeded: silent
   triggers:

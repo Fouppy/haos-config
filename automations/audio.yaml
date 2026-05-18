@@ -1,4 +1,4 @@
-- id: audio_turn_jvc_on_when_wiim_plays
+- id: living_room_turn_jvc_on_when_wiim_plays
   alias: "Living Room: Turn JVC on when WiiM plays"
   mode: single
   trigger:
@@ -12,7 +12,7 @@
   action:
     - action: script.audio_jvc_on
 
-- id: audio_turn_jvc_off_when_wiim_idle
+- id: living_room_turn_jvc_off_when_wiim_idle
   alias: "Living Room: Turn JVC off when WiiM idle"
   mode: restart
   trigger:
@@ -28,7 +28,7 @@
   action:
     - action: script.audio_jvc_off
 
-- id: audio_pause_wiim_on_fouppy_call
+- id: living_room_pause_wiim_on_fouppy_call
   alias: "Living Room: Pause WiiM on Fouppy call"
   mode: single
   trigger:

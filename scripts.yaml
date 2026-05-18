@@ -87,6 +87,10 @@ audio_movie_mode_on:
           - light.living_room_main_light
           - light.living_room_red_lamp
 
+    - action: media_player.turn_on
+      target:
+        entity_id: media_player.chromecast_2
+
     - action: input_boolean.turn_on
       target:
         entity_id: input_boolean.movie_mode_active
@@ -174,6 +178,19 @@ audio_goodnight:
                 entity_id: media_player.wiim_living_room
 
     - action: script.audio_jvc_off
+
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: media_player.chromecast_2
+              state:
+                - "on"
+                - "playing"
+                - "paused"
+          sequence:
+            - action: media_player.turn_off
+              target:
+                entity_id: media_player.chromecast_2
 
     - action: light.turn_off
       target:

@@ -69,7 +69,7 @@
           default:
             - action: script.audio_music_mode_off
 
-      long_press:
+      hold:
         - action: script.audio_goodnight
 - id: '1769007195923'
   alias: Door

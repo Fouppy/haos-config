@@ -1,5 +1,5 @@
 - id: '1769005223143'
-  alias: Sonoff Zigbee Button
+  alias: 'Buttons: Living Room Media Remote'
   description: ''
   use_blueprint:
     path: sonoff/blueprint-zha-snzb-01p.yaml
@@ -30,6 +30,7 @@
 
       hold:
         - action: script.living_room_goodnight
+
 - id: '1769007195923'
   alias: "Presence & Access: Closet light"
   description: ''

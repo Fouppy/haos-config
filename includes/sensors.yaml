@@ -257,6 +257,15 @@
   end: "{{ now() }}"
 
 - platform: history_stats
+  name: Hours closet lights have been on last 7 days
+  entity_id: light.closet_lights
+  state: "on"
+  type: time
+  duration:
+    days: 7
+  end: "{{ now() }}"
+
+- platform: history_stats
   name: Time at work this week
   entity_id: person.fouppy
   state: Fouppy Work

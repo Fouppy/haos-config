@@ -1,3 +1,0 @@
-generate_yaml:
-  name: Generate YAML
-  description: Generate YAML configuration for legacy template entities.

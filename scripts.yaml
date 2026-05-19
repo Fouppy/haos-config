@@ -92,15 +92,14 @@ living_room_movie_mode_on:
       target:
         entity_id:
           - light.living_room_main_light
-          - light.living_room_tv_light
+          - light.living_room_red_lamp
 
     - action: light.turn_on
       continue_on_error: true
       target:
         entity_id:
           - light.living_room_string_lights
-          - light.living_room_red_lava_lamp
-          - light.living_room_blue_lava_lamp
+          - light.living_room_tv_light
 
     - action: input_boolean.turn_on
       target:

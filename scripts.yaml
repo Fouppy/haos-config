@@ -74,6 +74,8 @@ living_room_movie_mode_on:
   alias: "Living Room: Movie Mode ON"
   mode: single
   sequence:
+    - action: script.living_room_turn_jvc_on
+
     - action: scene.create
       data:
         scene_id: pre_movie_living_room
@@ -89,17 +91,14 @@ living_room_movie_mode_on:
       target:
         entity_id:
           - light.living_room_main_light
-          - light.living_room_red_lamp
+          - light.living_room_tv_light
 
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: media_player.living_room_chromecast
-              state: "off"
-          sequence:
-            - action: media_player.turn_on
-              target:
-                entity_id: media_player.living_room_chromecast
+    - action: light.turn_on
+      target:
+        entity_id:
+          - light.living_room_string_lights
+          - light.living_room_red_lava_lamp
+          - light.living_room_blue_lava_lamp
 
     - action: input_boolean.turn_on
       target:
@@ -112,9 +111,18 @@ living_room_movie_mode_off:
     - choose:
         - conditions:
             - condition: template
-              value_template: "{{ states('scene.pre_movie_living_room') not in ['unknown', 'unavailable'] }}"
+              value_template: >
+                {{ states('scene.pre_movie_living_room')
+                not in ['unknown', 'unavailable'] }}
           sequence:
             - action: scene.turn_on
+              target:
+                entity_id: scene.pre_movie_living_room
+
+            - delay:
+                milliseconds: 500
+
+            - action: scene.delete
               target:
                 entity_id: scene.pre_movie_living_room
 
@@ -162,22 +170,32 @@ living_room_music_mode_off:
   sequence:
     - choose:
         - conditions:
+            - condition: template
+              value_template: >
+                {{ states('scene.pre_music_living_room')
+                not in ['unknown', 'unavailable'] }}
+          sequence:
+            - action: scene.turn_on
+              target:
+                entity_id: scene.pre_music_living_room
+
+            - delay:
+                milliseconds: 500
+
+            - action: scene.delete
+              target:
+                entity_id: scene.pre_music_living_room
+
+    - choose:
+        - conditions:
             - condition: state
               entity_id: media_player.wiim_living_room
               state: "playing"
           sequence:
             - action: media_player.media_pause
+              continue_on_error: true
               target:
                 entity_id: media_player.wiim_living_room
-
-    - choose:
-        - conditions:
-            - condition: template
-              value_template: "{{ states('scene.pre_music_living_room') not in ['unknown', 'unavailable'] }}"
-          sequence:
-            - action: scene.turn_on
-              target:
-                entity_id: scene.pre_music_living_room
 
     - action: input_boolean.turn_off
       target:

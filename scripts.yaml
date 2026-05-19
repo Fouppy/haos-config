@@ -109,9 +109,14 @@ living_room_movie_mode_off:
   alias: "Living Room: Movie Mode OFF"
   mode: single
   sequence:
-    - action: scene.turn_on
-      target:
-        entity_id: scene.pre_movie_living_room
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ states('scene.pre_movie_living_room') not in ['unknown', 'unavailable'] }}"
+          sequence:
+            - action: scene.turn_on
+              target:
+                entity_id: scene.pre_movie_living_room
 
     - action: input_boolean.turn_off
       target:
@@ -123,23 +128,23 @@ living_room_music_mode_on:
   sequence:
     - action: script.living_room_turn_jvc_on
 
+    - action: scene.create
+      data:
+        scene_id: pre_music_living_room
+        snapshot_entities:
+          - light.living_room_main_light
+          - light.living_room_tv_light
+          - light.living_room_string_lights
+          - light.living_room_red_lamp
+          - light.living_room_red_lava_lamp
+          - light.living_room_blue_lava_lamp
+
     - choose:
         - conditions:
             - condition: sun
               after: sunset
               after_offset: "-01:00:00"
           sequence:
-            - action: scene.create
-              data:
-                scene_id: pre_music_living_room
-                snapshot_entities:
-                  - light.living_room_main_light
-                  - light.living_room_tv_light
-                  - light.living_room_string_lights
-                  - light.living_room_red_lamp
-                  - light.living_room_red_lava_lamp
-                  - light.living_room_blue_lava_lamp
-
             - action: light.turn_on
               target:
                 entity_id:
@@ -165,9 +170,14 @@ living_room_music_mode_off:
               target:
                 entity_id: media_player.wiim_living_room
 
-    - action: scene.turn_on
-      target:
-        entity_id: scene.pre_music_living_room
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ states('scene.pre_music_living_room') not in ['unknown', 'unavailable'] }}"
+          sequence:
+            - action: scene.turn_on
+              target:
+                entity_id: scene.pre_music_living_room
 
     - action: input_boolean.turn_off
       target:

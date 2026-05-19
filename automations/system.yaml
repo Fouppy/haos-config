@@ -25,14 +25,6 @@
       title: "System"
       message: "CPU temperature has been above 70 °C for 4 hours! ⚠️"
 
-# - alias: "System: run chores"
-#   description: Run shell and Python scripts in utils folder.
-#   triggers:
-#     trigger: time_pattern
-#     minutes: "/15"
-#   actions:
-#     action: shell_command.chores
-
 - alias: "System: battery level low"
   triggers:
     trigger: time
@@ -73,3 +65,62 @@
   actions:
     - action: script.system_update_speedtest
   mode: single
+
+- alias: "System: Status Notification"
+  description: ""
+  mode: parallel
+
+  trigger:
+    - platform: state
+      entity_id:
+        - binary_sensor.lxc_adguard_400_status
+        - binary_sensor.lxc_cloud_103_status
+        - binary_sensor.lxc_jellyfin_200_status
+        - binary_sensor.lxc_proxy_102_status
+        - binary_sensor.lxc_servarr_101_status
+        - binary_sensor.lxc_vault_100_status
+        - binary_sensor.node_proxmox_status
+      to: "off"
+      for:
+        minutes: 2
+      id: down
+
+    - platform: state
+      entity_id:
+        - binary_sensor.lxc_adguard_400_status
+        - binary_sensor.lxc_cloud_103_status
+        - binary_sensor.lxc_jellyfin_200_status
+        - binary_sensor.lxc_proxy_102_status
+        - binary_sensor.lxc_servarr_101_status
+        - binary_sensor.lxc_vault_100_status
+        - binary_sensor.node_proxmox_status
+      to: "on"
+      for:
+        seconds: 30
+      id: up
+
+  action:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: down
+          sequence:
+            - action: notify.phone_fouppy
+              data:
+                title: "🔴 Homelab Alert"
+                message: >-
+                  {{
+                    trigger.to_state.name
+                  }} ({{ trigger.entity_id }}) is DOWN
+
+        - conditions:
+            - condition: trigger
+              id: up
+          sequence:
+            - action: notify.phone_fouppy
+              data:
+                title: "🟢 Homelab Restored"
+                message: >-
+                  {{
+                    trigger.to_state.name
+                  }} ({{ trigger.entity_id }}) is back online

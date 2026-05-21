@@ -5,3 +5,7 @@ movie_mode_active:
 music_mode_active:
   name: Music Mode Active
   icon: mdi:music
+
+climate_manual_override:
+  name: Climate Manual Override
+  icon: mdi:thermostat

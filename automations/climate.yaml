@@ -1,10 +1,15 @@
 - alias: "Living Room: Climate Mode"
   mode: restart
 
+  conditions:
+    - condition: state
+      entity_id: input_boolean.climate_manual_override
+      state: "off"
+
   triggers:
     - trigger: homeassistant
       event: start
-      
+
     - trigger: state
       entity_id: binary_sensor.living_room_active
 
@@ -80,3 +85,46 @@
         - action: switch.turn_off
           target:
             entity_id: switch.dyson_night_mode
+
+- alias: "Living Room: Climate Manual Override ON"
+  mode: single
+
+  triggers:
+    - trigger: state
+      entity_id:
+        - climate.dyson
+        - fan.dyson
+
+  conditions:
+    - condition: state
+      entity_id: input_boolean.climate_manual_override
+      state: "off"
+
+    # évite de s'auto-trigger juste après l'automation auto
+    - condition: template
+      value_template: >
+        {{
+          (as_timestamp(now()) -
+          as_timestamp(states.automation.living_room_climate_mode.attributes.last_triggered | default(0)))
+          > 10
+        }}
+
+  actions:
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.climate_manual_override
+
+- alias: "Living Room: Climate Manual Override Timeout"
+  mode: restart
+
+  triggers:
+    - trigger: state
+      entity_id: input_boolean.climate_manual_override
+      to: "on"
+      for:
+        hours: 2
+
+  actions:
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.climate_manual_override

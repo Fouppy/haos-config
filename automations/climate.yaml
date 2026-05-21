@@ -26,13 +26,13 @@ actions:
         sequence:
           - action: climate.set_hvac_mode
             target:
-              entity_id: climate.thermostat_salon
+              entity_id: climate.dyson_thermostat_salon
             data:
               hvac_mode: cool
 
           - action: climate.set_temperature
             target:
-              entity_id: climate.thermostat_salon
+              entity_id: climate.dyson_thermostat_salon
             data:
               temperature: 26
 
@@ -49,13 +49,13 @@ actions:
         sequence:
           - action: climate.set_hvac_mode
             target:
-              entity_id: climate.thermostat_salon
+              entity_id: climate.dyson_thermostat_salon
             data:
               hvac_mode: cool
 
           - action: climate.set_temperature
             target:
-              entity_id: climate.thermostat_salon
+              entity_id: climate.dyson_thermostat_salon
             data:
               temperature: 24
 
@@ -67,13 +67,13 @@ actions:
     default:
       - action: climate.set_hvac_mode
         target:
-          entity_id: climate.thermostat_salon
+          entity_id: climate.dyson_thermostat_salon
         data:
           hvac_mode: cool
 
       - action: climate.set_temperature
         target:
-          entity_id: climate.thermostat_salon
+          entity_id: climate.dyson_thermostat_salon
         data:
           temperature: 27
 

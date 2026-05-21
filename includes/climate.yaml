@@ -1,11 +1,9 @@
 - platform: dual_smart_thermostat
   name: Living Room Climate
 
-  heater:
-    - climate.dyson
+  heater: climate.dyson
 
-  cooler:
-    - climate.dyson
+  cooler: climate.dyson
 
   target_sensor: sensor.dyson_temperature
 

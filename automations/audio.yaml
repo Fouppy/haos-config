@@ -107,7 +107,7 @@
 
     - action: media_player.play_media
       target:
-        entity_id: media_player.wiim_living_room
+        entity_id: media_player.wiim_living_room_ma
       data:
         media_content_id: "spotify:playlist:37i9dQZF1CKMFBxUbxRIAg"
         media_content_type: "music"

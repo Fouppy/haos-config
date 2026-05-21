@@ -22,3 +22,5 @@ customize:
     icon: mdi:desk
   light.hall_lights:
     icon: mdi:coat-rack
+  light.closet_lights:
+    icon: mdi:wardrobe-outline

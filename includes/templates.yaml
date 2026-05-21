@@ -2,6 +2,11 @@
   - name: "Living Room Active"
     unique_id: living_room_active
     device_class: occupancy
-    state: "{{ true }}"
+    state: >
+      {{
+        is_state('media_player.wiim_living_room', 'playing')
+        or is_state('media_player.living_room_tv', 'on')
+        or is_state('light.living_room_lights', 'on')
+      }}
     delay_off:
       minutes: 30

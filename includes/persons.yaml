@@ -3,15 +3,9 @@
   user_id: e5b82f87b00d41a3be748acb037910bd
   picture: !secret profile_photo_fouppy
   device_trackers:
-    # OnePlus 8 Pro
-    - device_tracker.in2023 # from Android app
-    - device_tracker.in2023_ping
     # OnePlus 15
     - device_tracker.fouppy_s_1_15 # from Android app
     - device_tracker.fouppy_s_1_15_ping
-    # iPhone XR
-    - device_tracker.fouppys_iphone_2 # from iOS app
-    - device_tracker.fouppys_iphone_2_ping
 - name: MooM
   id: moom
   user_id: 7e4128d9bf5041e68d6afb646267dc22

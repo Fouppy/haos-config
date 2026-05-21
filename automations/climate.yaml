@@ -2,6 +2,9 @@
   mode: restart
 
   triggers:
+    - trigger: homeassistant
+      event: start
+      
     - trigger: state
       entity_id: binary_sensor.living_room_active
 
@@ -10,9 +13,6 @@
 
     - trigger: time
       at: "08:00:00"
-
-    - trigger: homeassistant
-      event: start
 
   actions:
     - choose:

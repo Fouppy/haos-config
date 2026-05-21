@@ -1,0 +1,16 @@
+- binary_sensor:
+  - name: "Living Room Active"
+    unique_id: living_room_active
+    device_class: occupancy
+    state: >
+      {{
+        is_state('media_player.wiim_living_room', 'playing')
+        or is_state('media_player.wiim_living_room', 'buffering')
+        or is_state('media_player.tv_salon', 'on')
+        or is_state('light.living_room_string_lights', 'on')
+        or is_state('light.living_room_red_lava_lamp', 'on')
+        or is_state('light.living_room_blue_lava_lamp', 'on')
+        or is_state('binary_sensor.fouppy_s_1_8_interactive', 'on')
+      }}
+    delay_off:
+      minutes: 30

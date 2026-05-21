@@ -44,3 +44,4 @@ intent:
 # Custom components
 pyscript: !include includes/pyscript.yaml
 template migrated: !include_dir_merge_list migrated_templates
+template: !include includes/templates.yaml

@@ -1,0 +1,70 @@
+- alias: "Living Room: Climate Mode"
+  mode: restart
+
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.living_room_active
+    - trigger: time
+      at: "23:30:00"
+    - trigger: time
+      at: "08:00:00"
+    - trigger: homeassistant
+      event: start
+
+  actions:
+    - choose:
+        # Nuit
+        - conditions:
+            - condition: time
+              after: "23:30:00"
+              before: "08:00:00"
+          sequence:
+            - action: climate.set_hvac_mode
+              target:
+                entity_id: climate.living_room_climate
+              data:
+                hvac_mode: cool
+            - action: climate.set_temperature
+              target:
+                entity_id: climate.living_room_climate
+              data:
+                temperature: 26
+            - action: switch.turn_on
+              target:
+                entity_id: switch.dyson_night_mode
+
+        # Salon actif
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.living_room_active
+              state: "on"
+          sequence:
+            - action: climate.set_hvac_mode
+              target:
+                entity_id: climate.living_room_climate
+              data:
+                hvac_mode: cool
+            - action: climate.set_temperature
+              target:
+                entity_id: climate.living_room_climate
+              data:
+                temperature: 24
+            - action: switch.turn_off
+              target:
+                entity_id: switch.dyson_night_mode
+
+      # Background
+      default:
+        - action: climate.set_hvac_mode
+          target:
+            entity_id: climate.living_room_climate
+          data:
+            hvac_mode: cool
+        - action: climate.set_temperature
+          target:
+            entity_id: climate.living_room_climate
+          data:
+            temperature: 27
+        - action: switch.turn_off
+          target:
+            entity_id: switch.dyson_night_mode

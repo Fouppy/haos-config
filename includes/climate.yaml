@@ -1,20 +1,17 @@
-- platform: dual_smart_thermostat
-  name: Living Room Climate
-
-  heater: climate.dyson
-
-  cooler: climate.dyson
-
+- platform: generic_thermostat
+  name: Thermostat Salon
+  unique_id: thermostat_salon
+  heater: fan.dyson
   target_sensor: sensor.dyson_temperature
 
+  ac_mode: true
+  target_temp: 24
   min_temp: 18
   max_temp: 30
+  precision: 0.1
 
-  cold_tolerance: 1.0
-  hot_tolerance: 0.7
+  cold_tolerance: 0.8
+  hot_tolerance: 0.8
 
   min_cycle_duration:
-    minutes: 20
-
-  initial_hvac_mode: cool
-  precision: 0.1
+    minutes: 10

@@ -4,22 +4,6 @@ persons:
     - person.fouppy
     - person.moom
 
-oneplus_8_fouppy:
-  # OnePlus 8 Pro
-  - sensor.in2023_do_not_disturb_sensor
-  - sensor.in2023_detected_activity
-  - sensor.in2023_battery_level
-  - sensor.in2023_battery_state
-  - sensor.in2023_bssid
-  - sensor.in2023_network_type
-  - sensor.in2023_geocoded_location
-  - sensor.in2023_last_update_trigger
-  - sensor.in2023_sim_1
-  - sensor.in2023_wifi_connection
-  - sensor.in2023_steps
-  - sensor.in2023_internal_storage
-  - device_tracker.in2023
-
 oneplus_15_fouppy:
   # OnePlus 15
   - sensor.fouppy_s_1_15_do_not_disturb_sensor

@@ -25,6 +25,20 @@
         - "standby"
       for:
         minutes: 20
+
+    - platform: time_pattern
+      minutes: "/5"
+
+  condition:
+    - condition: state
+      entity_id: media_player.wiim_living_room
+      state:
+        - idle
+        - paused
+        - "off"
+        - standby
+      for:
+        minutes: 20
   action:
     - action: script.living_room_turn_jvc_off
 
@@ -96,4 +110,4 @@
         entity_id: media_player.wiim_living_room
       data:
         media_content_id: "spotify:playlist:37i9dQZF1CKMFBxUbxRIAg"
-        media_content_type: "playlist"
+        media_content_type: "music"

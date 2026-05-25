@@ -1,247 +1,386 @@
 presence_access_turn_off_everything_automatic:
-  alias: "Presence & Access: Turn off everything"
+  alias: 'Presence & Access: Turn off everything'
   mode: parallel
   sequence:
-    - action: light.turn_off
-      data:
-        transition: 4
-        entity_id:
-          - light.living_room_lights
-          - light.bedroom_lights
-          - light.office_lights
-          - light.hall_lights
-          - light.kitchen_lights
-
-    - action: media_player.turn_off
-      entity_id: media_player.living_room_chromecast
-
+  - action: light.turn_off
+    data:
+      transition: 4
+      entity_id:
+      - light.living_room_lights
+      - light.bedroom_lights
+      - light.office_lights
+      - light.hall_lights
+      - light.kitchen_lights
+  - action: media_player.turn_off
+    entity_id: media_player.living_room_chromecast
 presence_access_turn_off_everything:
-  alias: "Presence & Access: Turn off everything (automatic)"
+  alias: 'Presence & Access: Turn off everything (automatic)'
   mode: parallel
   sequence:
-    - action: light.turn_off
-      entity_id: all
-
-    - action: script.presence_access_turn_off_everything_automatic
-
+  - action: light.turn_off
+    entity_id: all
+  - action: script.presence_access_turn_off_everything_automatic
 presence_access_leaving_home:
-  alias: "Presence & Access: Leaving home"
+  alias: 'Presence & Access: Leaving home'
   sequence:
-    - action: script.presence_access_turn_off_everything
-
+  - action: script.presence_access_turn_off_everything
 utilities_notification:
-  alias: "Utilities: Notification"
+  alias: 'Utilities: Notification'
   fields:
     name:
       description: name
       example: washing_machine
-
     emojis:
       description: emojis
-      example: "👚👕"
-
+      example: "\U0001F45A\U0001F455"
   sequence:
-    - action: "{{ states('sensor.nearest_phone_notify') }}"
-      data:
-        title: "Utilities"
-        message: "{{ name }} is done {{ emojis }}"
-
+  - action: '{{ states(''sensor.nearest_phone_notify'') }}'
+    data:
+      title: Utilities
+      message: '{{ name }} is done {{ emojis }}'
 system_update_speedtest:
-  alias: "System: Update SpeedTest"
+  alias: 'System: Update SpeedTest'
   sequence:
-    - action: hassio.addon_start
-      metadata: {}
-      data:
-        addon: 6b87c29e_speedtest_addon
-
+  - action: hassio.addon_start
+    metadata: {}
+    data:
+      addon: 6b87c29e_speedtest_addon
 living_room_turn_jvc_on:
-  alias: "Living Room: Turn JVC on"
+  alias: 'Living Room: Turn JVC on'
   mode: single
   sequence:
-    - action: switch.turn_on
-      target:
-        entity_id: switch.jvc
-
+  - action: switch.turn_on
+    target:
+      entity_id: switch.jvc
+    enabled: false
 living_room_turn_jvc_off:
-  alias: "Living Room: Turn JVC off"
+  alias: 'Living Room: Turn JVC off'
   mode: single
   sequence:
-    - action: switch.turn_off
-      target:
-        entity_id: switch.jvc
-
+  - action: switch.turn_off
+    target:
+      entity_id: switch.jvc
+    enabled: false
 living_room_movie_mode_on:
-  alias: "Living Room: Movie Mode ON"
+  alias: 'Living Room: Movie Mode ON'
   mode: single
   sequence:
-    - action: script.living_room_turn_jvc_on
-
-    - action: scene.create
-      data:
-        scene_id: pre_movie_living_room
-        snapshot_entities:
-          - light.living_room_main_light
-          - light.living_room_tv_light
-          - light.living_room_string_lights
-          - light.living_room_red_lamp
-          - light.living_room_red_lava_lamp
-          - light.living_room_blue_lava_lamp
-
-    - action: light.turn_off
-      continue_on_error: true
-      target:
-        entity_id:
-          - light.living_room_main_light
-          - light.living_room_red_lamp
-
-    - action: light.turn_on
-      continue_on_error: true
-      target:
-        entity_id:
-          - light.living_room_string_lights
-          - light.living_room_tv_light
-
-    - action: input_boolean.turn_on
-      target:
-        entity_id: input_boolean.movie_mode_active
-
+  - action: script.living_room_turn_jvc_on
+  - action: scene.create
+    data:
+      scene_id: pre_movie_living_room
+      snapshot_entities:
+      - light.living_room_main_light
+      - light.living_room_tv_light
+      - light.living_room_string_lights
+      - light.living_room_red_lamp
+      - light.living_room_red_lava_lamp
+      - light.living_room_blue_lava_lamp
+  - action: light.turn_off
+    continue_on_error: true
+    target:
+      entity_id:
+      - light.living_room_main_light
+      - light.living_room_red_lamp
+  - action: light.turn_on
+    continue_on_error: true
+    target:
+      entity_id:
+      - light.living_room_string_lights
+      - light.living_room_tv_light
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.movie_mode_active
 living_room_movie_mode_off:
-  alias: "Living Room: Movie Mode OFF"
+  alias: 'Living Room: Movie Mode OFF'
   mode: single
   sequence:
-    - choose:
-        - conditions:
-            - condition: template
-              value_template: >
-                {{ states('scene.pre_movie_living_room')
-                not in ['unknown', 'unavailable'] }}
-          sequence:
-            - action: scene.turn_on
-              continue_on_error: true
-              target:
-                entity_id: scene.pre_movie_living_room
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ states(''scene.pre_movie_living_room'') not in [''unknown'',
+          ''unavailable''] }}
 
-            - delay:
-                milliseconds: 500
-
-            - action: scene.delete
-              target:
-                entity_id: scene.pre_movie_living_room
-
-    - action: input_boolean.turn_off
-      target:
-        entity_id: input_boolean.movie_mode_active
-
+          '
+      sequence:
+      - action: scene.turn_on
+        continue_on_error: true
+        target:
+          entity_id: scene.pre_movie_living_room
+      - delay:
+          milliseconds: 500
+      - action: scene.delete
+        target:
+          entity_id: scene.pre_movie_living_room
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.movie_mode_active
 living_room_music_mode_on:
-  alias: "Living Room: Music Mode ON"
+  alias: 'Living Room: Music Mode ON'
   mode: single
   sequence:
-    - action: script.living_room_turn_jvc_on
-
-    - action: scene.create
-      data:
-        scene_id: pre_music_living_room
-        snapshot_entities:
-          - light.living_room_main_light
-          - light.living_room_tv_light
+  - action: script.living_room_turn_jvc_on
+  - action: scene.create
+    data:
+      scene_id: pre_music_living_room
+      snapshot_entities:
+      - light.living_room_main_light
+      - light.living_room_tv_light
+      - light.living_room_string_lights
+      - light.living_room_red_lamp
+      - light.living_room_red_lava_lamp
+      - light.living_room_blue_lava_lamp
+  - choose:
+    - conditions:
+      - condition: sun
+        after: sunset
+        after_offset: -01:00:00
+        enabled: false
+      sequence:
+      - action: light.turn_on
+        continue_on_error: true
+        target:
+          entity_id:
           - light.living_room_string_lights
-          - light.living_room_red_lamp
           - light.living_room_red_lava_lamp
           - light.living_room_blue_lava_lamp
-
-    - choose:
-        - conditions:
-            - condition: sun
-              after: sunset
-              after_offset: "-01:00:00"
-              enabled: false
-          sequence:
-            - action: light.turn_on
-              continue_on_error: true
-              target:
-                entity_id:
-                  - light.living_room_string_lights
-                  - light.living_room_red_lava_lamp
-                  - light.living_room_blue_lava_lamp
-                  - light.living_room_red_lamp
-
-    - action: input_boolean.turn_on
-      target:
-        entity_id: input_boolean.music_mode_active
-
+          - light.living_room_red_lamp
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.music_mode_active
 living_room_music_mode_off:
-  alias: "Living Room: Music Mode OFF"
+  alias: 'Living Room: Music Mode OFF'
   mode: single
   sequence:
-    - choose:
-        - conditions:
-            - condition: template
-              value_template: >
-                {{ states('scene.pre_music_living_room')
-                not in ['unknown', 'unavailable'] }}
-          sequence:
-            - action: scene.turn_on
-              continue_on_error: true
-              target:
-                entity_id: scene.pre_music_living_room
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ states(''scene.pre_music_living_room'') not in [''unknown'',
+          ''unavailable''] }}
 
-            - delay:
-                milliseconds: 500
-
-            - action: scene.delete
-              target:
-                entity_id: scene.pre_music_living_room
-
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: media_player.wiim_living_room
-              state: "playing"
-          sequence:
-            - action: media_player.media_pause
-              continue_on_error: true
-              target:
-                entity_id: media_player.wiim_living_room
-
-    - action: input_boolean.turn_off
-      target:
-        entity_id: input_boolean.music_mode_active
-
+          '
+      sequence:
+      - action: scene.turn_on
+        continue_on_error: true
+        target:
+          entity_id: scene.pre_music_living_room
+      - delay:
+          milliseconds: 500
+      - action: scene.delete
+        target:
+          entity_id: scene.pre_music_living_room
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: media_player.wiim_living_room
+        state: playing
+      sequence:
+      - action: media_player.media_pause
+        continue_on_error: true
+        target:
+          entity_id: media_player.wiim_living_room
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.music_mode_active
 living_room_goodnight:
-  alias: "Living Room: Goodnight"
+  alias: 'Living Room: Goodnight'
   mode: single
   sequence:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: media_player.wiim_living_room
-              state: "playing"
-          sequence:
-            - action: media_player.media_pause
-              target:
-                entity_id: media_player.wiim_living_room
-
-    - action: script.living_room_turn_jvc_off
-
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: media_player.living_room_chromecast
-              state:
-                - "on"
-                - "playing"
-                - "paused"
-          sequence:
-            - action: media_player.turn_off
-              target:
-                entity_id: media_player.living_room_chromecast
-
-    - action: light.turn_off
-      target:
-        entity_id: light.living_room_lights
-
-    - action: input_boolean.turn_off
-      target:
-        entity_id:
-          - input_boolean.movie_mode_active
-          - input_boolean.music_mode_active
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: media_player.wiim_living_room
+        state: playing
+      sequence:
+      - action: media_player.media_pause
+        target:
+          entity_id: media_player.wiim_living_room
+  - action: script.living_room_turn_jvc_off
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: media_player.living_room_chromecast
+        state:
+        - 'on'
+        - playing
+        - paused
+      sequence:
+      - action: media_player.turn_off
+        target:
+          entity_id: media_player.living_room_chromecast
+  - action: light.turn_off
+    target:
+      entity_id: light.living_room_lights
+  - action: input_boolean.turn_off
+    target:
+      entity_id:
+      - input_boolean.movie_mode_active
+      - input_boolean.music_mode_active
+switch_to_optical:
+  sequence:
+  - action: switch.turn_on
+    metadata: {}
+    target:
+      entity_id: switch.jvc
+    data: {}
+    continue_on_error: true
+  - action: remote.send_command
+    metadata: {}
+    target:
+      entity_id: remote.living_room_tv
+    data:
+      num_repeats: 1
+      delay_secs: 0.4
+      hold_secs: 0
+      command:
+      - KEY_HOME
+      - KEY_LEFT
+      - KEY_LEFT
+      - KEY_LEFT
+      - KEY_UP
+      - KEY_RIGHT
+      - KEY_ENTER
+      - KEY_ENTER
+      - KEY_RETURN
+      - KEY_RETURN
+    continue_on_error: true
+  - action: media_player.select_source
+    metadata: {}
+    target:
+      entity_id: media_player.wiim_living_room
+    data:
+      source: Optical In
+    continue_on_error: true
+  - action: media_player.volume_set
+    metadata: {}
+    target:
+      entity_id: media_player.wiim_living_room
+    data:
+      volume_level: 0.8
+    continue_on_error: true
+  - action: media_player.select_sound_mode
+    metadata: {}
+    target:
+      entity_id: media_player.wiim_living_room
+    data:
+      sound_mode: Spoken Word
+    continue_on_error: true
+  - action: input_boolean.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.cinema_audio
+    continue_on_error: true
+  alias: 'Living Room: Enter Cinema Mode'
+  description: ''
+  icon: mdi:movie-outline
+switch_to_tv_speakers:
+  sequence:
+  - action: remote.send_command
+    metadata: {}
+    target:
+      entity_id: remote.living_room_tv
+    data:
+      num_repeats: 1
+      delay_secs: 0.4
+      hold_secs: 0
+      command:
+      - KEY_HOME
+      - KEY_LEFT
+      - KEY_LEFT
+      - KEY_LEFT
+      - KEY_UP
+      - KEY_RIGHT
+      - KEY_ENTER
+      - KEY_RETURN
+      - KEY_RETURN
+    continue_on_error: true
+  - action: media_player.select_source
+    metadata: {}
+    target:
+      entity_id: media_player.wiim_living_room
+    data:
+      source: Network
+    continue_on_error: true
+  - action: media_player.volume_set
+    metadata: {}
+    target:
+      entity_id: media_player.wiim_living_room
+    data:
+      volume_level: 0.4
+    continue_on_error: true
+  - action: media_player.select_sound_mode
+    metadata: {}
+    target:
+      entity_id: media_player.wiim_living_room
+    data:
+      sound_mode: Hip-Hop
+    continue_on_error: true
+  - action: switch.turn_off
+    metadata: {}
+    target:
+      entity_id: switch.jvc
+    data: {}
+    continue_on_error: true
+  - action: input_boolean.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.cinema_audio
+    continue_on_error: true
+  alias: 'Living Room: Exit Cinema Mode'
+  description: ''
+  icon: mdi:movie-off-outline
+leaving_room_switch_to_late_night_mode:
+  sequence:
+  - action: light.turn_off
+    metadata: {}
+    target:
+      entity_id: light.living_room_lights
+    data: {}
+    continue_on_error: true
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 4
+      milliseconds: 0
+    continue_on_error: true
+  - action: light.turn_on
+    metadata: {}
+    target:
+      entity_id: light.living_room_red_lamp
+    data: {}
+    continue_on_error: true
+  - action: media_player.turn_on
+    metadata: {}
+    target:
+      entity_id: media_player.living_room_chromecast
+    data: {}
+    continue_on_error: true
+  - action: media_player.volume_set
+    metadata: {}
+    target:
+      device_id: 59ba334094a65a5e1d17b9947382a40a
+    data:
+      volume_level: 0.05
+    continue_on_error: true
+  - action: media_player.play_media
+    metadata: {}
+    target:
+      entity_id: media_player.living_room_chromecast
+    data:
+      media:
+        media_content_id: org.smarttube.stable
+        media_content_type: app
+        metadata:
+          title: SmartTube
+          thumbnail: https://smarttubeapp.github.io/images/site_logo.png
+          media_class: app
+          children_media_class:
+          navigateIds:
+          - {}
+          browse_entity_id: media_player.living_room_chromecast
+    continue_on_error: true
+  alias: 'Living Room: Switch to late night mode'
+  description: ''
+  icon: mdi:lightbulb-night-outline

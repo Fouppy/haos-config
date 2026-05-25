@@ -51,9 +51,93 @@
     tag_id: bb50a113-1d63-43b9-bfe2-6d15428e5246
   conditions: []
   actions:
-  - action: light.toggle
+  - action: script.leaving_room_switch_to_late_night_mode
+    metadata: {}
+    data: {}
+    continue_on_error: true
+  mode: single
+- id: '1779719901625'
+  alias: 'Living Room: Leave Jellyfin audio via TV'
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.living_room_chromecast
+    enabled: true
+    attribute: app_id
+  - trigger: state
+    entity_id: media_player.living_room_tv
+    to: 'off'
+  conditions:
+  - condition: state
+    entity_id: input_boolean.cinema_audio
+    state:
+    - 'on'
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: media_player.living_room_tv
+      state: 'off'
+      enabled: true
+    - condition: template
+      value_template: '{{ state_attr(''media_player.living_room_chromecast'', ''app_id'')
+        != ''org.jellyfin.androidtv'' }}
+
+        '
+  actions:
+  - delay: 00:00:05
+    continue_on_error: true
+  - action: script.switch_to_tv_speakers
+    data: {}
+    continue_on_error: true
+  mode: restart
+- id: '1779719977392'
+  alias: 'Living Room: Jellyfin audio via JVC'
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.living_room_chromecast
+    enabled: true
+    attribute: app_id
+  conditions:
+  - condition: template
+    value_template: '{{ state_attr(''media_player.living_room_chromecast'', ''app_id'')
+      == ''org.jellyfin.androidtv'' }}
+
+      '
+  - condition: state
+    entity_id: input_boolean.cinema_audio
+    state:
+    - 'off'
+  actions:
+  - action: script.switch_to_optical
+    data: {}
+    continue_on_error: true
+  - action: light.turn_off
+    metadata: {}
+    target:
+      entity_id: light.living_room_main_light
+    data: {}
+    continue_on_error: true
+  - condition: state
+    state:
+    - home
+    entity_id: person.moom_2
+  - action: light.turn_off
     metadata: {}
     target:
       entity_id: light.living_room_red_lamp
     data: {}
+    continue_on_error: true
+  - condition: state
+    state:
+    - 'on'
+    entity_id: fan.dyson
+  - action: switch.turn_on
+    metadata: {}
+    target:
+      entity_id: switch.dyson_night_mode
+    data: {}
+    continue_on_error: true
   mode: single

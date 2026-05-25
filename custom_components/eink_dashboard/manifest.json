@@ -1,0 +1,20 @@
+{
+  "domain": "eink_dashboard",
+  "name": "E-Ink Dashboard",
+  "after_dependencies": [
+    "media_source",
+    "recorder"
+  ],
+  "codeowners": [
+    "@cryptomilk"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/cryptomilk/hass-eink-dashboard",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/cryptomilk/hass-eink-dashboard/issues",
+  "requirements": [
+    "defusedxml>=0.7.1",
+    "resvg-py>=0.3.2"
+  ],
+  "version": "0.4.1"
+}

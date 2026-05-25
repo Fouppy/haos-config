@@ -1,0 +1,243 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "E-Ink Dashboard",
+        "data": {
+          "name": "Name",
+          "device_model": "Device model",
+          "orientation": "Device orientation",
+          "area": "Area",
+          "update_interval": "Update interval (seconds)"
+        },
+        "data_description": {
+          "device_model": "Select your e-ink display model",
+          "orientation": "Portrait or landscape layout"
+        }
+      },
+      "screen_portion": {
+        "title": "Screen portion ({orientation_info})",
+        "data": {
+          "screen_portion": "Screen portion"
+        },
+        "data_description": {
+          "screen_portion": "Select how much of the screen this dashboard occupies"
+        }
+      },
+      "custom_resolution": {
+        "title": "Custom resolution",
+        "data": {
+          "width": "Width (px)",
+          "height": "Height (px)"
+        }
+      },
+      "push_target": {
+        "title": "Image delivery",
+        "menu_options": {
+          "pull_only": "Pull only (Kindle, browser)",
+          "trmnl_setup": "TRMNL webhook (push)"
+        }
+      },
+      "trmnl_setup": {
+        "title": "TRMNL Setup",
+        "description": "Before entering the webhook URL, create a plugin on trmnl.com:\n\n1. Go to [**Plugins → Webhook Image**]({trmnl_plugin_url})\n2. Give it a name, set **Image Fit Mode** to **Contain**, and click **Save**\n3. Copy the **Webhook URL** shown on the plugin page\n\nSelect **Submit** when ready to enter the URL.\n\n**Battery level widget:** To display your TRMNL's battery level, install the [**TRMNL**]({trmnl_integration_url}) integration separately, then select its battery sensor in Device Settings. See the [TRMNL guide]({trmnl_docs_url}) for details."
+      },
+      "trmnl_webhook": {
+        "title": "TRMNL Webhook",
+        "data": {
+          "webhook_url": "Webhook URL",
+          "label": "Label (optional)"
+        },
+        "data_description": {
+          "webhook_url": "From trmnl.com: device settings → Private API Plugin → webhook URL",
+          "label": "A name for this push target — defaults to the device name if left empty"
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "Please enter a valid http or https URL."
+    },
+    "abort": {}
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "E-Ink Dashboard options",
+        "menu_options": {
+          "device_settings": "Device settings",
+          "display_settings": "Display settings",
+          "locale_settings": "Locale settings",
+          "add_webhook": "Add push target",
+          "remove_webhook": "Remove push target",
+          "copy_card_yaml": "Copy card YAML",
+          "copy_dashboard_yaml": "Copy dashboard YAML"
+        }
+      },
+      "copy_card_yaml": {
+        "title": "Card YAML",
+        "description": "Add this card to your Lovelace dashboard:\n\n```yaml\n{yaml}\n```"
+      },
+      "copy_dashboard_yaml": {
+        "title": "Dashboard YAML",
+        "description": "Create a new dashboard with this YAML:\n\n```yaml\n{yaml}\n```"
+      },
+      "device_settings": {
+        "title": "Device Settings",
+        "data": {
+          "device_model": "Device model",
+          "orientation": "Device orientation",
+          "area": "Area",
+          "battery_entity_id": "Battery sensor"
+        },
+        "data_description": {
+          "device_model": "Select your e-ink display model",
+          "orientation": "Portrait or landscape layout",
+          "battery_entity_id": "Entity providing battery level for the Device Battery widget, see the [setup guide]({trmnl_docs_url}) for details"
+        },
+        "sections": {
+          "screen_portion_section": {
+            "name": "Screen portion",
+            "data": {
+              "screen_portion": "Screen portion"
+            },
+            "data_description": {
+              "screen_portion": "Select how much of the screen this dashboard occupies"
+            }
+          }
+        }
+      },
+      "screen_portion_options": {
+        "title": "Screen portion ({orientation_info})",
+        "data": {
+          "screen_portion": "Screen portion"
+        },
+        "data_description": {
+          "screen_portion": "Select how much of the screen this dashboard occupies"
+        }
+      },
+      "custom_resolution": {
+        "title": "Custom resolution",
+        "data": {
+          "width": "Width (px)",
+          "height": "Height (px)"
+        }
+      },
+      "add_webhook": {
+        "title": "Add TRMNL Webhook",
+        "data": {
+          "webhook_url": "Webhook URL",
+          "label": "Label (optional)"
+        },
+        "data_description": {
+          "webhook_url": "From trmnl.com: device settings → Private API Plugin → webhook URL",
+          "label": "A name for this push target — defaults to the device name if left empty"
+        }
+      },
+      "remove_webhook": {
+        "title": "Remove Push Target",
+        "data": {
+          "webhook_url": "Push target"
+        }
+      },
+      "display_settings": {
+        "title": "Display Settings",
+        "data": {
+          "update_interval": "Update interval (seconds)",
+          "optimize": "E-ink optimization",
+          "grayscale_levels": "Grayscale levels",
+          "sharpness": "Sharpness",
+          "contrast": "Contrast"
+        },
+        "data_description": {
+          "optimize": "Apply autocontrast, sharpening, and quantization for e-ink displays",
+          "grayscale_levels": "Number of grayscale shades (fewer = higher contrast, more banding)",
+          "sharpness": "1.0 = unchanged, higher = sharper (0.0–10.0)",
+          "contrast": "1.0 = unchanged, higher = more contrast (0.0–10.0)"
+        }
+      },
+      "locale_settings": {
+        "title": "Locale Settings",
+        "description": "Override the Home Assistant owner's locale preferences for this display. Leave fields empty to use the defaults.",
+        "data": {
+          "locale_language": "Language",
+          "locale_number_format": "Number format",
+          "locale_first_weekday": "First day of week",
+          "locale_date_format": "Date format",
+          "locale_time_format": "Time format"
+        },
+        "data_description": {
+          "locale_language": "Language for locale-dependent formatting. Leave empty to use the HA owner's language.",
+          "locale_number_format": "How numbers are formatted (decimal and thousands separators). Leave empty to use the HA owner's preference.",
+          "locale_first_weekday": "First day of the week for calendar and weather displays. Leave empty to use the HA owner's preference.",
+          "locale_date_format": "How dates are formatted. Leave empty to use the HA owner's preference.",
+          "locale_time_format": "12-hour or 24-hour clock. Leave empty to use the HA owner's preference."
+        }
+      }
+    },
+    "error": {
+      "already_configured": "This webhook URL is already configured.",
+      "invalid_url": "Please enter a valid http or https URL."
+    }
+  },
+  "selector": {
+    "device_model": {
+      "options": {
+        "kindle_4": "Kindle 4/5",
+        "kindle_pw": "Kindle Paperwhite 1/2/3",
+        "kindle_pw4": "Kindle Paperwhite 4",
+        "kindle_oasis": "Kindle Oasis 2/3",
+        "trmnl_og": "TRMNL OG",
+        "trmnl_x": "TRMNL X",
+        "trmnl_rgb": "TRMNL RGB",
+        "custom": "Custom"
+      }
+    },
+    "orientation": {
+      "options": {
+        "portrait": "Portrait",
+        "landscape": "Landscape"
+      }
+    },
+    "locale_number_format": {
+      "options": {
+        "ha_default": "Default (HA owner preference)",
+        "language": "Automatic (from language)",
+        "comma_decimal": "1,234.56 (US/UK)",
+        "decimal_comma": "1.234,56 (DE/ES/IT)",
+        "space_comma": "1 234,56 (FR/SE)",
+        "quote_decimal": "1'234.56 (Swiss)",
+        "none": "No grouping (1234.56)"
+      }
+    },
+    "locale_first_weekday": {
+      "options": {
+        "ha_default": "Default (HA owner preference)",
+        "language": "Automatic (from language)",
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      }
+    },
+    "locale_date_format": {
+      "options": {
+        "ha_default": "Default (HA owner preference)",
+        "language": "Automatic (from language)",
+        "dmy": "Day-Month-Year (31/12/2026)",
+        "mdy": "Month-Day-Year (12/31/2026)",
+        "ymd": "Year-Month-Day (2026-12-31)"
+      }
+    },
+    "locale_time_format": {
+      "options": {
+        "ha_default": "Default (HA owner preference)",
+        "language": "Automatic (from language)",
+        "12": "12-hour (1:30 PM)",
+        "24": "24-hour (13:30)"
+      }
+    }
+  }
+}

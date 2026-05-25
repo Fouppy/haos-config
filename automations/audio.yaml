@@ -10,7 +10,9 @@
       entity_id: switch.jvc
       state: "off"
   action:
-    - action: script.living_room_turn_jvc_on
+    - action: switch.turn_on
+      target:
+        entity_id: switch.jvc
 
 - id: living_room_turn_jvc_off_when_wiim_idle
   alias: "Living Room: Turn JVC off when WiiM idle"
@@ -40,7 +42,9 @@
       for:
         minutes: 20
   action:
-    - action: script.living_room_turn_jvc_off
+    - action: switch.turn_off
+      target:
+        entity_id: switch.jvc
 
 - id: living_room_pause_wiim_on_fouppy_call
   alias: "Living Room: Pause WiiM on Fouppy call"

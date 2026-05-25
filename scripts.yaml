@@ -45,27 +45,13 @@ system_update_speedtest:
     metadata: {}
     data:
       addon: 6b87c29e_speedtest_addon
-living_room_turn_jvc_on:
-  alias: 'Living Room: Turn JVC on'
+living_room_movie_mode_on:
+  alias: 'Living Room: Movie Mode ON'
   mode: single
   sequence:
   - action: switch.turn_on
     target:
       entity_id: switch.jvc
-    enabled: false
-living_room_turn_jvc_off:
-  alias: 'Living Room: Turn JVC off'
-  mode: single
-  sequence:
-  - action: switch.turn_off
-    target:
-      entity_id: switch.jvc
-    enabled: false
-living_room_movie_mode_on:
-  alias: 'Living Room: Movie Mode ON'
-  mode: single
-  sequence:
-  - action: script.living_room_turn_jvc_on
   - action: scene.create
     data:
       scene_id: pre_movie_living_room
@@ -119,7 +105,9 @@ living_room_music_mode_on:
   alias: 'Living Room: Music Mode ON'
   mode: single
   sequence:
-  - action: script.living_room_turn_jvc_on
+  - action: switch.turn_on
+    target:
+      entity_id: switch.jvc
   - action: scene.create
     data:
       scene_id: pre_music_living_room
@@ -195,7 +183,9 @@ living_room_goodnight:
       - action: media_player.media_pause
         target:
           entity_id: media_player.wiim_living_room
-  - action: script.living_room_turn_jvc_off
+  - action: switch.turn_off
+    target:
+      entity_id: switch.jvc
   - choose:
     - conditions:
       - condition: state

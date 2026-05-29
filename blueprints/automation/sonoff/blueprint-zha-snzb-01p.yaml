@@ -1,9 +1,9 @@
 blueprint:
   name: ZHA - Sonoff SNZB-01P
   description: 'Perform actions with the Sonoff SNZB-01P Button.
-    You can set functions for single press, double press and hold. This allows you to assign, 
-    e.g., a scene or anything else.'
 
+    You can set functions for single press, double press and hold. This allows you
+    to assign, e.g., a scene or anything else.'
   domain: automation
   input:
     remote:
@@ -14,7 +14,7 @@ blueprint:
           integration: zha
           manufacturer: eWeLink
           model: SNZB-01P
-          
+          multiple: false
     single_press:
       name: Single press
       description: Action to run on single press
@@ -40,7 +40,7 @@ trigger:
 - platform: event
   event_type: zha_event
   event_data:
-    device_id: !input 'remote'
+    device_id: !input remote
 action:
 - variables:
     command: '{{ trigger.event.data.command }}'
@@ -51,14 +51,14 @@ action:
     - '{{ command == "toggle" }}'
     - '{{ cluster_id == 6 }}'
     - '{{ endpoint_id == 1 }}'
-    sequence: !input 'single_press'
+    sequence: !input single_press
   - conditions:
     - '{{ command == "on" }}'
     - '{{ cluster_id == 6 }}'
     - '{{ endpoint_id == 1 }}'
-    sequence: !input 'double_press'
+    sequence: !input double_press
   - conditions:
     - '{{ command == "off" }}'
     - '{{ cluster_id == 6 }}'
     - '{{ endpoint_id == 1 }}'
-    sequence: !input 'hold'
+    sequence: !input hold

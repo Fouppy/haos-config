@@ -92,10 +92,6 @@
       entity_id: person.fouppy
       state: "home"
 
-    - condition: state
-      entity_id: person.moom
-      state: "not_home"
-
   action:
     - action: switch.turn_on
       target:

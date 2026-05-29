@@ -141,3 +141,73 @@
     data: {}
     continue_on_error: true
   mode: single
+- id: '1779820491973'
+  alias: 'Buttons: Kitchen Rodret dimmer switch'
+  description: ''
+  use_blueprint:
+    path: damru/ikea_remotes_control-light.yaml
+    input:
+      remote_devices:
+      - df5b9b63c997a2417895397f2d10f3bf
+      light: light.kitchen_lower_lights
+- id: '1779820609389'
+  alias: 'Buttons: Office Rodret dimmer switch'
+  description: ''
+  use_blueprint:
+    path: damru/ikea_remotes_control-light.yaml
+    input:
+      remote_devices:
+      - 8b9d1a82015ce6dcacc147b0beba435a
+      light: light.office_bookcases
+- id: '1779820993124'
+  alias: Sensor Light
+  description: ''
+  use_blueprint:
+    path: Blackshome/sensor-light.yaml
+    input:
+      include_sun: sun_enabled
+      include_ambient: ambient_enabled
+      ambient_light_sensor: sensor.living_room_light_sensor
+      ambient_light_options: ambient_light_option_enabled
+      ambient_light_high_value: 100
+      ambient_light_value: 20
+      light_switch:
+        entity_id:
+        - light.living_room_tv_light
+        - light.living_room_string_lights
+      zone: zone.home
+      include_device_tracker: zone_people_enabled
+      people:
+      - person.fouppy_2
+      - person.moom_2
+      include_night_lights: night_lights_disabled
+      motion_trigger:
+      - binary_sensor.living_room_light_sensor_living_room_lux
+- id: '1780062791591'
+  alias: Washing Machine Notification
+  description: ''
+  use_blueprint:
+    path: Blackshome/appliance-notifications.yaml
+    input:
+      power_sensor: sensor.washing_machine_watts
+      start_time_delay: 3
+      running_dead_zone: 5
+      end_time_delay: 3
+      include_end_notify: enable_end_notify_options
+      end_notify_device:
+      - 5eba282c0bb6d3d0d3cbfc09725ed4c3
+      end_notify_data:
+      - high_priority
+      power_consumption_sensor: sensor.washing_machine_energy
+      include_power_tracking: enable_power_tracking
+      include_runtime_tracking: enable_runtime_tracking
+      include_cycle_counter: enable_cycle_counter
+      include_device_tracker:
+      - zone_end
+      notify_zone: zone.home
+      start_power_consumption: input_number.energy_tracking_start_washing_machine
+      end_power_consumption: input_number.energy_tracking_end_washing_machine
+      runtime_tracking_helper: input_text.runtime_tracking_washing_machine
+      include_duration_tracking: enable_duration_tracking
+      cycle_counter_helper: counter.cycle_counter_washing_machine
+      cost_per_kwh: sensor.energy_price

@@ -191,7 +191,7 @@
       end_notify_data:
       - high_priority
       power_consumption_sensor: sensor.washing_machine_energy
-      include_power_tracking: enable_power_tracking
+      include_power_tracking: enable_power_tracking_and_cost
       include_runtime_tracking: enable_runtime_tracking
       include_cycle_counter: enable_cycle_counter
       include_device_tracker:
@@ -221,7 +221,7 @@
       end_notify_data:
       - high_priority
       power_consumption_sensor: sensor.dishwasher_energy
-      include_power_tracking: enable_power_tracking
+      include_power_tracking: enable_power_tracking_and_cost
       include_runtime_tracking: enable_runtime_tracking
       include_cycle_counter: enable_cycle_counter
       include_device_tracker:

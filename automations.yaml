@@ -321,3 +321,98 @@
       - use_brightness
       night_lights:
         entity_id: light.closet_light
+- id: '1780069685440'
+  alias: 'System: Sensor Light Add On Blueprint Update Notification'
+  description: ''
+  use_blueprint:
+    path: Blackshome/blueprint-update-notifications.yaml
+    input:
+      include_time: time_enabled
+      time: '10:00:00'
+      include_notify: enable_mobile_app_notify
+      notify_device:
+      - 5eba282c0bb6d3d0d3cbfc09725ed4c3
+      notify_data:
+      - high_priority
+      include_persistent_notification: enable_persistent_notification
+      include_version_numbers: enable_version_numbers
+      blueprint_github_sensor: sensor.sensor_light_add_on_blueprint_gist_version_number
+      blueprint_local_sensor: sensor.sensor_light_add_on_blueprint_local_version_number
+      blueprint_url: https://community.home-assistant.io/t/sensor-light-add-on-media-movie-lights-house-alarm-lights-smoke-alarm-lights-exhaust-fans-more/591824
+      blueprint_name: Sensor Light Add On
+- id: '1780069976159'
+  alias: 'System: Low Battery Notifications & Actions Blueprint Update Notification'
+  description: ''
+  use_blueprint:
+    path: Blackshome/blueprint-update-notifications.yaml
+    input:
+      include_time: time_enabled
+      time: '10:00:00'
+      include_notify: enable_mobile_app_notify
+      notify_device:
+      - 5eba282c0bb6d3d0d3cbfc09725ed4c3
+      notify_data:
+      - high_priority
+      include_persistent_notification: enable_persistent_notification
+      include_version_numbers: enable_version_numbers
+      blueprint_github_sensor: sensor.low_battery_blueprint_gist_version_number
+      blueprint_local_sensor: sensor.low_battery_blueprint_local_version_number
+      blueprint_url: https://community.home-assistant.io/t/low-battery-notifications-actions/653754
+      blueprint_name: Low Battery Notifications & Actions
+- id: '1780070046210'
+  alias: 'System: Closet, Pantry, and Cupboard Lightning Blueprint Update Notification'
+  description: ''
+  use_blueprint:
+    path: Blackshome/blueprint-update-notifications.yaml
+    input:
+      include_time: time_enabled
+      time: '10:00:00'
+      include_notify: enable_mobile_app_notify
+      notify_device:
+      - 5eba282c0bb6d3d0d3cbfc09725ed4c3
+      notify_data:
+      - high_priority
+      include_persistent_notification: enable_persistent_notification
+      include_version_numbers: enable_version_numbers
+      blueprint_github_sensor: sensor.closet_pantry_and_cupboard_lighting_blueprint_gist_version_number
+      blueprint_local_sensor: sensor.closet_pantry_and_cupboard_lighting_blueprint_local_version_number
+      blueprint_url: https://community.home-assistant.io/t/closet-pantry-and-cupboard-lighting/697688
+      blueprint_name: Closet, Pantry, and Cupboard Lighting
+- id: '1780070159493'
+  alias: 'System: Blueprint Update Notification Blueprint Update Notification'
+  description: ''
+  use_blueprint:
+    path: Blackshome/blueprint-update-notifications.yaml
+    input:
+      include_time: time_enabled
+      time: '10:00:00'
+      include_notify: enable_mobile_app_notify
+      notify_device:
+      - 5eba282c0bb6d3d0d3cbfc09725ed4c3
+      notify_data:
+      - high_priority
+      include_persistent_notification: enable_persistent_notification
+      include_version_numbers: enable_version_numbers
+      blueprint_github_sensor: sensor.blueprint_update_notifications_blueprint_gist_version_number
+      blueprint_local_sensor: sensor.blueprint_update_notifications_blueprint_local_version_number
+      blueprint_url: https://community.home-assistant.io/t/blueprint-update-notifications/896272
+      blueprint_name: Blueprint Update Notification
+- id: '1780070219495'
+  alias: 'System: Appliance Notifications & Actions Blueprint Update Notification'
+  description: ''
+  use_blueprint:
+    path: Blackshome/blueprint-update-notifications.yaml
+    input:
+      include_time: time_enabled
+      time: '10:00:00'
+      include_notify: enable_mobile_app_notify
+      notify_device:
+      - 5eba282c0bb6d3d0d3cbfc09725ed4c3
+      notify_data:
+      - high_priority
+      include_persistent_notification: enable_persistent_notification
+      include_version_numbers: enable_version_numbers
+      blueprint_github_sensor: sensor.appliance_notification_blueprint_gist_version_number
+      blueprint_local_sensor: sensor.apliance_notification_blueprint_local_version_number
+      blueprint_url: https://community.home-assistant.io/t/appliance-notifications-actions-washing-machine-clothes-dryer-dish-washer-etc/650166
+      blueprint_name: Appliance Notifications & Actions

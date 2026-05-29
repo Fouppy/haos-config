@@ -151,7 +151,7 @@
     input:
       include_sun: sun_enabled
       include_ambient: ambient_enabled
-      ambient_light_sensor: sensor.living_room_light_sensor
+      ambient_light_sensor: sensor.illuminance_sensor
       ambient_light_options: ambient_light_option_enabled
       ambient_light_high_value: 100
       ambient_light_value: 20

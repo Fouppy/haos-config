@@ -645,3 +645,18 @@
     target:
       entity_id: switch.jvc
   mode: single
+- id: '1780077980501'
+  alias: 'Remote: Living Room Button'
+  description: ''
+  use_blueprint:
+    path: sonoff/blueprint-zha-snzb-01p.yaml
+    input:
+      hold:
+      - action: script.living_room_goodnight
+        metadata: {}
+        data: {}
+      remote: 80774417407683d5c5d59e83bcefeea7
+      double_press:
+      - action: script.living_room_switch_to_late_night_mode
+        metadata: {}
+        data: {}

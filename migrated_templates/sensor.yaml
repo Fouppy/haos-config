@@ -94,6 +94,18 @@
     state: >-
       {{ states('sensor.lights_on_total_hours')|float(0) * 5.4 / 1000 }}
     name: lights_on_total_kwh
+- sensor:
+  - platform: rest
+    name: "Sensor Light Blueprint Gist Version Number"
+    icon: mdi:cloud-tags
+    resource: "https://gist.githubusercontent.com/Blackshome/6edfec0ff6a25c5da0d07b88dc908238/raw/sensor-light.yaml"
+    method: GET
+    headers:
+      accept: "text/plain"
+    value_template: >
+      {% set match = value | regex_findall('\\*\\*Version:\\s*([0-9.]+)\\*\\*') %}
+      {{ match[0] if match else 'unknown' }}
+    scan_interval: 86400
 - trigger:
     - trigger: numeric_state
       entity_id: sensor.living_room_light_sensor

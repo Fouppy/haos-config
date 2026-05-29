@@ -147,6 +147,17 @@ sensor:
       {% set match = value | regex_findall('\\*\\*Version:\\s*([0-9.]+)\\*\\*') %}
       {{ match[0] if match else 'unknown' }}
     scan_interval: 86400
+  - platform: rest
+    name: "State Notifications & Actions Blueprint Gist Version Number"
+    icon: mdi:cloud-tags
+    resource: "https://gist.github.com/Blackshome/06f6f28e76299267b813dac48608f549/raw/state-notifications-and-actions.yaml"
+    method: GET
+    headers:
+      accept: "text/plain"
+    value_template: >
+      {% set match = value | regex_findall('\\*\\*Version:\\s*([0-9.]+)\\*\\*') %}
+      {{ match[0] if match else 'unknown' }}
+    scan_interval: 86400
 
 command_line:
   - sensor:
@@ -193,4 +204,9 @@ command_line:
       name: "Zone Presence of People & Devices Blueprint Local Version Number"
       icon: mdi:code-not-equal-variant
       command: "grep -oE '[*][*]Version: [0-9.]+' /config/blueprints/automation/Blackshome/zone-presence-people-device.yaml | grep -oE '[0-9.]+'"
+      scan_interval: 86400
+  - sensor:
+      name: "State Notifications & Actions Blueprint Local Version Number"
+      icon: mdi:code-not-equal-variant
+      command: "grep -oE '[*][*]Version: [0-9.]+' /config/blueprints/automation/Blackshome/state-notifications-and-actions.yaml | grep -oE '[0-9.]+'"
       scan_interval: 86400

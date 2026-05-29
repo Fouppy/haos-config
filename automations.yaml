@@ -1,15 +1,3 @@
-- id: '1769005223143'
-  alias: 'Buttons: Living Room Media Remote'
-  description: ''
-  use_blueprint:
-    path: sonoff/blueprint-zha-snzb-01p.yaml
-    input:
-      remote: 80774417407683d5c5d59e83bcefeea7
-      single_press: []
-      double_press: []
-      hold:
-      - action: script.living_room_goodnight
-        data: {}
 - id: '1779534247472'
   alias: 'Living Room: Switch to Late Night Mode'
   description: ''
@@ -592,4 +580,68 @@
         media_content_id: spotify:playlist:37i9dQZF1CKMFBxUbxRIAg
         media_content_type: music
         metadata: {}
+  mode: single
+- id: '1780077264426'
+  alias: 'Living Room: Pause WiiM on Fouppy call'
+  description: ''
+  triggers:
+  - entity_id: sensor.fouppy_s_1_15_phone_state
+    to: ringing
+    for:
+      seconds: 2
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: media_player.wiim_living_room
+    state: playing
+  actions:
+  - action: media_player.media_pause
+    target:
+      entity_id: media_player.wiim_living_room
+  mode: single
+- id: '1780077299841'
+  alias: 'Living Room: Turn JVC off when WiiM idle'
+  description: ''
+  triggers:
+  - entity_id: media_player.wiim_living_room
+    to:
+    - idle
+    - paused
+    - 'off'
+    - standby
+    for:
+      minutes: 20
+    trigger: state
+  - minutes: /5
+    trigger: time_pattern
+  conditions:
+  - condition: state
+    entity_id: media_player.wiim_living_room
+    state:
+    - idle
+    - paused
+    - 'off'
+    - standby
+    for:
+      minutes: 20
+  actions:
+  - action: switch.turn_off
+    target:
+      entity_id: switch.jvc
+  mode: restart
+- id: '1780077310326'
+  alias: 'Living Room: Turn JVC on when WiiM plays'
+  description: ''
+  triggers:
+  - entity_id: media_player.wiim_living_room
+    to: playing
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: switch.jvc
+    state: 'off'
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.jvc
   mode: single

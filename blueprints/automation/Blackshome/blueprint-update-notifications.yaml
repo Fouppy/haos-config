@@ -1,0 +1,694 @@
+blueprint:
+  name: Blueprint Update Notification
+  description: "# \U0001F4E5 Blueprint Update Notification\n**Version: 1.1**\n\nBecause
+    even your blueprint automations deserve updates! \U0001F9E0\n\n**If you like my
+    blueprints, and would like to show your support or just say thank you?** [Click
+    Here](https://www.paypal.com/donate/?hosted_button_id=WAZS3QSDTPGA8) \U0001F642\n\n<details>
+    <summary><b>The Automation Process:</b> \U0001F448</summary>\n\nThis automation
+    can monitor my blueprints and check whether an update is available. To function
+    correctly, you'll need to create two sensors for each blueprint to track the version
+    you are currently using. It can also monitor other developers' blueprints as long
+    as they use version numbers and you provide the required sensors to track those
+    versions.\n\n\n  - **Trigger Options:**\n\n    - **Button Helper:**\n      Manually
+    trigger the update check from the Home Assistant user interface (UI).\n\n    -
+    **Time & Day:**\n      Automatically check for blueprint updates at a specific
+    time on the days you define.\n\n  - **Notification Options:**\n\n    - **Mobile
+    App Notifications:**\n      Send update alerts to one or more selected devices.
+    Compatible with both Apple iOS and Android.\n\n    - **UI Notifications:**\n      Display
+    update alerts directly within the Home Assistant user interface (UI).\n\n</details>\n\nNeed
+    help?\n- FAQ: [Click Here](https://community.home-assistant.io/t/896272/2)\n-
+    Community Support Including Updates: [Click Here](https://community.home-assistant.io/t/896272)\n\nRequired
+    = *\n"
+  domain: automation
+  input:
+    triggers:
+      name: Triggers *
+      icon: mdi:cog-play-outline
+      description: 'You must select at least one trigger: a button helper, a time,
+        or both. The Folder Watcher option is optional and not required. *
+
+        '
+      collapsed: true
+      input:
+        include_button:
+          name: Use The Button Helper Trigger (Optional)
+          description: 'Choose this option if you''d like to use a button helper to
+            manually trigger the automation. This is useful if you want to check for
+            blueprint updates by pressing a button in the UI.
+
+
+            If you have multiple automations checking for different blueprint updates,
+            you can use the same button helper to trigger all of them at once.
+
+            '
+          default: disable_button_trigger
+          selector:
+            select:
+              options:
+              - label: Use a button trigger
+                value: enable_button_trigger
+              - label: Dont use a button trigger
+                value: disable_button_trigger
+              custom_value: false
+              multiple: false
+              sort: false
+        button_entity:
+          name: Button Helper
+          description: 'Input your button helper.
+
+            '
+          default: []
+          selector:
+            entity:
+              filter:
+              - domain:
+                - input_button
+              reorder: false
+              multiple: false
+        include_time:
+          name: Use The Time Trigger (Optional)
+          description: 'Enable this if you''d like to periodically check for blueprint
+            updates at a specific time and day.
+
+            '
+          default: time_disabled
+          selector:
+            select:
+              options:
+              - label: Enable the time options
+                value: time_enabled
+              - label: Disable the time options
+                value: time_disabled
+              custom_value: false
+              multiple: false
+              sort: false
+        time:
+          name: Time
+          description: 'Set the time you would like to run the automation.
+
+            '
+          default: 00:00:00
+          selector:
+            time: {}
+        weekday_options:
+          name: Weekdays
+          description: 'Select the days of the week you would like the automation
+            to run.
+
+            '
+          default:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+          - sat
+          - sun
+          selector:
+            select:
+              multiple: true
+              mode: list
+              options:
+              - label: Monday
+                value: mon
+              - label: Tuesday
+                value: tue
+              - label: Wednesday
+                value: wed
+              - label: Thursday
+                value: thu
+              - label: Friday
+                value: fri
+              - label: Saturday
+                value: sat
+              - label: Sunday
+                value: sun
+              custom_value: false
+              sort: false
+        include_folder_watcher:
+          name: Use the Folder Watcher Option (Optional)
+          description: 'Enable this option to automatically re-run the automation
+            whenever the blueprint file is updated. This helps ensure the local version
+            sensor stays in sync with the latest version after the blueprint update.
+
+
+            To use this option, you must have the Folder Watcher integration configured,
+            specify the exact blueprint file path in Folder Watcher, and manually
+            add some code to your configuration file. If you''re not familiar with
+            these steps or prefer not to do this, it''s perfectly fine to leave this
+            option disabled.
+
+
+            If disabled, the local version sensor will still update when Home Assistant
+            restarts, when its scan interval runs, or whenever the automation is triggered.
+            This option is not required unless you want version changes reflected
+            immediately in the UI when you update the blueprint.
+
+
+            For setup instructions, [click here](https://community.home-assistant.io/t/896272/4).
+
+            '
+          default: disable_folder_watcher
+          selector:
+            select:
+              options:
+              - label: Use Folder Watcher
+                value: enable_folder_watcher
+              - label: Do Not Use Folder Watcher
+                value: disable_folder_watcher
+              custom_value: false
+              multiple: false
+              sort: false
+        blueprint_file_name:
+          name: Blueprint File Name
+          description: 'Enter the file name of the blueprint you want to monitor (e.g.,
+            sensor-light.yaml). This must match the exact file name in the blueprint
+            folder you are watching.
+
+            '
+          default: []
+          selector:
+            text:
+              multiline: false
+              multiple: false
+    blueprint:
+      name: Blueprint
+      icon: mdi:code-tags-check
+      collapsed: true
+      input:
+        blueprint_name:
+          name: Blueprint Name
+          description: "Enter the name of the blueprint you want to monitor.\n\nThis
+            is useful for:\n  - Your reference when setting up the automation.\n  -
+            Being dynamically included in notification messages by using **{{blueprint_name}}**.\n"
+          default: Sensor Light
+          selector:
+            text:
+              multiline: false
+              multiple: false
+        blueprint_url:
+          name: Blueprint URL
+          description: "Provide the public URL for the blueprint (e.g., Community
+            Forum link). This URL is used in both notifications:\n  - In **Mobile
+            App Notify**, tapping the message will open this URL.\n  - In **Notifications**,
+            if you've entered text in the **URL Title**, this URL will be attached
+            to it as a clickable \n"
+          default: []
+          selector:
+            text:
+              multiline: false
+              multiple: false
+        blueprint_github_sensor:
+          name: Blueprint Gist / Github Sensor
+          description: 'Select the sensor that monitors the online Gist / GitHub version
+            of the blueprint.
+
+
+            For sensor setup instructions, [click here](https://community.home-assistant.io/t/896272/3?u=blacky).
+
+            '
+          default: []
+          selector:
+            entity:
+              filter:
+              - domain:
+                - sensor
+              reorder: false
+              multiple: false
+        blueprint_local_sensor:
+          name: Blueprint Local Sensor
+          description: 'Select the sensor that monitors the version of the blueprint
+            stored locally in Home Assistant.
+
+
+            For sensor setup instructions, [click here](https://community.home-assistant.io/t/896272/3?u=blacky).
+
+            '
+          default: []
+          selector:
+            entity:
+              filter:
+              - domain:
+                - sensor
+              reorder: false
+              multiple: false
+    device_notify_settings:
+      name: Mobile App Notify
+      icon: mdi:devices
+      collapsed: true
+      input:
+        include_notify:
+          name: Use The Mobile App Notify Option (Optional)
+          description: 'Enable this option to send notifications to the selected mobile
+            devices listed below.
+
+            '
+          default: disable_mobile_app_notify
+          selector:
+            select:
+              options:
+              - label: Enable Mobile App Notify Options
+                value: enable_mobile_app_notify
+              - label: Disable Mobile App Notify Options
+                value: disable_mobile_app_notify
+              custom_value: false
+              multiple: false
+              sort: false
+        notify_device:
+          name: Devices Notified (Optional)
+          description: 'If you''ve enabled device notifications above, please select
+            the devices to receive the notifications.
+
+            '
+          default: []
+          selector:
+            device:
+              filter:
+              - integration: mobile_app
+              multiple: true
+        notify_title:
+          name: Title
+          description: 'Enter in the notification title of your message.
+
+            '
+          default: Blueprint Update!
+          selector:
+            text:
+              multiline: false
+              multiple: false
+        notify_message:
+          name: Message
+          description: 'Enter in the notification message.
+
+
+            Use **{{ blueprint_name }}** to dynamically insert the blueprint name
+            from the input in **Blueprint** section above.
+
+            '
+          default: YES! Blacky has updated the {{blueprint_name}} blueprint!
+          selector:
+            text:
+              multiline: false
+              multiple: false
+        notify_interruption_level:
+          name: Interruption Level - iOS Only
+          description: 'On devices running iOS 15 and later, you can configure the
+            interruption level for your notifications to ensure they are delivered
+            according to your preferences. Choose the desired interruption level from
+            the dropdown list. Critical and time-sensitive notifications must be turned
+            ON within the Home Assistant App, and time-sensitive notifications must
+            be allowed in your Focus settings.
+
+
+            For more information on interruption levels [Click Here](https://community.home-assistant.io/t/896272/16)
+
+            '
+          default: active
+          selector:
+            select:
+              mode: dropdown
+              options:
+              - label: Default
+                value: active
+              - label: Critical Notifications
+                value: critical
+              - label: Time Sensitive Notifications
+                value: time-sensitive
+              - label: Quiet Notifications Without Waking Screen
+                value: passive
+              custom_value: false
+              multiple: false
+              sort: false
+        notify_sound:
+          name: Notification Sound - iOS Only
+          description: 'The Home Assistant app for iOS includes built-in notification
+            sounds, and you can import sounds from your iOS device into the app. Custom
+            sounds can also be added via iTunes or from your cloud storage. When entering
+            a sound, ensure you use the full filename, including the extension.
+
+
+            For more information on using sounds in the Home Assistant app, [Click
+            Here](https://community.home-assistant.io/t/896272/16)
+
+            '
+          default: []
+          selector:
+            text:
+              multiline: false
+              multiple: false
+        notify_data:
+          name: Android Only Options (Optional)
+          description: '**High Priority** notifications ensure that you receive important
+            alerts immediately. These notifications bypass normal delivery delays
+            and are delivered instantly to your device.
+
+
+            **Sticky Notification** ensure that important alerts are not dismissed
+            when selected. They remain on your notification screen until you actively
+            clear or swipe them away, ensuring that critical information stays visible
+            until addressed.
+
+
+            **Notification Channel** allow you to easily organize different notification
+            settings, including notification sounds, vibrations, and other device-specific
+            features. If you choose this option, please enter your desired channel
+            name below.
+
+            '
+          default: []
+          selector:
+            select:
+              multiple: true
+              options:
+              - label: High Priority
+                value: high_priority
+              - label: Sticky Notification
+                value: sticky
+              - label: Notification Channel
+                value: channel
+              custom_value: false
+              sort: false
+        notify_channel:
+          name: Notification Channel - Android Only
+          description: 'If you have chosen to use a notification channel, simply enter
+            the name of an existing channel to apply its pre-configured settings.
+            If you don''t have a channel yet, you can create a new one by entering
+            a name here. When your automation sends the first notification, it will
+            create the channel on your device. After the channel is created, you can
+            customize its notification settings to your preference directly on your
+            device.
+
+
+            For more information on notification channels [Click Here](https://community.home-assistant.io/t/896272/16)
+
+            '
+          default: []
+          selector:
+            text:
+              multiline: false
+              multiple: false
+        include_blueprint_url:
+          name: Use The Blueprint URL Link Option (Optional)
+          description: 'Enable this option to include a clickable **Blueprint URL**
+            in the message. When tapped, the notification will open the **Blueprint
+            URL** you provided above in the **Blueprint** section.
+
+
+            This is useful if you want a quick way to view the blueprint on the community
+            forum directly from the notification, so you can easily check what has
+            been updated.
+
+            '
+          default: disable_blueprint_url
+          selector:
+            select:
+              options:
+              - label: Enable Blueprint URL
+                value: enable_blueprint_url
+              - label: Disable Blueprint URL
+                value: disable_blueprint_url
+              custom_value: false
+              multiple: false
+              sort: false
+    persistent_notify_settings:
+      name: Notifications
+      icon: mdi:bell-outline
+      collapsed: true
+      input:
+        include_persistent_notification:
+          name: Use The UI Notification Option (Optional)
+          description: "Choose whether to display blueprint update notifications directly
+            in the Home Assistant user interface (UI). \n"
+          default: disabled_persistent_notification
+          selector:
+            select:
+              options:
+              - label: Enable UI Notifications
+                value: enable_persistent_notification
+              - label: Disable UI Notifications
+                value: disabled_persistent_notification
+              custom_value: false
+              multiple: false
+              sort: false
+        persistent_title:
+          name: Title
+          description: 'Enter the title shown in the UI notification.
+
+            '
+          default: "\U0001F4E5 Blueprint Update!"
+          selector:
+            text:
+              multiline: false
+              multiple: false
+        persistent_message:
+          name: Message
+          description: 'Enter the message content shown in the UI notification.
+
+
+            Use **{{ blueprint_name }}** to dynamically insert the blueprint name
+            from the input in **Blueprint** section above.
+
+            '
+          default: YES! Blacky has updated the {{blueprint_name}} blueprint!
+          selector:
+            text:
+              multiline: false
+              multiple: false
+        persistent_message_url_title:
+          name: URL Title
+          description: 'Enter the clickable text for the link in the notification
+            (e.g., "Click Here to View the blueprint"). Make sure you''ve also entered
+            the **Blueprint URL** in the **Blueprint** section above.
+
+
+            If either the clickable text or the URL is left blank, the link will not
+            be included in the notification.
+
+
+            This is useful if you want a quick way to view the blueprint on the community
+            forum directly from the notification, so you can easily check what has
+            been updated.
+
+            '
+          default: []
+          selector:
+            text:
+              multiline: false
+              multiple: false
+        include_version_numbers:
+          name: Include Version Numbers Option
+          description: 'Enable or disable including version numbers in the notification
+            message.
+
+            '
+          default: disable_version_numbers
+          selector:
+            select:
+              options:
+              - label: Enable Version Numbers
+                value: enable_version_numbers
+              - label: Disable Version Numbers
+                value: disable_version_numbers
+              custom_value: false
+              multiple: false
+              sort: false
+        latest_version_text:
+          name: Latest Version Text
+          description: Text shown before the latest version number.
+          default: Latest version
+          selector:
+            text:
+              multiline: false
+              multiple: false
+        installed_version_text:
+          name: Installed Version Text
+          description: Text shown before the installed version number.
+          default: Installed version
+          selector:
+            text:
+              multiline: false
+              multiple: false
+    custom_actions_settings:
+      name: Custom Actions
+      icon: mdi:code-tags
+      collapsed: true
+      input:
+        include_custom_actions:
+          name: Use The Custom Action Options (Optional)
+          description: 'Enable this option to add your own actions when a new blueprint
+            version is available. Common uses include announcements via The Voice
+            (HA), Google Assistant, Alexa, or sending custom notifications. You can
+            also trigger any other automation or service you want when an update is
+            detected.
+
+            '
+          default: disable_custom_actions
+          selector:
+            select:
+              options:
+              - label: Enable Custom Actions
+                value: enable_custom_actions
+              - label: Disable Custom Actions
+                value: disable_custom_actions
+              custom_value: false
+              multiple: false
+              sort: false
+        custom_actions:
+          name: Custom Actions
+          description: 'Enter the actions you want to run when an update is detected.
+
+            '
+          default: []
+          selector:
+            action: {}
+  source_url: https://gist.github.com/Blackshome/ede9cf745f3b86ff8576c21b6ca1509a
+mode: single
+max_exceeded: silent
+variables:
+  include_button: !input include_button
+  button_entity: !input button_entity
+  include_time: !input include_time
+  time: !input time
+  weekday_options: !input weekday_options
+  include_folder_watcher: !input include_folder_watcher
+  blueprint_file_name: !input blueprint_file_name
+  blueprint_name: !input blueprint_name
+  blueprint_url: !input blueprint_url
+  blueprint_github_sensor: !input blueprint_github_sensor
+  blueprint_local_sensor: !input blueprint_local_sensor
+  include_notify: !input include_notify
+  notify_device: !input notify_device
+  notify_title: !input notify_title
+  notify_message: !input notify_message
+  notify_interruption_level: !input notify_interruption_level
+  notify_sound: !input notify_sound
+  notify_data: !input notify_data
+  notify_channel: !input notify_channel
+  include_blueprint_url: !input include_blueprint_url
+  include_persistent_notification: !input include_persistent_notification
+  persistent_title: !input persistent_title
+  persistent_message: !input persistent_message
+  persistent_message_url_title: !input persistent_message_url_title
+  include_version_numbers: !input include_version_numbers
+  latest_version_text: !input latest_version_text
+  installed_version_text: !input installed_version_text
+  include_custom_actions: !input include_custom_actions
+  custom_actions: !input custom_actions
+  device_message_data: "{% set message = namespace(data={}) %} {% set push = namespace(data={})
+    %} {% if notify_interruption_level in ['active', 'critical', 'time-sensitive',
+    'passive'] %}\n  {% set push.data = dict(push.data, **{ 'interruption-level':
+    notify_interruption_level }) %}\n{% endif %} {% if notify_sound != [] %}\n  {%
+    set push.data = dict(push.data, **{ 'sound': notify_sound }) %}\n{% endif %} {%
+    if push.data %}\n  {% set message.data = dict(message.data, **{ 'push': push.data
+    }) %}\n{% endif %} {% if 'high_priority' in notify_data %}\n  {% set message.data
+    = dict(message.data, **{ 'ttl': 0, 'priority': 'high' }) %}\n{% endif %} {% if
+    'channel' in notify_data %}\n  {% set message.data = dict(message.data, **{ 'channel':
+    notify_channel }) %}\n{% endif %} {% if 'sticky' in notify_data %}\n  {% set message.data
+    = dict(message.data, **{ 'sticky': \"true\" }) %}\n{% endif %} {% if include_blueprint_url
+    == 'enable_blueprint_url' and blueprint_url != [] %}\n  {% set message.data =
+    dict(message.data, **{ 'url': blueprint_url }) %}\n{% endif %} {{ message.data
+    }}"
+triggers:
+- trigger: state
+  entity_id: !input button_entity
+  id: t0
+- trigger: time
+  at: !input time
+  id: t1
+- trigger: event
+  event_type: folder_watcher
+  id: t2
+  event_data:
+    event_type: modified
+conditions:
+- condition: or
+  conditions:
+  - condition: and
+    conditions:
+    - condition: trigger
+      id: t0
+    - '{{ include_button == ''enable_button_trigger'' }}'
+  - condition: and
+    conditions:
+    - condition: trigger
+      id: t1
+    - '{{ include_time == ''time_enabled'' }}'
+  - condition: and
+    conditions:
+    - condition: trigger
+      id: t2
+    - condition: template
+      value_template: '{{ include_folder_watcher == ''enable_folder_watcher'' }}'
+    - condition: template
+      value_template: '{{ blueprint_file_name in trigger.event.data.path }}'
+- condition: or
+  conditions:
+  - '{{ include_time == ''time_disabled'' }}'
+  - condition: and
+    conditions:
+    - condition: time
+      weekday: !input weekday_options
+    - '{{ include_time == ''time_enabled'' }}'
+  - condition: trigger
+    id:
+    - t0
+    - t2
+actions:
+- action: homeassistant.update_entity
+  target:
+    entity_id: !input blueprint_github_sensor
+- action: homeassistant.update_entity
+  target:
+    entity_id: !input blueprint_local_sensor
+- choose:
+  - alias: Perform the custom actions
+    conditions:
+    - condition: template
+      value_template: "{{ states(blueprint_github_sensor) != states(blueprint_local_sensor)\n
+        \ and states(blueprint_github_sensor) not in ['unknown', 'unavailable'] }}\n"
+    sequence:
+    - variables:
+        latest_version: '{{ states(blueprint_github_sensor) }}'
+        installed_version: '{{ states(blueprint_local_sensor) }}'
+    - choose:
+      - alias: Check if notification is enabled
+        conditions:
+        - '{{ include_notify == ''enable_mobile_app_notify'' }}'
+        - '{{ notify_device | length > 0 }}'
+        sequence:
+        - alias: Send notification to each device
+          repeat:
+            for_each: !input notify_device
+            sequence:
+            - action: notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify
+                }}
+              data:
+                title: !input notify_title
+                message: !input notify_message
+                data: '{{ device_message_data }}'
+    - choose:
+      - alias: Use the persistent notification is enabled
+        conditions:
+        - condition: template
+          value_template: '{{ include_persistent_notification == ''enable_persistent_notification''
+            }}'
+        sequence:
+        - variables:
+            persistent_message_data: "{% set message = persistent_message %} {% if
+              include_version_numbers == 'enable_version_numbers' %}\n  {% set message
+              = message ~ \"\\n\\n\" ~ latest_version_text ~ \" \" ~ latest_version
+              ~ \"\\n\" ~ installed_version_text ~ \" \" ~ installed_version %}\n{%
+              endif %} {% if blueprint_url != [] and persistent_message_url_title
+              != [] %}\n  {% set message = message ~ \"\\n\\n[\" ~ persistent_message_url_title
+              ~ \"](\" ~ blueprint_url ~ \")\" %}\n{% endif %} {{ message }}"
+        - action: persistent_notification.create
+          data:
+            title: !input persistent_title
+            message: '{{ persistent_message_data }}'
+    - choose:
+      - alias: Perform the custom action
+        conditions:
+        - condition: template
+          value_template: '{{ ''enable_custom_actions'' in include_custom_actions
+            }}'
+        sequence: !input custom_actions

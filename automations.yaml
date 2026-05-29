@@ -160,7 +160,7 @@
       - 8b9d1a82015ce6dcacc147b0beba435a
       light: light.office_bookcases
 - id: '1779820993124'
-  alias: Sensor Light
+  alias: 'Living Room: Automatic Lights'
   description: ''
   use_blueprint:
     path: Blackshome/sensor-light.yaml
@@ -175,6 +175,8 @@
         entity_id:
         - light.living_room_tv_light
         - light.living_room_string_lights
+        - light.living_room_red_lamp
+        - light.living_room_main_light
       zone: zone.home
       include_device_tracker: zone_people_enabled
       people:
@@ -182,20 +184,26 @@
       - person.moom_2
       include_night_lights: night_lights_disabled
       motion_trigger:
-      - binary_sensor.living_room_light_sensor_living_room_lux
+      - binary_sensor.living_room_lux
+      include_bypass:
+      - bypass_enabled_stop
+      motion_bypass_lights_stop:
+      - input_boolean.automation_link_media_movie
+      bypass_time_delay: 5
 - id: '1780062791591'
-  alias: Washing Machine Notification
+  alias: 'Utilities: Washing Machine Notification'
   description: ''
   use_blueprint:
     path: Blackshome/appliance-notifications.yaml
     input:
-      power_sensor: sensor.washing_machine_watts
+      power_sensor: sensor.washing_machine_power
       start_time_delay: 3
       running_dead_zone: 5
       end_time_delay: 3
       include_end_notify: enable_end_notify_options
       end_notify_device:
       - 5eba282c0bb6d3d0d3cbfc09725ed4c3
+      - a068eda95b0d1fc98cec8f85df6a2248
       end_notify_data:
       - high_priority
       power_consumption_sensor: sensor.washing_machine_energy
@@ -211,3 +219,101 @@
       include_duration_tracking: enable_duration_tracking
       cycle_counter_helper: counter.cycle_counter_washing_machine
       cost_per_kwh: sensor.energy_price
+      include_run_status: run_status_disabled
+- id: '1780063858879'
+  alias: 'Utilities: Dishwasher Notification'
+  description: ''
+  use_blueprint:
+    path: Blackshome/appliance-notifications.yaml
+    input:
+      power_sensor: sensor.dishwasher_power
+      start_time_delay: 3
+      running_dead_zone: 5
+      end_time_delay: 3
+      include_end_notify: enable_end_notify_options
+      end_notify_device:
+      - 5eba282c0bb6d3d0d3cbfc09725ed4c3
+      - a068eda95b0d1fc98cec8f85df6a2248
+      end_notify_data:
+      - high_priority
+      power_consumption_sensor: sensor.dishwasher_energy
+      include_power_tracking: enable_power_tracking
+      include_runtime_tracking: enable_runtime_tracking
+      include_cycle_counter: enable_cycle_counter
+      include_device_tracker:
+      - zone_end
+      notify_zone: zone.home
+      start_power_consumption: input_number.energy_tracking_start_dishwasher
+      end_power_consumption: input_number.energy_tracking_end_dishwasher
+      runtime_tracking_helper: input_text.runtime_tracking_dishwasher
+      include_duration_tracking: enable_duration_tracking
+      cycle_counter_helper: counter.cycle_counter_dishwasher
+      cost_per_kwh: sensor.energy_price
+      include_run_status: run_status_disabled
+      end_message_title: Dishwasher
+      end_message: Yippee the dishwasher is finished!
+      end_notify_icon: mdi:dishwasher
+- id: '1780065850020'
+  alias: 'Living Room: Automatic Movie Lights'
+  description: ''
+  use_blueprint:
+    path: Blackshome/sensor-light-add-on.yaml
+    input:
+      trigger_entities:
+      - media_player.living_room_chromecast
+      trigger_on_state:
+      - 'on'
+      app_attribute:
+      - org.jellyfin.androidtv
+      trigger_off_state:
+      - idle
+      include_start_turn_off: enable_start_turn_off
+      off_light_switch:
+        entity_id:
+        - light.living_room_red_lamp
+        - light.living_room_main_light
+      light_switch:
+        entity_id:
+        - light.living_room_string_lights
+        - script.living_room_change_audio_to_optical
+      include_sun: sun_enabled
+      include_ambient: ambient_enabled
+      ambient_light_sensor: sensor.living_room_light_sensor
+      ambient_light_options: ambient_light_option_enabled
+      include_automation_link: enable_automation_link
+      automation_link:
+      - input_boolean.automation_link_media_movie
+      include_end_turn_on: enable_end_turn_on
+      include_automation_link_time_delay: enable_time_delay
+      end_light_switch:
+        entity_id: script.living_room_change_audio_to_network
+- id: '1780066577270'
+  alias: 'Utilities: Low Power Notification'
+  description: ''
+  use_blueprint:
+    path: Blackshome/low-battery-notifications-and-actions.yaml
+    input:
+      exclude_sensors:
+        entity_id:
+        - sensor.cph2465_battery_level
+      include_easy_notify: enable_easy_notify
+      notify_device:
+      - 5eba282c0bb6d3d0d3cbfc09725ed4c3
+      notify_message: sensors
+      notify_data:
+      - high_priority
+- id: '1780067128377'
+  alias: 'System: Sensor Light Blueprint Update Notification'
+  description: ''
+  use_blueprint:
+    path: Blackshome/blueprint-update-notifications.yaml
+    input:
+      include_time: time_enabled
+      time: '10:00:00'
+      include_notify: enable_mobile_app_notify
+      notify_device:
+      - 5eba282c0bb6d3d0d3cbfc09725ed4c3
+      notify_data:
+      - high_priority
+      include_persistent_notification: enable_persistent_notification
+      include_version_numbers: enable_version_numbers

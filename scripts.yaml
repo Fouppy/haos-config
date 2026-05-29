@@ -360,3 +360,122 @@ leaving_room_switch_to_late_night_mode:
   alias: 'Living Room: Switch to late night mode'
   description: ''
   icon: mdi:lightbulb-night-outline
+living_room_change_audio_to_optical:
+  sequence:
+  - action: switch.turn_on
+    metadata: {}
+    target:
+      entity_id: switch.jvc
+    data: {}
+    continue_on_error: true
+  - action: remote.send_command
+    metadata: {}
+    target:
+      entity_id: remote.living_room_tv
+    data:
+      num_repeats: 1
+      delay_secs: 0.4
+      hold_secs: 0
+      command:
+      - KEY_HOME
+      - KEY_LEFT
+      - KEY_LEFT
+      - KEY_LEFT
+      - KEY_UP
+      - KEY_RIGHT
+      - KEY_ENTER
+      - KEY_ENTER
+      - KEY_RETURN
+      - KEY_RETURN
+    continue_on_error: true
+    enabled: false
+  - action: media_player.select_source
+    metadata: {}
+    target:
+      entity_id: media_player.wiim_living_room
+    data:
+      source: Optical In
+    continue_on_error: true
+  - action: media_player.volume_set
+    metadata: {}
+    target:
+      entity_id: media_player.wiim_living_room
+    data:
+      volume_level: 0.8
+    continue_on_error: true
+  - action: media_player.select_sound_mode
+    metadata: {}
+    target:
+      entity_id: media_player.wiim_living_room
+    data:
+      sound_mode: Spoken Word
+    continue_on_error: true
+  - action: input_boolean.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.cinema_audio
+    continue_on_error: true
+    enabled: false
+  alias: 'Living Room: Change audio to optical'
+  description: ''
+  icon: mdi:movie-outline
+living_room_change_audio_to_network:
+  sequence:
+  - action: remote.send_command
+    metadata: {}
+    target:
+      entity_id: remote.living_room_tv
+    data:
+      num_repeats: 1
+      delay_secs: 0.4
+      hold_secs: 0
+      command:
+      - KEY_HOME
+      - KEY_LEFT
+      - KEY_LEFT
+      - KEY_LEFT
+      - KEY_UP
+      - KEY_RIGHT
+      - KEY_ENTER
+      - KEY_RETURN
+      - KEY_RETURN
+    continue_on_error: true
+    enabled: false
+  - action: media_player.select_source
+    metadata: {}
+    target:
+      entity_id: media_player.wiim_living_room
+    data:
+      source: Network
+    continue_on_error: true
+  - action: media_player.volume_set
+    metadata: {}
+    target:
+      entity_id: media_player.wiim_living_room
+    data:
+      volume_level: 0.4
+    continue_on_error: true
+  - action: media_player.select_sound_mode
+    metadata: {}
+    target:
+      entity_id: media_player.wiim_living_room
+    data:
+      sound_mode: Hip-Hop
+    continue_on_error: true
+  - action: switch.turn_off
+    metadata: {}
+    target:
+      entity_id: switch.jvc
+    data: {}
+    continue_on_error: true
+  - action: input_boolean.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.cinema_audio
+    continue_on_error: true
+    enabled: false
+  alias: 'Living Room: Change audio to network'
+  description: ''
+  icon: mdi:movie-off-outline

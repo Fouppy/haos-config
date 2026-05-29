@@ -1,3 +1,15 @@
+- id: '1769005223143'
+  alias: 'Buttons: Living Room Media Remote'
+  description: ''
+  use_blueprint:
+    path: sonoff/blueprint-zha-snzb-01p.yaml
+    input:
+      remote: 80774417407683d5c5d59e83bcefeea7
+      single_press: []
+      double_press: []
+      hold:
+      - action: script.living_room_goodnight
+        data: {}
 - id: '1779534247472'
   alias: 'Living Room: Switch to Late Night Mode'
   description: ''
@@ -473,4 +485,111 @@
       - action: switch.turn_off
         target:
           entity_id: switch.living_room_mosquito_plug
+  mode: single
+- id: '1780075459948'
+  alias: 'System: Containers Down Notification'
+  description: ''
+  use_blueprint:
+    path: Blackshome/state-notifications-and-actions.yaml
+    input:
+      start_trigger_state: 'off'
+      start_trigger_state_entity:
+      - binary_sensor.lxc_adguard_400_status
+      - binary_sensor.lxc_cloud_103_status
+      - binary_sensor.lxc_jellyfin_200_status
+      - binary_sensor.lxc_proxy_102_status
+      - binary_sensor.lxc_servarr_101_status
+      - binary_sensor.lxc_vault_100_status
+      - binary_sensor.node_proxmox_status
+      include_start_notify: enable_start_notify_options
+      start_notify_device:
+      - 5eba282c0bb6d3d0d3cbfc09725ed4c3
+      start_title: "\U0001F534 Homelab Alert"
+      start_message: '{{ states[trigger.entity_id].attributes.friendly_name }} ({{
+        trigger.entity_id }}) is DOWN'
+      start_notify_data:
+      - high_priority
+      start_notify_icon: mdi:emoticon-frown-outline
+      end_trigger_state: 'on'
+      start_time_delay_state:
+        hours: 0
+        minutes: 2
+        seconds: 0
+      start_notify_icon_colour:
+      - 255
+      - 41
+      - 41
+      end_trigger_state_entity:
+      - binary_sensor.lxc_adguard_400_status
+      - binary_sensor.lxc_cloud_103_status
+      - binary_sensor.lxc_jellyfin_200_status
+      - binary_sensor.lxc_proxy_102_status
+      - binary_sensor.lxc_servarr_101_status
+      - binary_sensor.lxc_vault_100_status
+      - binary_sensor.node_proxmox_status
+      end_time_delay_state:
+        hours: 0
+        minutes: 0
+        seconds: 30
+      include_end_notify: enable_end_notify_options
+      end_notify_device:
+      - 5eba282c0bb6d3d0d3cbfc09725ed4c3
+      end_title: "\U0001F7E2 Homelab Restored"
+      end_message: '{{  states[trigger.entity_id].attributes.friendly_name  }} ({{
+        trigger.entity_id }}) is back online'
+      end_notify_data:
+      - high_priority
+- id: '1780075577966'
+  alias: 'System: Update SpeedTest'
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    hours: /1
+  conditions: []
+  actions:
+  - action: script.system_update_speedtest
+  mode: single
+- id: '1780076500502'
+  alias: 'Living Room: Wakeup music'
+  description: ''
+  triggers:
+  - value_template: "{% set alarm = states('sensor.fouppy_s_1_15_next_alarm') %} {%
+      if alarm not in ['unknown', 'unavailable', 'none', ''] %}\n  {% set diff = as_timestamp(alarm)
+      - as_timestamp(now()) %}\n  {{ 0 <= diff < 60 }}\n{% else %}\n  false\n{% endif
+      %}\n"
+    trigger: template
+  conditions:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  - condition: state
+    entity_id: person.fouppy
+    state: home
+  - condition: state
+    entity_id: person.moom
+    state:
+    - not_home
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.jvc
+  - delay: 00:00:03
+  - action: media_player.volume_set
+    target:
+      entity_id: media_player.wiim_living_room
+    data:
+      volume_level: 0.4
+  - delay: 00:00:01
+  - action: media_player.play_media
+    target:
+      entity_id: media_player.wiim_living_room_ma
+    data:
+      media:
+        media_content_id: spotify:playlist:37i9dQZF1CKMFBxUbxRIAg
+        media_content_type: music
+        metadata: {}
   mode: single

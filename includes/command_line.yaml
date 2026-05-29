@@ -1,5 +1,0 @@
-- sensor:
-    name: "Sensor Light Blueprint Local Version Number"
-    icon: mdi:code-not-equal-variant
-    command: "grep -oE '[*][*]Version: [0-9.]+' /config/blueprints/automation/Blackshome/sensor-light.yaml | grep -oE '[0-9.]+'"
-    scan_interval: 86400

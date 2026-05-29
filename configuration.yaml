@@ -1,23 +1,20 @@
 # Core Configuration
-homeassistant: !include includes/homeassistant.yaml
 default_config:
+automation: !include automations.yaml
+scene: !include scenes.yaml
+script: !include scripts.yaml
 frontend:
   themes: !include_dir_merge_named themes
-http: !include includes/http.yaml
-
-# Managed via UI
-scene: !include scenes.yaml
-automation: !include automations.yaml
-script: !include scripts.yaml
-
-# Others
-# automation manual: !include automations.yaml
-light: !include includes/lights.yaml
-recorder: !include includes/recorder.yaml
-
-# Custom components
-template: !include includes/templates.yaml
-
+http: 
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 192.168.1.109
+recorder:
+  db_url: !secret maria_db_url
+  purge_keep_days: 14
+  exclude:
+    domains:
+      - sun
 sensor:
   - platform: rest
     name: "Sensor Light Blueprint Gist Version Number"
@@ -118,7 +115,6 @@ sensor:
       {% set match = value | regex_findall('\\*\\*Version:\\s*([0-9.]+)\\*\\*') %}
       {{ match[0] if match else 'unknown' }}
     scan_interval: 86400
-
 command_line:
   - sensor:
       name: "Sensor Light Blueprint Local Version Number"
@@ -165,3 +161,7 @@ command_line:
       icon: mdi:code-not-equal-variant
       command: "grep -oE '[*][*]Version: [0-9.]+' /config/blueprints/automation/Blackshome/state-notifications-and-actions.yaml | grep -oE '[0-9.]+'"
       scan_interval: 86400
+
+# To Remove
+light: !include includes/lights.yaml
+template: !include includes/templates.yaml

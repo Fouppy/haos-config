@@ -1,0 +1,11 @@
+- name: Home _ bak
+  latitude: !secret latitude_home
+  longitude: !secret longitude_home
+  radius: 100
+  icon: mdi:home-outline
+
+- name: MooM Work _ bak
+  latitude: !secret latitude_moom_work
+  longitude: !secret longitude_moom_work
+  radius: 500
+  icon: mdi:briefcase-outline

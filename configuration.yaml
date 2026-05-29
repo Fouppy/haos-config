@@ -114,7 +114,17 @@ sensor:
       {% set match = value | regex_findall('\\*\\*Version:\\s*([0-9.]+)\\*\\*') %}
       {{ match[0] if match else 'unknown' }}
     scan_interval: 86400
-
+  - platform: rest
+    name: "Closet, Pantry, and Cupboard Lighting Blueprint Gist Version Number"
+    icon: mdi:cloud-tags
+    resource: "https://gist.github.com/Blackshome/5aac0fe94d23a71154aee5ba8d1375bc/raw/closet-pantry-cupboard-lighting.yaml"
+    method: GET
+    headers:
+      accept: "text/plain"
+    value_template: >
+      {% set match = value | regex_findall('\\*\\*Version:\\s*([0-9.]+)\\*\\*') %}
+      {{ match[0] if match else 'unknown' }}
+    scan_interval: 86400
 
 command_line:
   - sensor:
@@ -146,4 +156,9 @@ command_line:
       name: "Blueprint Update Notifications Blueprint Local Version Number"
       icon: mdi:code-not-equal-variant
       command: "grep -oE '[*][*]Version: [0-9.]+' /config/blueprints/automation/Blackshome/blueprint-update-notifications.yaml | grep -oE '[0-9.]+'"
+      scan_interval: 86400
+  - sensor:
+      name: "Closet, Pantry, and Cupboard Lighting Blueprint Local Version Number"
+      icon: mdi:code-not-equal-variant
+      command: "grep -oE '[*][*]Version: [0-9.]+' /config/blueprints/automation/Blackshome/closet-pantry-cupboard-lighting.yaml | grep -oE '[0-9.]+'"
       scan_interval: 86400

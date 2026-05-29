@@ -1,29 +1,3 @@
-presence_access_turn_off_everything_automatic:
-  alias: 'Presence & Access: Turn off everything'
-  mode: parallel
-  sequence:
-  - action: light.turn_off
-    data:
-      transition: 4
-      entity_id:
-      - light.living_room_lights
-      - light.bedroom_lights
-      - light.office_lights
-      - light.hall_lights
-      - light.kitchen_lights
-  - action: media_player.turn_off
-    entity_id: media_player.living_room_chromecast
-presence_access_turn_off_everything:
-  alias: 'Presence & Access: Turn off everything (automatic)'
-  mode: parallel
-  sequence:
-  - action: light.turn_off
-    entity_id: all
-  - action: script.presence_access_turn_off_everything_automatic
-presence_access_leaving_home:
-  alias: 'Presence & Access: Leaving home'
-  sequence:
-  - action: script.presence_access_turn_off_everything
 system_update_speedtest:
   alias: 'System: Update SpeedTest'
   sequence:

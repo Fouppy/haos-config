@@ -59,6 +59,61 @@ sensor:
       {% set match = value | regex_findall('\\*\\*Version:\\s*([0-9.]+)\\*\\*') %}
       {{ match[0] if match else 'unknown' }}
     scan_interval: 86400
+  - platform: rest
+    name: "Sensor Light Add On Blueprint Gist Version Number"
+    icon: mdi:cloud-tags
+    resource: "https://gist.github.com/Blackshome/85d6e7dbfa3390afbcf3e801b8be6294/raw/sensor-light-add-on.yaml"
+    method: GET
+    headers:
+      accept: "text/plain"
+    value_template: >
+      {% set match = value | regex_findall('\\*\\*Version:\\s*([0-9.]+)\\*\\*') %}
+      {{ match[0] if match else 'unknown' }}
+    scan_interval: 86400
+  - platform: rest
+    name: "Holiday & Away Lighting Blueprint Gist Version Number"
+    icon: mdi:cloud-tags
+    resource: "https://gist.github.com/Blackshome/0a34870755762bcb9fab159d5b94fd25/raw/holiday-away-lighting.yaml"
+    method: GET
+    headers:
+      accept: "text/plain"
+    value_template: >
+      {% set match = value | regex_findall('\\*\\*Version:\\s*([0-9.]+)\\*\\*') %}
+      {{ match[0] if match else 'unknown' }}
+    scan_interval: 86400
+  - platform: rest
+    name: "Low Battery Blueprint Gist Version Number"
+    icon: mdi:cloud-tags
+    resource: "https://gist.github.com/Blackshome/4010fb83bb8c19b5fa1425526c6ff0e2/raw/low-battery-notifications-and-actions.yaml"
+    method: GET
+    headers:
+      accept: "text/plain"
+    value_template: >
+      {% set match = value | regex_findall('\\*\\*Version:\\s*([0-9.]+)\\*\\*') %}
+      {{ match[0] if match else 'unknown' }}
+    scan_interval: 86400
+  - platform: rest
+    name: "Appliance Notification Blueprint Gist Version Number"
+    icon: mdi:cloud-tags
+    resource: "https://gist.github.com/Blackshome/42586b567d243d432887cadf54e18906/raw/appliance-notifications.yaml"
+    method: GET
+    headers:
+      accept: "text/plain"
+    value_template: >
+      {% set match = value | regex_findall('\\*\\*Version:\\s*([0-9.]+)\\*\\*') %}
+      {{ match[0] if match else 'unknown' }}
+    scan_interval: 86400
+  - platform: rest
+    name: "Blueprint Update Notifications Blueprint Gist Version Number"
+    icon: mdi:cloud-tags
+    resource: "https://gist.github.com/Blackshome/ede9cf745f3b86ff8576c21b6ca1509a/raw/blueprint-update-notifications.yaml"
+    method: GET
+    headers:
+      accept: "text/plain"
+    value_template: >
+      {% set match = value | regex_findall('\\*\\*Version:\\s*([0-9.]+)\\*\\*') %}
+      {{ match[0] if match else 'unknown' }}
+    scan_interval: 86400
 
 
 command_line:
@@ -66,4 +121,29 @@ command_line:
       name: "Sensor Light Blueprint Local Version Number"
       icon: mdi:code-not-equal-variant
       command: "grep -oE '[*][*]Version: [0-9.]+' /config/blueprints/automation/Blackshome/sensor-light.yaml | grep -oE '[0-9.]+'"
+      scan_interval: 86400
+  - sensor:
+      name: "Sensor Light Add On Blueprint Local Version Number"
+      icon: mdi:code-not-equal-variant
+      command: "grep -oE '[*][*]Version: [0-9.]+' /config/blueprints/automation/Blackshome/sensor-light-add-on.yaml | grep -oE '[0-9.]+'"
+      scan_interval: 86400
+  - sensor:
+      name: "Holiday & Away Lighting Blueprint Local Version Number"
+      icon: mdi:code-not-equal-variant
+      command: "grep -oE '[*][*]Version: [0-9.]+' /config/blueprints/automation/Blackshome/holiday-away-lighting.yaml | grep -oE '[0-9.]+'"
+      scan_interval: 86400
+  - sensor:
+      name: "Low Battery Blueprint Local Version Number"
+      icon: mdi:code-not-equal-variant
+      command: "grep -oE '[*][*]Version: [0-9.]+' /config/blueprints/automation/Blackshome/low-battery-notifications-and-actions.yaml | grep -oE '[0-9.]+'"
+      scan_interval: 86400
+  - sensor:
+      name: "Apliance Notification Blueprint Local Version Number"
+      icon: mdi:code-not-equal-variant
+      command: "grep -oE '[*][*]Version: [0-9.]+' /config/blueprints/automation/Blackshome/appliance-notifications.yaml | grep -oE '[0-9.]+'"
+      scan_interval: 86400
+  - sensor:
+      name: "Blueprint Update Notifications Blueprint Local Version Number"
+      icon: mdi:code-not-equal-variant
+      command: "grep -oE '[*][*]Version: [0-9.]+' /config/blueprints/automation/Blackshome/blueprint-update-notifications.yaml | grep -oE '[0-9.]+'"
       scan_interval: 86400

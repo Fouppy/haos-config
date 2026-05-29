@@ -473,3 +473,33 @@
       blueprint_local_sensor: sensor.zone_presence_of_people_devices_blueprint_local_version_number
       blueprint_url: https://community.home-assistant.io/t/zone-presence-of-people-devices/940901
       blueprint_name: Zone Presence of People & Devices
+- id: '1780074784936'
+  alias: 'Utilities: Mosquito Plug Schedule'
+  description: ''
+  triggers:
+  - trigger: sun
+    event: sunset
+    offset: -00:30:00
+    id: 'on'
+  - trigger: sun
+    event: sunrise
+    offset: +01:00:00
+    id: 'off'
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: 'on'
+      sequence:
+      - action: switch.turn_on
+        target:
+          entity_id: switch.living_room_mosquito_plug
+    - conditions:
+      - condition: trigger
+        id: 'off'
+      sequence:
+      - action: switch.turn_off
+        target:
+          entity_id: switch.living_room_mosquito_plug
+  mode: single

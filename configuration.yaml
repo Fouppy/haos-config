@@ -35,7 +35,7 @@ notify: !include includes/notify.yaml
 light: !include includes/lights.yaml
 wake_on_lan:
 timer: !include includes/timers.yaml
-command_line: !include includes/command_line.yaml
+# command_line: !include includes/command_line.yaml
 # ios: !include includes/ios.yaml
 # homekit: !include includes/homekit.yaml
 # influxdb: !include includes/influxdb.yaml
@@ -46,3 +46,24 @@ intent:
 pyscript: !include includes/pyscript.yaml
 template migrated: !include_dir_merge_list migrated_templates
 template: !include includes/templates.yaml
+
+sensor:
+  - platform: rest
+    name: "Sensor Light Blueprint Gist Version Number"
+    icon: mdi:cloud-tags
+    resource: "https://gist.githubusercontent.com/Blackshome/6edfec0ff6a25c5da0d07b88dc908238/raw/sensor-light.yaml"
+    method: GET
+    headers:
+      accept: "text/plain"
+    value_template: >
+      {% set match = value | regex_findall('\\*\\*Version:\\s*([0-9.]+)\\*\\*') %}
+      {{ match[0] if match else 'unknown' }}
+    scan_interval: 86400
+
+
+command_line:
+  - sensor:
+      name: "Sensor Light Blueprint Local Version Number"
+      icon: mdi:code-not-equal-variant
+      command: "grep -oE '[*][*]Version: [0-9.]+' /config/blueprints/automation/Blackshome/sensor-light.yaml | grep -oE '[0-9.]+'"
+      scan_interval: 86400

@@ -27,22 +27,6 @@
         - action: script.living_room_music_mode_off
       hold:
       - action: script.living_room_goodnight
-- id: '1769007195923'
-  alias: 'Presence & Access: Closet light'
-  description: ''
-  use_blueprint:
-    path: Blackshome/sensor-light.yaml
-    input:
-      motion_trigger:
-      - binary_sensor.closet_door
-      light_switch:
-        entity_id: light.closet_light
-      time_delay: 0
-      include_light_control:
-      - use_brightness
-      motion_bypass_lights_on: []
-      include_bypass: []
-      motion_bypass_lights_off: []
 - id: '1779534247472'
   alias: New automation
   description: ''
@@ -317,3 +301,23 @@
       - high_priority
       include_persistent_notification: enable_persistent_notification
       include_version_numbers: enable_version_numbers
+      blueprint_github_sensor: sensor.sensor_light_blueprint_gist_version_number
+      blueprint_local_sensor: sensor.sensor_light_blueprint_local_version_number
+      blueprint_url: https://community.home-assistant.io/t/sensor-light-motion-sensor-door-sensor-sun-elevation-lux-value-scenes-time-light-control-device-tracker-night-lights/481048
+- id: '1780069273953'
+  alias: 'Presence & Access: Closet Light'
+  description: ''
+  use_blueprint:
+    path: Blackshome/closet-pantry-cupboard-lighting.yaml
+    input:
+      trigger_entity:
+      - binary_sensor.closet_door
+      light_switch:
+        entity_id: light.closet_light
+      include_night_lights: night_lights_enabled
+      night_lights_conditions:
+      - sun_enabled
+      include_night_light_control:
+      - use_brightness
+      night_lights:
+        entity_id: light.closet_light

@@ -416,3 +416,60 @@
       blueprint_local_sensor: sensor.apliance_notification_blueprint_local_version_number
       blueprint_url: https://community.home-assistant.io/t/appliance-notifications-actions-washing-machine-clothes-dryer-dish-washer-etc/650166
       blueprint_name: Appliance Notifications & Actions
+- id: '1780071086003'
+  alias: 'System: Holiday & Away Lighting Blueprint Update Notification'
+  description: ''
+  use_blueprint:
+    path: Blackshome/blueprint-update-notifications.yaml
+    input:
+      include_time: time_enabled
+      time: '10:00:00'
+      include_notify: enable_mobile_app_notify
+      notify_device:
+      - 5eba282c0bb6d3d0d3cbfc09725ed4c3
+      notify_data:
+      - high_priority
+      include_persistent_notification: enable_persistent_notification
+      include_version_numbers: enable_version_numbers
+      blueprint_github_sensor: sensor.holiday_away_lighting_blueprint_gist_version_number
+      blueprint_local_sensor: sensor.holiday_away_lighting_blueprint_local_version_number
+      blueprint_url: https://community.home-assistant.io/t/holiday-away-lighting/871550
+      blueprint_name: Holiday & Away Lighting
+- id: '1780071143754'
+  alias: 'System: State Notifications & Actions Blueprint Update Notification'
+  description: ''
+  use_blueprint:
+    path: Blackshome/blueprint-update-notifications.yaml
+    input:
+      include_time: time_enabled
+      time: '10:00:00'
+      include_notify: enable_mobile_app_notify
+      notify_device:
+      - 5eba282c0bb6d3d0d3cbfc09725ed4c3
+      notify_data:
+      - high_priority
+      include_persistent_notification: enable_persistent_notification
+      include_version_numbers: enable_version_numbers
+      blueprint_github_sensor: sensor.state_notifications_actions_blueprint_gist_version_number
+      blueprint_local_sensor: sensor.state_notifications_actions_blueprint_local_version_number
+      blueprint_url: https://community.home-assistant.io/t/state-notifications-actions/612617
+      blueprint_name: State Notifications & Actions
+- id: '1780071225603'
+  alias: 'System: Zone Presence of People & Devices Blueprint Update Notification'
+  description: ''
+  use_blueprint:
+    path: Blackshome/blueprint-update-notifications.yaml
+    input:
+      include_time: time_enabled
+      time: '10:00:00'
+      include_notify: enable_mobile_app_notify
+      notify_device:
+      - 5eba282c0bb6d3d0d3cbfc09725ed4c3
+      notify_data:
+      - high_priority
+      include_persistent_notification: enable_persistent_notification
+      include_version_numbers: enable_version_numbers
+      blueprint_github_sensor: sensor.zone_presence_of_people_devices_blueprint_gist_version_number
+      blueprint_local_sensor: sensor.zone_presence_of_people_devices_blueprint_local_version_number
+      blueprint_url: https://community.home-assistant.io/t/zone-presence-of-people-devices/940901
+      blueprint_name: Zone Presence of People & Devices

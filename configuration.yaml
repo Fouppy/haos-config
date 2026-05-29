@@ -5,13 +5,6 @@ frontend:
   themes: !include_dir_merge_named themes
 http: !include includes/http.yaml
 
-# Inputs
-input_boolean: !include includes/input_booleans.yaml
-
-# Logging and history
-logger: !include includes/logger.yaml
-recorder: !include includes/recorder.yaml
-
 # Managed via UI
 scene: !include scenes.yaml
 # automation: !include automations.yaml
@@ -20,15 +13,12 @@ script: !include scripts.yaml
 # Others
 person: !include includes/persons.yaml
 zone: !include includes/zones.yaml
-group: !include includes/groups.yaml
 # automation: !include_dir_merge_list automations
 automation manual: !include automations.yaml
 automation: !include_dir_merge_list automations/
-notify: !include includes/notify.yaml
 light: !include includes/lights.yaml
 
 # Custom components
-pyscript: !include includes/pyscript.yaml
 template: !include includes/templates.yaml
 
 sensor:

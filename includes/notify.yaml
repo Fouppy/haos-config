@@ -1,4 +1,0 @@
-- platform: group
-  name: phone_fouppy
-  services:
-    - service: mobile_app_fouppy_s_1_15

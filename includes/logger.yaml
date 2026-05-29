@@ -1,8 +1,0 @@
-default: warning
-logs:
-  # homeassistant.core: debug
-  # homeassistant.components.deconz: debug
-  # pyotgw: warning
-  # custom_components.derivative_custom: debug
-  # custom_components.pyscript: debug
-  homeassistant.components.shell_command: debug

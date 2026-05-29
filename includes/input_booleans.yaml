@@ -1,7 +1,0 @@
-movie_mode_active:
-  name: Movie Mode Active
-  icon: mdi:movie-open
-
-music_mode_active:
-  name: Music Mode Active
-  icon: mdi:music

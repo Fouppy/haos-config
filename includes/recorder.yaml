@@ -1,9 +1,0 @@
-db_url: !secret maria_db_url
-purge_keep_days: 14
-exclude:
-  domains:
-    - sun
-  entities:
-    - sensor.n_days_last_month
-    - sensor.monthly_energy_last_period
-    - sensor.monthly_energy_cost_last_period

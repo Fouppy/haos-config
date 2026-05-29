@@ -1,41 +1,12 @@
-- id: '1769005223143'
-  alias: 'Buttons: Living Room Media Remote'
-  description: ''
-  use_blueprint:
-    path: sonoff/blueprint-zha-snzb-01p.yaml
-    input:
-      remote: 80774417407683d5c5d59e83bcefeea7
-      single_press:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: input_boolean.movie_mode_active
-            state: 'off'
-          sequence:
-          - action: script.living_room_movie_mode_on
-        default:
-        - action: script.living_room_movie_mode_off
-      double_press:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: input_boolean.music_mode_active
-            state: 'off'
-          sequence:
-          - action: script.living_room_music_mode_on
-        default:
-        - action: script.living_room_music_mode_off
-      hold:
-      - action: script.living_room_goodnight
 - id: '1779534247472'
-  alias: New automation
+  alias: 'Living Room: Switch to Late Night Mode'
   description: ''
   triggers:
   - trigger: tag
     tag_id: bb50a113-1d63-43b9-bfe2-6d15428e5246
   conditions: []
   actions:
-  - action: script.leaving_room_switch_to_late_night_mode
+  - action: script.living_room_switch_to_late_night_mode
     metadata: {}
     data: {}
     continue_on_error: true

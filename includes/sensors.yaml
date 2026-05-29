@@ -1,65 +1,5 @@
 # - platform: template
 #   sensors:
-#     dishwasher_watts:
-#       value_template: >
-#         {{ states("sensor.dishwasher_power") | float(0) }}
-#       unit_of_measurement: Watt
-#       friendly_name: Dishwasher usage
-
-#     washing_machine_watts:
-#       value_template: >
-#         {{ states("sensor.washing_machine_power") | float(0) }}
-#       unit_of_measurement: Watt
-#       friendly_name: Washing machine usage
-
-#     count_automations:
-#       icon_template: mdi:autorenew
-#       value_template: "{{ states.automation | count }}"
-
-#     count_scripts:
-#       icon_template: mdi:script-text-outline
-#       value_template: "{{ states.script| count }}"
-
-#     count_device_trackers:
-#       icon_template: mdi:map-marker
-#       value_template: "{{ states.device_tracker | count }}"
-
-#     count_binary_sensors:
-#       icon_template: mdi:unfold-more-horizontal
-#       value_template: "{{ states.binary_sensor| count }}"
-
-#     count_sensors:
-#       icon_template: mdi:resistor
-#       value_template: "{{ states.sensor | count }}"
-
-#     count_switches:
-#       icon_template: mdi:light-switch
-#       value_template: "{{ states.switch | count }}"
-
-#     count_zones:
-#       icon_template: mdi:map-marker-radius
-#       value_template: "{{ states.zone | count }}"
-
-#     count_input_booleans:
-#       icon_template: mdi:toggle-switch
-#       value_template: "{{ states.input_boolean | count }}"
-
-#     count_input_numbers:
-#       icon_template: mdi:numeric
-#       value_template: "{{ states.input_number | count }}"
-
-#     count_input_texts:
-#       icon_template: mdi:alphabetical
-#       value_template: "{{ states.input_text | count }}"
-
-#     count_input_selects:
-#       icon_template: mdi:view-list
-#       value_template: "{{ states.input_select | count }}"
-
-#     count_input_datetimes:
-#       icon_template: mdi:calendar-clock
-#       value_template: "{{ states.input_datetime | count }}"
-
 #     tv_volume:
 #       value_template: >
 #         {{ state_attr("media_player.living_room_tv", "volume_level")|float(0) * 100 }}
@@ -169,42 +109,6 @@
 - platform: history_stats
   name: Times TV has been on last 7 days
   entity_id: media_player.living_room_chromecast
-  state: "on"
-  type: count
-  duration:
-    days: 7
-  end: "{{ now() }}"
-
-- platform: history_stats
-  name: Hours dishwasher has been on last 7 days
-  entity_id: binary_sensor.dishwasher
-  state: "on"
-  type: time
-  duration:
-    days: 7
-  end: "{{ now() }}"
-
-- platform: history_stats
-  name: Times dishwasher has been on last 7 days
-  entity_id: binary_sensor.dishwasher
-  state: "on"
-  type: count
-  duration:
-    days: 7
-  end: "{{ now() }}"
-
-- platform: history_stats
-  name: Hours washing machine has been on last 7 days
-  entity_id: binary_sensor.washing_machine
-  state: "on"
-  type: time
-  duration:
-    days: 7
-  end: "{{ now() }}"
-
-- platform: history_stats
-  name: Times washing machine has been on last 7 days
-  entity_id: binary_sensor.washing_machine
   state: "on"
   type: count
   duration:

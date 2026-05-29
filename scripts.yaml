@@ -24,20 +24,6 @@ presence_access_leaving_home:
   alias: 'Presence & Access: Leaving home'
   sequence:
   - action: script.presence_access_turn_off_everything
-utilities_notification:
-  alias: 'Utilities: Notification'
-  fields:
-    name:
-      description: name
-      example: washing_machine
-    emojis:
-      description: emojis
-      example: "\U0001F45A\U0001F455"
-  sequence:
-  - action: '{{ states(''sensor.nearest_phone_notify'') }}'
-    data:
-      title: Utilities
-      message: '{{ name }} is done {{ emojis }}'
 system_update_speedtest:
   alias: 'System: Update SpeedTest'
   sequence:

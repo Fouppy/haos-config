@@ -1,88 +1,4 @@
 - sensor:
-  - unit_of_measurement: Watt
-    default_entity_id: sensor.dishwasher_watts
-    name: Dishwasher usage
-    state: >-
-      {{ states("sensor.dishwasher_power") | float(0) }}
-- sensor:
-  - unit_of_measurement: Watt
-    default_entity_id: sensor.washing_machine_watts
-    name: Washing machine usage
-    state: >-
-      {{ states("sensor.washing_machine_power") | float(0) }}
-- sensor:
-  - default_entity_id: sensor.count_automations
-    icon: mdi:autorenew
-    state: >-
-      {{ states.automation | count }}
-    name: count_automations
-- sensor:
-  - default_entity_id: sensor.count_scripts
-    icon: mdi:script-text-outline
-    state: >-
-      {{ states.script| count }}
-    name: count_scripts
-- sensor:
-  - default_entity_id: sensor.count_device_trackers
-    icon: mdi:map-marker
-    state: >-
-      {{ states.device_tracker | count }}
-    name: count_device_trackers
-- sensor:
-  - default_entity_id: sensor.count_binary_sensors
-    icon: mdi:unfold-more-horizontal
-    state: >-
-      {{ states.binary_sensor| count }}
-    name: count_binary_sensors
-- sensor:
-  - default_entity_id: sensor.count_sensors
-    icon: mdi:resistor
-    state: >-
-      {{ states.sensor | count }}
-    name: count_sensors
-- sensor:
-  - default_entity_id: sensor.count_switches
-    icon: mdi:light-switch
-    state: >-
-      {{ states.switch | count }}
-    name: count_switches
-- sensor:
-  - default_entity_id: sensor.count_zones
-    icon: mdi:map-marker-radius
-    state: >-
-      {{ states.zone | count }}
-    name: count_zones
-- sensor:
-  - default_entity_id: sensor.count_input_booleans
-    icon: mdi:toggle-switch
-    state: >-
-      {{ states.input_boolean | count }}
-    name: count_input_booleans
-- sensor:
-  - default_entity_id: sensor.count_input_numbers
-    icon: mdi:numeric
-    state: >-
-      {{ states.input_number | count }}
-    name: count_input_numbers
-- sensor:
-  - default_entity_id: sensor.count_input_texts
-    icon: mdi:alphabetical
-    state: >-
-      {{ states.input_text | count }}
-    name: count_input_texts
-- sensor:
-  - default_entity_id: sensor.count_input_selects
-    icon: mdi:view-list
-    state: >-
-      {{ states.input_select | count }}
-    name: count_input_selects
-- sensor:
-  - default_entity_id: sensor.count_input_datetimes
-    icon: mdi:calendar-clock
-    state: >-
-      {{ states.input_datetime | count }}
-    name: count_input_datetimes
-- sensor:
   - unit_of_measurement: '%'
     default_entity_id: sensor.tv_volume
     state: >-
@@ -178,3 +94,27 @@
     state: >-
       {{ states('sensor.lights_on_total_hours')|float(0) * 5.4 / 1000 }}
     name: lights_on_total_kwh
+- trigger:
+    - trigger: numeric_state
+      entity_id: sensor.sensor.living_room_light_sensor
+      below: '20'
+      for:
+        minutes: 1
+    - trigger: numeric_state
+      entity_id: sensor.sensor.living_room_light_sensor
+      above: '20'
+      for:
+        minutes: 1
+    - platform: state
+      entity_id: sensor.sensor.living_room_light_sensor
+      to: 
+        - 'unavailable'
+        - 'unknown'
+        - 'none'
+      for:
+        minutes: 1
+  # sensor:
+  #   name: "Illuminance Sensor"
+  #   device_class: illuminance
+  #   unit_of_measurement: lx
+  #   state: "{{ states('sensor.sensor.living_room_light_sensor') | float(0.0) }}"

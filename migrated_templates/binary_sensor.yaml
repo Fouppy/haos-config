@@ -36,32 +36,6 @@
     state: >-
       {{ is_state("binary_sensor.activity_in_living_room", "on") }}
 - binary_sensor:
-  - delay_on: 0:05:00
-    delay_off: 0:05:00
-    default_entity_id: binary_sensor.washing_machine
-    icon: >-
-      {% if is_state("binary_sensor.washing_machine", "on") %}
-        mdi:washing-machine
-      {% else %}
-        mdi:washing-machine-off
-      {% endif %}
-    name: Washing machine
-    state: >-
-      {{ states("sensor.washing_machine_watts") | float(0) > 1 }}
-- binary_sensor:
-  - delay_on: 0:05:00
-    delay_off: 0:05:00
-    default_entity_id: binary_sensor.dishwasher
-    icon: >-
-      {% if is_state("binary_sensor.dishwasher", "on") %}
-        mdi:dishwasher
-      {% else %}
-        mdi:dishwasher-off
-      {% endif %}
-    name: Dishwasher
-    state: >-
-      {{ states("sensor.dishwasher_watts") | float(0) > 1 }}
-- binary_sensor:
   - default_entity_id: binary_sensor.any_light_on
     name: Any light is on
     state: >-

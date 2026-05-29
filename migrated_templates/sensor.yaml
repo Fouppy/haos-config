@@ -96,17 +96,17 @@
     name: lights_on_total_kwh
 - trigger:
     - trigger: numeric_state
-      entity_id: sensor.sensor.living_room_light_sensor
+      entity_id: sensor.living_room_light_sensor
       below: '20'
       for:
         minutes: 1
     - trigger: numeric_state
-      entity_id: sensor.sensor.living_room_light_sensor
+      entity_id: sensor.living_room_light_sensor
       above: '20'
       for:
         minutes: 1
     - platform: state
-      entity_id: sensor.sensor.living_room_light_sensor
+      entity_id: sensor.living_room_light_sensor
       to: 
         - 'unavailable'
         - 'unknown'
@@ -117,4 +117,4 @@
   #   name: "Illuminance Sensor"
   #   device_class: illuminance
   #   unit_of_measurement: lx
-  #   state: "{{ states('sensor.sensor.living_room_light_sensor') | float(0.0) }}"
+  #   state: "{{ states('sensor.living_room_light_sensor') | float(0.0) }}"

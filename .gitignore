@@ -125,8 +125,6 @@ secrets.yaml
 .homekit.state
 .spotify-token-cache
 .vscode/
-appdaemon/compiled
-appdaemon/dashboards/
 home-assistant_v2.db*
 home-assistant.log*
 zigbee.db*
@@ -134,7 +132,6 @@ html5_push_registrations.conf
 tts/
 webostv.conf
 notebooks/
-airsonos.xml
 themes/ios-*
 image
 .DS_Store

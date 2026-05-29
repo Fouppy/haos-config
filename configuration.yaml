@@ -11,6 +11,7 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 
 # Others
+zone: !include includes/zones.yaml
 # automation manual: !include automations.yaml
 light: !include includes/lights.yaml
 recorder: !include includes/recorder.yaml

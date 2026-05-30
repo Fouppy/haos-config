@@ -164,7 +164,7 @@ command_line:
 # To Remove
 light:
   - platform: group
-    name: Living room lights
+    name: Living room lights 2
     entities:
       - light.living_room_main_light
       - light.living_room_tv_light
@@ -174,26 +174,26 @@ light:
       - light.living_room_blue_lava_lamp
 
   - platform: group
-    name: Bedroom lights
+    name: Bedroom lights 2
     entities:
       - light.bedroom_main_lamp
       - light.bedroom_red_lamp
       - light.bedroom_string_lights
 
   - platform: group
-    name: Bathroom lights
+    name: Bathroom lights 2
     entities:
       - light.bathroom_main_lamp
 
   - platform: group
-    name: Kitchen lights
+    name: Kitchen lights 2
     entities:
       - light.kitchen_ceiling
       - light.kitchen_countertop
       - light.kitchen_sink
 
   - platform: group
-    name: Office lights
+    name: Office lights 2
     entities:
       - light.office_main_lamp
       - light.office_bookcases
@@ -201,11 +201,11 @@ light:
       - light.office_fouppy_desk_light
 
   - platform: group
-    name: Hall lights
+    name: Hall lights 2
     entities:
       - light.hall_ceiling
 
   - platform: group
-    name: Closet lights
+    name: Closet lights 2
     entities:
       - light.closet_light

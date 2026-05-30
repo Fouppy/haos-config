@@ -182,9 +182,9 @@
     path: Blackshome/appliance-notifications.yaml
     input:
       power_sensor: sensor.dishwasher_power
-      start_time_delay: 3
+      start_time_delay: 1
       running_dead_zone: 5
-      end_time_delay: 3
+      end_time_delay: 5
       include_end_notify: enable_end_notify_options
       end_notify_device:
       - 5eba282c0bb6d3d0d3cbfc09725ed4c3
@@ -208,6 +208,8 @@
       end_message_title: Dishwasher
       end_message: Yippee the dishwasher is finished!
       end_notify_icon: mdi:dishwasher
+      end_appliance_power: 1
+      start_appliance_power: 2
 - id: '1780065850020'
   alias: 'Living Room: Automatic Movie Lights'
   description: ''

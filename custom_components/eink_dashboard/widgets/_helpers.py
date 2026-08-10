@@ -1,3 +1,17 @@
+# Copyright 2026 Andreas Schneider
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Shared layout helpers for widget SVG context builders.
 
 Functions in this module compute dimensions, colors, and template
@@ -381,8 +395,9 @@ def _entity_info_context(
 
     Args:
         widget: Widget config dict.  Recognised keys: ``entity``,
-            ``name``, ``icon``, ``unit``, ``icon_style``,
-            ``card_style``.
+            ``name``, ``icon``, ``unit``, ``hide_icon``,
+            ``hide_name``, ``icon_style``, ``card_style``,
+            ``bold_value``.
         config: Display config with ``states`` and
             ``grayscale_levels``.
         section_h: Height of the entity info section in pixels.
@@ -409,8 +424,11 @@ def _entity_info_context(
     name_override = widget.get("name")
     icon_override = widget.get("icon")
     unit_override = widget.get("unit")
+    hide_icon: bool = widget.get("hide_icon", False)
+    hide_name: bool = widget.get("hide_name", False)
     icon_style = widget.get("icon_style")
     card_style = widget.get("card_style", DEFAULT_CARD_STYLE)
+    value_bold: bool = widget.get("bold_value", False)
     states = config.get("states", {})
     grayscale_levels = config.get("grayscale_levels", 16)
 
@@ -464,18 +482,24 @@ def _entity_info_context(
     )
 
     # Icon resolution: explicit override → device_class → attrs icon.
-    icon_svg, letter = _resolve_icon_svg(
-        icon_override,
-        attrs,
-        state_val,
-        domain,
-        icon_inner,
-        entity_id,
-    )
-
-    icon_outline, icon_no_circle = _resolve_icon_style(
-        icon_style, state_val, grayscale_levels
-    )
+    # Skipped entirely when hide_icon is set.
+    if hide_icon:
+        icon_svg: markupsafe.Markup | str = ""
+        letter = ""
+        icon_outline = False
+        icon_no_circle = True
+    else:
+        icon_svg, letter = _resolve_icon_svg(
+            icon_override,
+            attrs,
+            state_val,
+            domain,
+            icon_inner,
+            entity_id,
+        )
+        icon_outline, icon_no_circle = _resolve_icon_style(
+            icon_style, state_val, grayscale_levels
+        )
     # Widen outline stroke on 2-level displays to avoid dithering.
     icon_stroke_w = m.border * 3 if grayscale_levels <= 2 else m.border
     icon_fill = color_to_hex(COLOR_GRAY)
@@ -495,16 +519,16 @@ def _entity_info_context(
     icon_glyph_x = icon_cx - icon_inner // 2
     icon_glyph_y = icon_cy - icon_inner // 2
 
-    # Name: left-aligned in header row, vertically centered.
-    # Larger ratio than m.font_primary (0.32) — the entity name is
-    # the card's primary label and should fill the header row.
-    name_font_sz = round(header_h * 0.48)
+    # Name: left-aligned in header row, vertically centered. Kept
+    # small relative to the value below — the value is what users
+    # scan for at a glance, so it gets visual priority.
+    name_font_sz = max(10, round(header_h * 0.32))
     name_x = x_off + lpad
     name_y = header_h // 2
 
     # Value: left-aligned, baseline at ~65% of the info section so
     # the value and unit share an alphabetic baseline (HA style).
-    value_font_sz = max(10, round(section_h * 0.28))
+    value_font_sz = max(10, round(section_h * 0.38))
     value_x = x_off + lpad
     value_y = header_h + round(info_h * 0.65)
 
@@ -512,7 +536,9 @@ def _entity_info_context(
     unit_font_sz = m.font_secondary
     unit_x = value_x
     if unit_text:
-        value_font = _load_font(value_font_sz, medium=True)
+        value_font = _load_font(
+            value_font_sz, medium=not value_bold, bold=value_bold
+        )
         text_w = round(value_font.getlength(value_text))
         unit_x = value_x + text_w + m.inner_gap // 2
 
@@ -539,6 +565,7 @@ def _entity_info_context(
         "letter": letter,
         "letter_font_sz": letter_font_sz,
         # Header row text.
+        "hide_name": hide_name,
         "name_text": name_text,
         "name_x": name_x,
         "name_y": name_y,
@@ -548,6 +575,7 @@ def _entity_info_context(
         "value_x": value_x,
         "value_y": value_y,
         "value_font_sz": value_font_sz,
+        "value_bold": value_bold,
         "unit_text": unit_text,
         "unit_x": unit_x,
         "unit_y": value_y,

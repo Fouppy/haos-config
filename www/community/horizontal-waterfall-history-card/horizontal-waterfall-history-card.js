@@ -1,4 +1,4 @@
-/* Waterfall History Card v4.4.1 */
+/* Waterfall History Card v2026.8.3 */
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -46,7 +46,7 @@ const t$1=globalThis,e$2=t$1.ShadowRoot&&(void 0===t$1.ShadyCSS||t$1.ShadyCSS.na
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const t=globalThis,i$1=t=>t,s$1=t.trustedTypes,e=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,h="$lit$",o$2=`lit$${Math.random().toFixed(9).slice(2)}$`,n$1="?"+o$2,r$2=`<${n$1}>`,l=document,c=()=>l.createComment(""),a=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,d=t=>u(t)||"function"==typeof t?.[Symbol.iterator],f="[ \t\n\f\r]",v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${f}(?:([^\\s"'>=/]+)(${f}*=${f}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,x=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),b=x(1),E=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),C=new WeakMap,P=l.createTreeWalker(l,129);function V(t,i){if(!u(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e?e.createHTML(i):i}const N=(t,i)=>{const s=t.length-1,e=[];let n,l=2===i?"<svg>":3===i?"<math>":"",c=v;for(let i=0;i<s;i++){const s=t[i];let a,u,d=-1,f=0;for(;f<s.length&&(c.lastIndex=f,u=c.exec(s),null!==u);)f=c.lastIndex,c===v?"!--"===u[1]?c=_:void 0!==u[1]?c=m:void 0!==u[2]?(y.test(u[2])&&(n=RegExp("</"+u[2],"g")),c=p):void 0!==u[3]&&(c=p):c===p?">"===u[0]?(c=n??v,d=-1):void 0===u[1]?d=-2:(d=c.lastIndex-u[2].length,a=u[1],c=void 0===u[3]?p:'"'===u[3]?$:g):c===$||c===g?c=p:c===_||c===m?c=v:(c=p,n=void 0);const x=c===p&&t[i+1].startsWith("/>")?" ":"";l+=c===v?s+r$2:d>=0?(e.push(a),s.slice(0,d)+h+s.slice(d)+o$2+x):s+o$2+(-2===d?i:x);}return [V(t,l+(t[s]||"<?>")+(2===i?"</svg>":3===i?"</math>":"")),e]};class S{constructor({strings:t,_$litType$:i},e){let r;this.parts=[];let l=0,a=0;const u=t.length-1,d=this.parts,[f,v]=N(t,i);if(this.el=S.createElement(f,e),P.currentNode=this.el.content,2===i||3===i){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes);}for(;null!==(r=P.nextNode())&&d.length<u;){if(1===r.nodeType){if(r.hasAttributes())for(const t of r.getAttributeNames())if(t.endsWith(h)){const i=v[a++],s=r.getAttribute(t).split(o$2),e=/([.?@])?(.*)/.exec(i);d.push({type:1,index:l,name:e[2],strings:s,ctor:"."===e[1]?I:"?"===e[1]?L:"@"===e[1]?z:H}),r.removeAttribute(t);}else t.startsWith(o$2)&&(d.push({type:6,index:l}),r.removeAttribute(t));if(y.test(r.tagName)){const t=r.textContent.split(o$2),i=t.length-1;if(i>0){r.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)r.append(t[s],c()),P.nextNode(),d.push({type:2,index:++l});r.append(t[i],c());}}}else if(8===r.nodeType)if(r.data===n$1)d.push({type:2,index:l});else {let t=-1;for(;-1!==(t=r.data.indexOf(o$2,t+1));)d.push({type:7,index:l}),t+=o$2.length-1;}l++;}}static createElement(t,i){const s=l.createElement("template");return s.innerHTML=t,s}}function M(t,i,s=t,e){if(i===E)return i;let h=void 0!==e?s._$Co?.[e]:s._$Cl;const o=a(i)?void 0:i._$litDirective$;return h?.constructor!==o&&(h?._$AO?.(false),void 0===o?h=void 0:(h=new o(t),h._$AT(t,s,e)),void 0!==e?(s._$Co??=[])[e]=h:s._$Cl=h),void 0!==h&&(i=M(t,h._$AS(t,i.values),h,e)),i}class R{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:i},parts:s}=this._$AD,e=(t?.creationScope??l).importNode(i,true);P.currentNode=e;let h=P.nextNode(),o=0,n=0,r=s[0];for(;void 0!==r;){if(o===r.index){let i;2===r.type?i=new k(h,h.nextSibling,this,t):1===r.type?i=new r.ctor(h,r.name,r.strings,this,t):6===r.type&&(i=new Z(h,this,t)),this._$AV.push(i),r=s[++n];}o!==r?.index&&(h=P.nextNode(),o++);}return P.currentNode=l,e}p(t){let i=0;for(const s of this._$AV) void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class k{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,i,s,e){this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cv=e?.isConnected??true;}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t?.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=M(this,t,i),a(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==E&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):d(t)?this.k(t):this._(t);}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}_(t){this._$AH!==A&&a(this._$AH)?this._$AA.nextSibling.data=t:this.T(l.createTextNode(t)),this._$AH=t;}$(t){const{values:i,_$litType$:s}=t,e="number"==typeof s?this._$AC(t):(void 0===s.el&&(s.el=S.createElement(V(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===e)this._$AH.p(i);else {const t=new R(e,this),s=t.u(this.options);t.p(i),this.T(s),this._$AH=t;}}_$AC(t){let i=C.get(t.strings);return void 0===i&&C.set(t.strings,i=new S(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const h of t)e===i.length?i.push(s=new k(this.O(c()),this.O(c()),this,this.options)):s=i[e],s._$AI(h),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,s){for(this._$AP?.(false,true,s);t!==this._$AB;){const s=i$1(t).nextSibling;i$1(t).remove(),t=s;}}setConnected(t){ void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t));}}class H{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,i,s,e,h){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=h,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}_$AI(t,i=this,s,e){const h=this.strings;let o=false;if(void 0===h)t=M(this,t,i,0),o=!a(t)||t!==this._$AH&&t!==E,o&&(this._$AH=t);else {const e=t;let n,r;for(t=h[0],n=0;n<h.length-1;n++)r=M(this,e[s+n],i,n),r===E&&(r=this._$AH[n]),o||=!a(r)||r!==this._$AH[n],r===A?t=A:t!==A&&(t+=(r??"")+h[n+1]),this._$AH[n]=r;}o&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"");}}class I extends H{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}class L extends H{constructor(){super(...arguments),this.type=4;}j(t){this.element.toggleAttribute(this.name,!!t&&t!==A);}}class z extends H{constructor(t,i,s,e,h){super(t,i,s,e,h),this.type=5;}_$AI(t,i=this){if((t=M(this,t,i,0)??A)===E)return;const s=this._$AH,e=t===A&&s!==A||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,h=t!==A&&(s===A||e);e&&this.element.removeEventListener(this.name,this,s),h&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t);}}class Z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){M(this,t);}}const B=t.litHtmlPolyfillSupport;B?.(S,k),(t.litHtmlVersions??=[]).push("3.3.2");const D=(t,i,s)=>{const e=s?.renderBefore??i;let h=e._$litPart$;if(void 0===h){const t=s?.renderBefore??null;e._$litPart$=h=new k(i.insertBefore(c(),t),t,void 0,s??{});}return h._$AI(t),h};
+const t=globalThis,i$1=t=>t,s$1=t.trustedTypes,e=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,h="$lit$",o$2=`lit$${Math.random().toFixed(9).slice(2)}$`,n$1="?"+o$2,r$2=`<${n$1}>`,l=document,c=()=>l.createComment(""),a=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,d=t=>u(t)||"function"==typeof t?.[Symbol.iterator],f="[ \t\n\f\r]",v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${f}(?:([^\\s"'>=/]+)(${f}*=${f}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,x=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),b=x(1),E=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),C=new WeakMap,P=l.createTreeWalker(l,129);function V(t,i){if(!u(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e?e.createHTML(i):i}const N=(t,i)=>{const s=t.length-1,e=[];let n,l=2===i?"<svg>":3===i?"<math>":"",c=v;for(let i=0;i<s;i++){const s=t[i];let a,u,d=-1,f=0;for(;f<s.length&&(c.lastIndex=f,u=c.exec(s),null!==u);)f=c.lastIndex,c===v?"!--"===u[1]?c=_:void 0!==u[1]?c=m:void 0!==u[2]?(y.test(u[2])&&(n=RegExp("</"+u[2],"g")),c=p):void 0!==u[3]&&(c=p):c===p?">"===u[0]?(c=n??v,d=-1):void 0===u[1]?d=-2:(d=c.lastIndex-u[2].length,a=u[1],c=void 0===u[3]?p:'"'===u[3]?$:g):c===$||c===g?c=p:c===_||c===m?c=v:(c=p,n=void 0);const x=c===p&&t[i+1].startsWith("/>")?" ":"";l+=c===v?s+r$2:d>=0?(e.push(a),s.slice(0,d)+h+s.slice(d)+o$2+x):s+o$2+(-2===d?i:x);}return [V(t,l+(t[s]||"<?>")+(2===i?"</svg>":3===i?"</math>":"")),e]};class S{constructor({strings:t,_$litType$:i},e){let r;this.parts=[];let l=0,a=0;const u=t.length-1,d=this.parts,[f,v]=N(t,i);if(this.el=S.createElement(f,e),P.currentNode=this.el.content,2===i||3===i){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes);}for(;null!==(r=P.nextNode())&&d.length<u;){if(1===r.nodeType){if(r.hasAttributes())for(const t of r.getAttributeNames())if(t.endsWith(h)){const i=v[a++],s=r.getAttribute(t).split(o$2),e=/([.?@])?(.*)/.exec(i);d.push({type:1,index:l,name:e[2],strings:s,ctor:"."===e[1]?I:"?"===e[1]?L:"@"===e[1]?z:H}),r.removeAttribute(t);}else t.startsWith(o$2)&&(d.push({type:6,index:l}),r.removeAttribute(t));if(y.test(r.tagName)){const t=r.textContent.split(o$2),i=t.length-1;if(i>0){r.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)r.append(t[s],c()),P.nextNode(),d.push({type:2,index:++l});r.append(t[i],c());}}}else if(8===r.nodeType)if(r.data===n$1)d.push({type:2,index:l});else {let t=-1;for(;-1!==(t=r.data.indexOf(o$2,t+1));)d.push({type:7,index:l}),t+=o$2.length-1;}l++;}}static createElement(t,i){const s=l.createElement("template");return s.innerHTML=t,s}}function M(t,i,s=t,e){if(i===E)return i;let h=void 0!==e?s._$Co?.[e]:s._$Cl;const o=a(i)?void 0:i._$litDirective$;return h?.constructor!==o&&(h?._$AO?.(false),void 0===o?h=void 0:(h=new o(t),h._$AT(t,s,e)),void 0!==e?(s._$Co??=[])[e]=h:s._$Cl=h),void 0!==h&&(i=M(t,h._$AS(t,i.values),h,e)),i}class R{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:i},parts:s}=this._$AD,e=(t?.creationScope??l).importNode(i,true);P.currentNode=e;let h=P.nextNode(),o=0,n=0,r=s[0];for(;void 0!==r;){if(o===r.index){let i;2===r.type?i=new k(h,h.nextSibling,this,t):1===r.type?i=new r.ctor(h,r.name,r.strings,this,t):6===r.type&&(i=new Z(h,this,t)),this._$AV.push(i),r=s[++n];}o!==r?.index&&(h=P.nextNode(),o++);}return P.currentNode=l,e}p(t){let i=0;for(const s of this._$AV) void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class k{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,i,s,e){this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cv=e?.isConnected??true;}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t?.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=M(this,t,i),a(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==E&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):d(t)?this.k(t):this._(t);}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}_(t){this._$AH!==A&&a(this._$AH)?this._$AA.nextSibling.data=t:this.T(l.createTextNode(t)),this._$AH=t;}$(t){const{values:i,_$litType$:s}=t,e="number"==typeof s?this._$AC(t):(void 0===s.el&&(s.el=S.createElement(V(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===e)this._$AH.p(i);else {const t=new R(e,this),s=t.u(this.options);t.p(i),this.T(s),this._$AH=t;}}_$AC(t){let i=C.get(t.strings);return void 0===i&&C.set(t.strings,i=new S(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const h of t)e===i.length?i.push(s=new k(this.O(c()),this.O(c()),this,this.options)):s=i[e],s._$AI(h),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,s){for(this._$AP?.(false,true,s);t!==this._$AB;){const s=i$1(t).nextSibling;i$1(t).remove(),t=s;}}setConnected(t){ void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t));}}class H{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,i,s,e,h){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=h,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}_$AI(t,i=this,s,e){const h=this.strings;let o=false;if(void 0===h)t=M(this,t,i,0),o=!a(t)||t!==this._$AH&&t!==E,o&&(this._$AH=t);else {const e=t;let n,r;for(t=h[0],n=0;n<h.length-1;n++)r=M(this,e[s+n],i,n),r===E&&(r=this._$AH[n]),o||=!a(r)||r!==this._$AH[n],r===A?t=A:t!==A&&(t+=(r??"")+h[n+1]),this._$AH[n]=r;}o&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"");}}class I extends H{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}class L extends H{constructor(){super(...arguments),this.type=4;}j(t){this.element.toggleAttribute(this.name,!!t&&t!==A);}}class z extends H{constructor(t,i,s,e,h){super(t,i,s,e,h),this.type=5;}_$AI(t,i=this){if((t=M(this,t,i,0)??A)===E)return;const s=this._$AH,e=t===A&&s!==A||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,h=t!==A&&(s===A||e);e&&this.element.removeEventListener(this.name,this,s),h&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t);}}class Z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){M(this,t);}}const B=t.litHtmlPolyfillSupport;B?.(S,k),(t.litHtmlVersions??=[]).push("3.3.3");const D=(t,i,s)=>{const e=s?.renderBefore??i;let h=e._$litPart$;if(void 0===h){const t=s?.renderBefore??null;e._$litPart$=h=new k(i.insertBefore(c(),t),t,void 0,s??{});}return h._$AI(t),h};
 
 /**
  * @license
@@ -99,6 +99,7 @@ const TRANSLATIONS = {
     en: {
         history: 'History',
         error_loading_data: 'Error loading historical data',
+        no_data: 'No data',
         min_label: 'Min',
         max_label: 'Max',
         hours_ago: 'h ago',
@@ -108,6 +109,7 @@ const TRANSLATIONS = {
     fr: {
         history: 'Historique',
         error_loading_data: 'Erreur lors du chargement des données historiques',
+        no_data: 'Aucune donnée',
         min_label: 'Min',
         max_label: 'Max',
         hours_ago: 'h',
@@ -122,6 +124,8 @@ const DEFAULTS = {
     intervals: 48,
     start_offset: 0, // No offset by default (show recent history ending at "now")
     height: 60,
+    label_count: 1,
+    label_format: 'relative',
     show_min_max: false,
     digits: 1,
     compact: false,
@@ -156,12 +160,16 @@ class WaterfallHistoryCard extends i {
         await Promise.resolve().then(function () { return editor; });
         return document.createElement('waterfall-history-card-editor');
     }
-    // Provide default stub configuration
-    static getStubConfig() {
+    // Provide default stub configuration for the card picker preview.
+    // HA passes the hass object so we can pick a real entity to display.
+    static getStubConfig(hass) {
+        const sensorEntity = hass
+            ? Object.keys(hass.states).find((entityId) => entityId.startsWith('sensor.'))
+            : undefined;
         return {
             title: 'History',
             hours: 24,
-            entities: [],
+            entities: sensorEntity ? [sensorEntity] : [],
         };
     }
     setConfig(config) {
@@ -179,6 +187,8 @@ class WaterfallHistoryCard extends i {
             gradient: config.gradient || DEFAULTS.gradient,
             show_current: config.show_current !== false,
             show_labels: config.show_labels !== false,
+            label_count: typeof config.label_count === 'number' ? config.label_count : DEFAULTS.label_count,
+            label_format: config.label_format || DEFAULTS.label_format,
             show_min_max: config.show_min_max || DEFAULTS.show_min_max,
             show_icons: config.show_icons !== false,
             unit: config.unit ?? undefined,
@@ -453,6 +463,25 @@ class WaterfallHistoryCard extends i {
                 }
             });
         }
+        // For min/max mode: include initialState in bucket 0's extreme comparison.
+        // The pre-window state was active from the start of the window until the first change
+        // in bucket 0, so it must be considered as a candidate extreme for that bucket.
+        if (bucketExtreme !== null && initialState !== null &&
+            initialState !== UNKNOWN_STATE && initialState !== UNAVAILABLE_STATE) {
+            if (bucketExtreme[0] === null) {
+                bucketExtreme[0] = initialState;
+            }
+            else if (intervalValue === 'min' && initialState < bucketExtreme[0]) {
+                bucketExtreme[0] = initialState;
+            }
+            else if (intervalValue === 'max' && initialState > bucketExtreme[0]) {
+                bucketExtreme[0] = initialState;
+            }
+        }
+        // In min/max mode capture a copy of last raw values before overwriting with extremes.
+        // This is used for fill operations so empty buckets get the carry-over state (the value
+        // that was actually active during the gap), not an adjacent bucket's extreme.
+        const fillValues = bucketExtreme !== null ? [...processed] : null;
         // Merge extreme values into processed array.
         // Where a real extreme exists, it replaces the last value for that bucket.
         // Buckets that only had special states (unknown/unavailable) are left as-is.
@@ -466,23 +495,26 @@ class WaterfallHistoryCard extends i {
         // Apply initial state to bucket 0 if it wasn't set by a state change within the window
         if (initialState !== null && !bucket0ExplicitlySet) {
             processed[0] = initialState;
+            if (fillValues !== null)
+                fillValues[0] = initialState;
         }
-        // Forward fill - Propagate all states (including unavailable/unknown) until next actual state change
+        // Forward fill - Propagate all states (including unavailable/unknown) until next actual state change.
+        // In min/max mode, fill from the raw last-value array so empty buckets get the carry-over
+        // state rather than an adjacent bucket's extreme.
+        const fwd = fillValues ?? processed;
         for (let i = 1; i < processed.length; i++) {
-            if (processed[i] === null && processed[i - 1] !== null) {
-                processed[i] = processed[i - 1];
-            }
+            if (fwd[i] === null && fwd[i - 1] !== null)
+                fwd[i] = fwd[i - 1];
+            if (processed[i] === null && fwd[i - 1] !== null)
+                processed[i] = fwd[i - 1];
         }
-        // Backward fill - Don't fill FROM unavailable/unknown states
-        // Also don't overwrite unavailable/unknown states with normal states
-        for (let i = processed.length - 2; i >= 0; i--) {
-            if (processed[i] === null &&
-                processed[i + 1] !== null &&
-                processed[i + 1] !== UNKNOWN_STATE &&
-                processed[i + 1] !== UNAVAILABLE_STATE) {
-                processed[i] = processed[i + 1];
-            }
-        }
+        // NOTE: No backward fill (removed for issue #81). After forward fill, the only
+        // remaining null buckets are leading ones - time before the entity's first
+        // recorded state (entity did not exist yet, or the recorder purged the data).
+        // The HA history API already returns the state active at the window start
+        // (include_start_time_state), which initialState/bucket 0 handling covers, so
+        // backward fill could only ever fabricate values for periods with no data.
+        // Leading nulls now render as transparent "no data" segments.
         return processed.map((value, index) => ({
             time: new Date(startTime + index * timeStep),
             value
@@ -506,6 +538,10 @@ class WaterfallHistoryCard extends i {
         }
         return [min, max];
     }
+    // Returns the state_colors map for an entity, checking per-entity then global config.
+    getStateColors(entityConfig) {
+        return entityConfig?.state_colors ?? this.config?.state_colors;
+    }
     parseState(state, entityConfig) {
         if (typeof state === 'number')
             return state;
@@ -515,6 +551,15 @@ class WaterfallHistoryCard extends i {
                 return UNKNOWN_STATE;
             if (lowerState === 'unavailable')
                 return UNAVAILABLE_STATE;
+            // Multi-state: check state_colors before binary on/off so that states like 'off'
+            // in an HVAC context map to their configured index rather than binary 0.
+            const stateColors = this.getStateColors(entityConfig);
+            if (stateColors) {
+                const keys = Object.keys(stateColors);
+                const matchIndex = keys.findIndex(k => k.toLowerCase() === lowerState);
+                if (matchIndex !== -1)
+                    return matchIndex;
+            }
             if (lowerState === 'off')
                 return 0;
             if (lowerState === 'on')
@@ -539,6 +584,14 @@ class WaterfallHistoryCard extends i {
         }
         if (state === UNAVAILABLE_STATE) {
             return entityConfig.state_unavailable ?? this.config.state_unavailable ?? DEFAULTS.state_unavailable;
+        }
+        // Multi-state: return the original state name for the given index
+        const stateColors = this.getStateColors(entityConfig);
+        if (stateColors && state !== null) {
+            const keys = Object.keys(stateColors);
+            if (Number.isInteger(state) && state >= 0 && state < keys.length) {
+                return keys[state];
+            }
         }
         // Only treat 0/1 as binary when no thresholds are configured. A numeric sensor whose
         // current reading happens to be 0 or 1 (e.g. PM2.5 = 1.0) must not be shown as On/Off.
@@ -593,14 +646,24 @@ class WaterfallHistoryCard extends i {
         return DEFAULT_THRESHOLDS_BOOLEAN;
     }
     getColorForValue(value, entityConfig) {
+        // Null means no data exists for the bucket (e.g. before the entity was created).
+        // Render transparent so the container background shows through as an empty track.
         if (value === null || isNaN(value))
-            return '#666666';
+            return 'transparent';
         // Handle special states first
         if (value === UNKNOWN_STATE) {
             return entityConfig.color_unknown ?? this.config.color_unknown ?? DEFAULTS.color_unknown;
         }
         if (value === UNAVAILABLE_STATE) {
             return entityConfig.color_unavailable ?? this.config.color_unavailable ?? DEFAULTS.color_unavailable;
+        }
+        // Multi-state: look up color by index into state_colors keys
+        const stateColors = this.getStateColors(entityConfig);
+        if (stateColors) {
+            const keys = Object.keys(stateColors);
+            if (Number.isInteger(value) && value >= 0 && value < keys.length) {
+                return stateColors[keys[value]] || '#666666';
+            }
         }
         let thresholds = entityConfig.thresholds ?? this.config.thresholds;
         // Check if this is a binary value and apply binary colors
@@ -700,8 +763,11 @@ class WaterfallHistoryCard extends i {
             return b `<div class="error">Entity not found: ${entityId}</div>`;
         }
         const name = entityObj.name || entity.attributes.friendly_name || entityId;
-        // Resolve icon
-        let icon = entity.attributes?.icon;
+        // Resolve icon. Precedence: per-entity configured icon, then global
+        // configured icon, then the entity's own icon attribute, then a
+        // domain-based default. The configured overrides must win so that the
+        // "Custom Icon" editor field (e.g. mdi:power-cycle) actually takes effect.
+        let icon = entityObj.icon || this.config.icon || entity.attributes?.icon;
         if (!icon) {
             const domain = entityId.split('.')[0];
             icon = DEFAULT_DOMAIN_ICONS[domain] || 'mdi:bookmark';
@@ -721,23 +787,36 @@ class WaterfallHistoryCard extends i {
             : [...historyData.map(d => d.value), this.parseState(entity.state, entityObj)];
         const [actualMin, actualMax] = this.getMinMax(history);
         const showLabels = entityObj.show_labels ?? this.config.show_labels;
+        const labelCount = entityObj.label_count ?? this.config.label_count ?? DEFAULTS.label_count;
+        const labelFormat = entityObj.label_format ?? this.config.label_format ?? DEFAULTS.label_format;
         const showMinMax = entityObj.show_min_max ?? this.config.show_min_max;
         const showCurrent = entityObj.show_current ?? this.config.show_current;
         const hours = entityObj.hours ?? this.config.hours;
         const intervals = entityObj.intervals ?? this.config.intervals;
         const current = this.parseState(entity.state, entityObj);
         const inlineLayout = entityObj.inline_layout ?? this.config.inline_layout;
-        // Calculate label text based on offset
-        const startLabelHours = hours + startOffset;
-        const endLabelHours = startOffset;
-        const startLabel = `${startLabelHours}${this.t('hours_ago')}`;
-        const endLabel = startOffset > 0 ? `${endLabelHours}${this.t('hours_ago')}` : this.t('now');
+        // Build evenly-spaced time labels. label_count=1 gives [start, end].
+        // label_count=N gives N+1 labels spaced (hours/N) apart, capped at hours.
+        const segments = Math.max(1, Math.min(Math.round(labelCount), hours));
+        const endTime = Date.now() - startOffset * 60 * 60 * 1000;
+        const timeLabels = Array.from({ length: segments + 1 }, (_, i) => {
+            const hoursAgo = (hours + startOffset) - (i * hours / segments);
+            if (labelFormat === 'relative') {
+                if (hoursAgo <= startOffset && startOffset === 0)
+                    return this.t('now');
+                return `${Math.round(hoursAgo)}${this.t('hours_ago')}`;
+            }
+            const ts = new Date(endTime - (segments - i) * (hours / segments) * 60 * 60 * 1000);
+            return ts.toLocaleTimeString([], labelFormat === '12h'
+                ? { hour: 'numeric', minute: '2-digit', hour12: true }
+                : { hour: '2-digit', minute: '2-digit', hour12: false });
+        });
         // Render waterfall bars
         const waterfallBars = b `
       ${history.map((value, index) => {
             const isLast = index === history.length - 1;
             const color = this.getColorForValue(value, entityObj);
-            const title = `${this.getTimeLabel(index, intervals, hours, startOffset)} : ${value !== null ? this.displayState(value, entityObj) : this.t('error_loading_data')}`;
+            const title = `${this.getTimeLabel(index, intervals, hours, startOffset)} : ${value !== null ? this.displayState(value, entityObj) : this.t('no_data')}`;
             return b `
           <div
             class="bar-segment ${isLast ? 'last-bar' : ''}"
@@ -761,8 +840,7 @@ class WaterfallHistoryCard extends i {
             </div>
             ${showLabels ? b `
               <div class="labels">
-                <span>${startLabel}</span>
-                <span>${endLabel}</span>
+                ${timeLabels.map(l => b `<span>${l}</span>`)}
               </div>
             ` : ''}
           </div>
@@ -788,8 +866,7 @@ class WaterfallHistoryCard extends i {
         </div>
         ${showLabels ? b `
           <div class="labels">
-            <span>${startLabel}</span>
-            <span>${endLabel}</span>
+            ${timeLabels.map(l => b `<span>${l}</span>`)}
           </div>
         ` : ''}
         ${showMinMax ? b `
@@ -830,13 +907,13 @@ WaterfallHistoryCard.styles = i$3 `
     }
 
     .card-header {
-      font-size: var(--header-font-size, 11px);
-      font-weight: 600;
-      letter-spacing: 0.10em;
-      text-transform: uppercase;
+      font-size: var(--waterfall-header-font-size, var(--header-font-size, 11px));
+      font-weight: var(--waterfall-header-font-weight, 600);
+      letter-spacing: var(--waterfall-header-letter-spacing, 0.10em);
+      text-transform: var(--waterfall-header-text-transform, uppercase);
       padding-bottom: 10px;
       margin-bottom: 2px;
-      color: var(--secondary-text-color, #727272);
+      color: var(--waterfall-header-color, var(--secondary-text-color, #727272));
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -873,20 +950,20 @@ WaterfallHistoryCard.styles = i$3 `
     }
 
     .entity-name {
-      font-size: var(--entity-name-font-size, 11px);
-      font-weight: 500;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--primary-text-color);
+      font-size: var(--waterfall-entity-name-font-size, var(--entity-name-font-size, 11px));
+      font-weight: var(--waterfall-entity-name-font-weight, 500);
+      letter-spacing: var(--waterfall-entity-name-letter-spacing, 0.07em);
+      text-transform: var(--waterfall-entity-name-text-transform, uppercase);
+      color: var(--waterfall-entity-name-color, var(--primary-text-color));
     }
 
     .current-value {
       margin-left: auto;
-      font-size: var(--entity-name-font-size, 11px);
-      font-weight: 500;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--primary-text-color);
+      font-size: var(--waterfall-value-font-size, var(--waterfall-entity-name-font-size, var(--entity-name-font-size, 11px)));
+      font-weight: var(--waterfall-value-font-weight, var(--waterfall-entity-name-font-weight, 500));
+      letter-spacing: var(--waterfall-value-letter-spacing, var(--waterfall-entity-name-letter-spacing, 0.07em));
+      text-transform: var(--waterfall-value-text-transform, var(--waterfall-entity-name-text-transform, uppercase));
+      color: var(--waterfall-value-color, var(--waterfall-entity-name-color, var(--primary-text-color)));
       font-variant-numeric: tabular-nums lining-nums;
       font-feature-settings: 'tnum' 1;
     }
@@ -914,18 +991,18 @@ WaterfallHistoryCard.styles = i$3 `
     .labels {
       display: flex;
       justify-content: space-between;
-      font-size: 9.5px;
-      letter-spacing: 0.04em;
-      color: var(--primary-text-color);
+      font-size: var(--waterfall-labels-font-size, 9.5px);
+      letter-spacing: var(--waterfall-labels-letter-spacing, 0.04em);
+      color: var(--waterfall-labels-color, var(--primary-text-color));
       margin-top: var(--labels-margin-top, 5px);
     }
 
     .min-max-label {
       display: block;
       width: 100%;
-      font-size: 10px;
-      letter-spacing: 0.03em;
-      color: var(--primary-text-color);
+      font-size: var(--waterfall-min-max-font-size, 10px);
+      letter-spacing: var(--waterfall-min-max-letter-spacing, 0.03em);
+      color: var(--waterfall-min-max-color, var(--primary-text-color));
       text-align: center;
     }
 
@@ -935,11 +1012,11 @@ WaterfallHistoryCard.styles = i$3 `
 
     /* Compact mode overrides */
     :host(.compact) .card-header {
-      font-size: 10px;
+      font-size: var(--waterfall-header-font-size, 10px);
     }
 
     :host(.compact) .entity-name {
-      font-size: 10px;
+      font-size: var(--waterfall-entity-name-font-size, 10px);
     }
 
     :host(.compact) .labels {
@@ -983,8 +1060,8 @@ WaterfallHistoryCard.styles = i$3 `
     }
 
     .entity-inline-container .entity-name {
-      font-size: var(--entity-name-font-size, 11px);
-      font-weight: 500;
+      font-size: var(--waterfall-entity-name-font-size, var(--entity-name-font-size, 11px));
+      font-weight: var(--waterfall-entity-name-font-weight, 500);
       white-space: nowrap;
       line-height: var(--waterfall-height, 60px);
     }
@@ -1005,11 +1082,11 @@ WaterfallHistoryCard.styles = i$3 `
     .entity-inline-container .entity-inline-value {
       flex-shrink: 0;
       text-align: right;
-      font-size: var(--entity-name-font-size, 11px);
-      font-weight: 500;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--primary-text-color);
+      font-size: var(--waterfall-value-font-size, var(--waterfall-entity-name-font-size, var(--entity-name-font-size, 11px)));
+      font-weight: var(--waterfall-value-font-weight, var(--waterfall-entity-name-font-weight, 500));
+      letter-spacing: var(--waterfall-value-letter-spacing, var(--waterfall-entity-name-letter-spacing, 0.07em));
+      text-transform: var(--waterfall-value-text-transform, var(--waterfall-entity-name-text-transform, uppercase));
+      color: var(--waterfall-value-color, var(--waterfall-entity-name-color, var(--primary-text-color)));
       font-variant-numeric: tabular-nums lining-nums;
       font-feature-settings: 'tnum' 1;
       white-space: nowrap;
@@ -1031,7 +1108,7 @@ WaterfallHistoryCard.styles = i$3 `
     }
 
     :host(.compact) .entity-inline-container .entity-name {
-      font-size: 10px;
+      font-size: var(--waterfall-entity-name-font-size, 10px);
     }
 
   `;
@@ -1053,9 +1130,10 @@ window.customCards = window.customCards || [];
 window.customCards.push({
     type: 'waterfall-history-card',
     name: 'Waterfall History Card',
-    description: 'A horizontal waterfall display for historical sensor data with visual editor'
+    description: 'A horizontal waterfall display for historical sensor data with visual editor',
+    preview: true,
 });
-console.info(`%c WATERFALL-HISTORY-CARD %c v4.5.3 `, 'color: black; background: #F2720C; font-weight: 600;', 'color: black; background: #00a5c9; font-weight: 600;');
+console.info(`%c WATERFALL-HISTORY-CARD %c 2026.8.3 `, 'color: black; background: #F2720C; font-weight: 600;', 'color: black; background: #00a5c9; font-weight: 600;');
 
 var NumberFormat;
 (function (NumberFormat) {
@@ -1197,6 +1275,66 @@ class WaterfallHistoryCardEditor extends i {
             ...newConfig.thresholds[index],
             [key]: key === 'value' ? Number(value) : value
         };
+        fireEvent(this, 'config-changed', { config: newConfig });
+    }
+    // Global state_colors management
+    _addStateColor() {
+        const entries = Object.entries(this._config.state_colors || {});
+        entries.push(['', '#cccccc']);
+        this._configValueChanged('state_colors', Object.fromEntries(entries));
+    }
+    _removeStateColor(index) {
+        const entries = Object.entries(this._config.state_colors || {});
+        entries.splice(index, 1);
+        this._configValueChanged('state_colors', entries.length > 0 ? Object.fromEntries(entries) : undefined);
+    }
+    _stateColorChanged(index, key, value) {
+        const entries = Object.entries(this._config.state_colors || {});
+        if (key === 'state') {
+            entries[index] = [value, entries[index][1]];
+        }
+        else {
+            entries[index] = [entries[index][0], value];
+        }
+        this._configValueChanged('state_colors', Object.fromEntries(entries));
+    }
+    // Per-entity state_colors management
+    _addEntityStateColor(entityIndex) {
+        const newConfig = { ...this._config };
+        newConfig.entities = [...newConfig.entities];
+        const currentEntity = newConfig.entities[entityIndex];
+        const entityConfig = typeof currentEntity === 'string' ? { entity: currentEntity } : { ...currentEntity };
+        const entries = Object.entries(entityConfig.state_colors || {});
+        entries.push(['', '#cccccc']);
+        entityConfig.state_colors = Object.fromEntries(entries);
+        newConfig.entities[entityIndex] = entityConfig;
+        fireEvent(this, 'config-changed', { config: newConfig });
+    }
+    _removeEntityStateColor(entityIndex, stateIndex) {
+        const newConfig = { ...this._config };
+        newConfig.entities = [...newConfig.entities];
+        const currentEntity = newConfig.entities[entityIndex];
+        const entityConfig = typeof currentEntity === 'string' ? { entity: currentEntity } : { ...currentEntity };
+        const entries = Object.entries(entityConfig.state_colors || {});
+        entries.splice(stateIndex, 1);
+        entityConfig.state_colors = entries.length > 0 ? Object.fromEntries(entries) : undefined;
+        newConfig.entities[entityIndex] = entityConfig;
+        fireEvent(this, 'config-changed', { config: newConfig });
+    }
+    _entityStateColorChanged(entityIndex, stateIndex, key, value) {
+        const newConfig = { ...this._config };
+        newConfig.entities = [...newConfig.entities];
+        const currentEntity = newConfig.entities[entityIndex];
+        const entityConfig = typeof currentEntity === 'string' ? { entity: currentEntity } : { ...currentEntity };
+        const entries = Object.entries(entityConfig.state_colors || {});
+        if (key === 'state') {
+            entries[stateIndex] = [value, entries[stateIndex][1]];
+        }
+        else {
+            entries[stateIndex] = [entries[stateIndex][0], value];
+        }
+        entityConfig.state_colors = Object.fromEntries(entries);
+        newConfig.entities[entityIndex] = entityConfig;
         fireEvent(this, 'config-changed', { config: newConfig });
     }
     // Per-entity threshold management
@@ -1345,6 +1483,30 @@ class WaterfallHistoryCardEditor extends i {
           ></ha-switch>
         </div>
 
+        <ha-selector
+          .hass=${this.hass}
+          .label=${'Label Count'}
+          .value=${this._config.label_count ?? DEFAULTS.label_count}
+          .selector=${{ number: { min: 1, max: 168, mode: 'box', step: 1 } }}
+          @value-changed=${(ev) => this._configValueChanged('label_count', Number(ev.detail.value))}
+        ></ha-selector>
+
+        <ha-selector
+          .hass=${this.hass}
+          .label=${'Label Format'}
+          .selector=${{
+            select: {
+                options: [
+                    { value: 'relative', label: 'Relative (e.g. 24h ago, Now)' },
+                    { value: '24h', label: '24-hour time (e.g. 14:30)' },
+                    { value: '12h', label: '12-hour time (e.g. 2:30 PM)' },
+                ]
+            }
+        }}
+          .value=${this._config.label_format || DEFAULTS.label_format}
+          @value-changed=${(ev) => this._configValueChanged('label_format', ev.detail.value)}
+        ></ha-selector>
+
         <div class="toggle-row">
           <label>Show Current Value</label>
           <ha-switch
@@ -1469,6 +1631,8 @@ class WaterfallHistoryCardEditor extends i {
             .selector=${{ text: {} }}
             @value-changed=${(ev) => this._configValueChanged('state_unavailable', ev.detail.value)}
           ></ha-selector>
+
+          ${this._renderGlobalStateColors()}
         </div>
       </ha-expansion-panel>
     `;
@@ -1617,6 +1781,30 @@ class WaterfallHistoryCardEditor extends i {
             ></ha-switch>
           </div>
 
+          <ha-selector
+            .hass=${this.hass}
+            .label=${'Label Count (override)'}
+            .value=${entityConfig.label_count || ''}
+            .selector=${{ number: { min: 1, max: 168, mode: 'box', step: 1 } }}
+            @value-changed=${(ev) => this._entityChanged(index, 'label_count', ev.detail.value ? Number(ev.detail.value) : undefined)}
+          ></ha-selector>
+
+          <ha-selector
+            .hass=${this.hass}
+            .label=${'Label Format (override)'}
+            .selector=${{
+            select: {
+                options: [
+                    { value: 'relative', label: 'Relative (e.g. 24h ago, Now)' },
+                    { value: '24h', label: '24-hour time (e.g. 14:30)' },
+                    { value: '12h', label: '12-hour time (e.g. 2:30 PM)' },
+                ]
+            }
+        }}
+            .value=${entityConfig.label_format || ''}
+            @value-changed=${(ev) => this._entityChanged(index, 'label_format', ev.detail.value || undefined)}
+          ></ha-selector>
+
           <div class="toggle-row">
             <label>Show Current (override)</label>
             <ha-switch
@@ -1693,9 +1881,95 @@ class WaterfallHistoryCardEditor extends i {
             @value-changed=${(ev) => this._entityChanged(index, 'color_off', ev.detail.value)}
           ></ha-selector>
 
+          ${this._renderEntityStateColors(entityConfig, index)}
           ${this._renderEntityThresholds(entityConfig, index)}
         </div>
       </ha-expansion-panel>
+    `;
+    }
+    _renderGlobalStateColors() {
+        const entries = Object.entries(this._config.state_colors || {});
+        return b `
+      <div class="entity-thresholds">
+        <h4>Multi-State Colors (Global)</h4>
+        <p class="helper-text">
+          Map HA state strings to colors for multi-state entities (e.g. HVAC modes).
+          Add one row per state in the order they should appear. The state name must
+          match the HA state value exactly (case-insensitive).
+        </p>
+
+        ${entries.length === 0 ? b `
+          <p class="info-text">No state colors defined.</p>
+        ` : ''}
+
+        ${entries.map(([stateName, color], index) => b `
+          <div class="threshold-item">
+            <input
+              type="text"
+              placeholder="State name (e.g. cool)"
+              .value=${stateName}
+              style="flex:1;padding:4px 8px;font-size:14px;border:1px solid var(--divider-color,#e0e0e0);border-radius:4px;background:var(--card-background-color,#fff);color:var(--primary-text-color);"
+              @change=${(ev) => this._stateColorChanged(index, 'state', ev.target.value)}
+            >
+            <input
+              type="text"
+              placeholder="e.g., #FF0000"
+              .value=${color}
+              style="flex:1;padding:4px 8px;font-size:14px;border:1px solid var(--divider-color,#e0e0e0);border-radius:4px;background:var(--card-background-color,#fff);color:var(--primary-text-color);"
+              @input=${(ev) => this._stateColorChanged(index, 'color', ev.target.value)}
+            >
+            <mwc-button @click=${() => this._removeStateColor(index)}>
+              Remove
+            </mwc-button>
+          </div>
+        `)}
+
+        <mwc-button @click=${this._addStateColor}>
+          Add State Color
+        </mwc-button>
+      </div>
+    `;
+    }
+    _renderEntityStateColors(entityConfig, entityIndex) {
+        const entries = Object.entries(entityConfig.state_colors || {});
+        return b `
+      <div class="entity-thresholds">
+        <h4>Multi-State Colors (Per-Entity)</h4>
+        <p class="helper-text">
+          Map HA state strings to colors for this entity. Overrides global state colors.
+          Add one row per state in the order they should appear.
+        </p>
+
+        ${entries.length === 0 ? b `
+          <p class="info-text">No entity-specific state colors. Using global state colors.</p>
+        ` : ''}
+
+        ${entries.map(([stateName, color], stateIndex) => b `
+          <div class="threshold-item">
+            <input
+              type="text"
+              placeholder="State name (e.g. cool)"
+              .value=${stateName}
+              style="flex:1;padding:4px 8px;font-size:14px;border:1px solid var(--divider-color,#e0e0e0);border-radius:4px;background:var(--card-background-color,#fff);color:var(--primary-text-color);"
+              @change=${(ev) => this._entityStateColorChanged(entityIndex, stateIndex, 'state', ev.target.value)}
+            >
+            <input
+              type="text"
+              placeholder="e.g., #FF0000"
+              .value=${color}
+              style="flex:1;padding:4px 8px;font-size:14px;border:1px solid var(--divider-color,#e0e0e0);border-radius:4px;background:var(--card-background-color,#fff);color:var(--primary-text-color);"
+              @input=${(ev) => this._entityStateColorChanged(entityIndex, stateIndex, 'color', ev.target.value)}
+            >
+            <mwc-button @click=${() => this._removeEntityStateColor(entityIndex, stateIndex)}>
+              Remove
+            </mwc-button>
+          </div>
+        `)}
+
+        <mwc-button @click=${() => this._addEntityStateColor(entityIndex)}>
+          Add State Color
+        </mwc-button>
+      </div>
     `;
     }
     _renderEntityThresholds(entityConfig, entityIndex) {

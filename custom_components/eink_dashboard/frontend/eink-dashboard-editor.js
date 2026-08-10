@@ -1,5 +1,16 @@
-// E-Ink Dashboard widget list editor panel.
-// Loaded on demand by eink-dashboard-card.js when edit mode is entered.
+// Copyright 2026 Andreas Schneider
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 import "./eink-widget-picker.js";
 const EDITOR_TAG = "eink-dashboard-editor";
 // ── Constants (mirror const.py / render.py) ─────────────────────
@@ -10,6 +21,18 @@ const DEFAULT_CARD_STYLE = "none";
 const DEFAULT_ICON_STYLE = "filled";
 // ── Widget type registry ─────────────────────────────────────────
 export const WIDGET_TYPES = {
+    frame: {
+        label: "Frame",
+        description: "Decorative rounded-corner border box",
+        icon: "mdi:rectangle-outline",
+        defaults: {
+            type: "frame",
+            x: 0,
+            y: 0,
+            w: 400,
+            h: 200,
+        },
+    },
     heading: {
         label: "Heading",
         description: "Section heading with optional icon and badges",
@@ -128,6 +151,22 @@ export const WIDGET_TYPES = {
             card_style: DEFAULT_CARD_STYLE,
         },
     },
+    calendar: {
+        label: "Calendar",
+        description: "Upcoming events from a calendar entity",
+        icon: "mdi:calendar",
+        defaults: {
+            type: "calendar",
+            x: 24,
+            y: 0,
+            w: 400,
+            h: 56,
+            entity: "",
+            max_events: 5,
+            days_ahead: 7,
+            card_style: DEFAULT_CARD_STYLE,
+        },
+    },
     sensor: {
         label: "Sensor",
         description: "Single sensor with optional history sparkline graph",
@@ -141,6 +180,35 @@ export const WIDGET_TYPES = {
             entity: "",
             card_style: DEFAULT_CARD_STYLE,
             icon_style: DEFAULT_ICON_STYLE,
+        },
+    },
+    gauge: {
+        label: "Gauge",
+        description: "Circular arc gauge for a sensor value",
+        icon: "mdi:gauge",
+        defaults: {
+            type: "gauge",
+            x: 24,
+            y: 0,
+            w: 240,
+            h: 240,
+            entity: "",
+            card_style: DEFAULT_CARD_STYLE,
+        },
+    },
+    graph: {
+        label: "Graph",
+        description: "Line or bar graph with up to three overlaid entities",
+        icon: "mdi:chart-line",
+        defaults: {
+            type: "graph",
+            x: 24,
+            y: 0,
+            w: 400,
+            // 5 × DEFAULT_ROW_H gives adequate graph area below the header.
+            h: 280,
+            entity: "",
+            card_style: DEFAULT_CARD_STYLE,
         },
     },
 };
@@ -211,6 +279,48 @@ function posXYWH(d) {
         },
     ];
 }
+/** Available named shades for color threshold overrides. */
+const SHADE_OPTIONS = [
+    { value: "black", label: "Black" },
+    { value: "dark", label: "Dark" },
+    { value: "medium", label: "Medium" },
+    { value: "light", label: "Light" },
+];
+/**
+ * Threshold grid schema for one numbered threshold slot (1–4).
+ *
+ * Each slot has a numeric value, an optional hex color string,
+ * and an optional named shade override. When both color and
+ * shade are present, shade takes precedence in the renderer.
+ *
+ * @param n - Threshold slot number (1–4).
+ * @returns A grid ha-form schema entry with value, color, shade.
+ */
+function thresholdGrid(n) {
+    return {
+        type: "grid",
+        name: "",
+        schema: [
+            {
+                name: `threshold_${n}_value`,
+                selector: { number: { mode: "box" } },
+            },
+            {
+                name: `threshold_${n}_color`,
+                selector: { text: {} },
+            },
+            {
+                name: `threshold_${n}_shade`,
+                selector: {
+                    select: {
+                        mode: "dropdown",
+                        options: SHADE_OPTIONS,
+                    },
+                },
+            },
+        ],
+    };
+}
 /**
  * Card style dropdown selector.
  *
@@ -230,6 +340,18 @@ function cardStyleSelector() {
                 mode: "dropdown",
             },
         },
+    };
+}
+/**
+ * Bold-value boolean toggle.
+ *
+ * @returns A single ha-form schema entry.
+ */
+function boldValueSelector() {
+    return {
+        name: "bold_value",
+        default: false,
+        selector: { boolean: {} },
     };
 }
 /**
@@ -314,6 +436,68 @@ function identitySection() {
     };
 }
 export const SCHEMAS = {
+    frame: (d) => [
+        identitySection(),
+        {
+            name: "content",
+            type: "expandable",
+            flatten: true,
+            expanded: true,
+            title: "Appearance",
+            icon: "mdi:palette",
+            schema: [
+                {
+                    type: "grid",
+                    name: "",
+                    schema: [
+                        {
+                            name: "color",
+                            default: 0,
+                            selector: {
+                                number: {
+                                    min: 0, max: 255, step: 1, mode: "box",
+                                },
+                            },
+                        },
+                        {
+                            name: "fill_color",
+                            selector: {
+                                number: {
+                                    min: 0, max: 255, step: 1, mode: "box",
+                                },
+                            },
+                        },
+                        {
+                            name: "border_width",
+                            default: 2,
+                            selector: {
+                                number: {
+                                    min: 1, max: 40, step: 1, mode: "box",
+                                },
+                            },
+                        },
+                        {
+                            name: "border_radius",
+                            default: 12,
+                            selector: {
+                                number: {
+                                    min: 0, max: 200, step: 2, mode: "box",
+                                },
+                            },
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            name: "layout",
+            type: "expandable",
+            flatten: true,
+            title: "Layout",
+            icon: "mdi:move-resize",
+            schema: [{ type: "grid", name: "", schema: posXYWH(d) }],
+        },
+    ],
     separator: (d) => [
         identitySection(),
         {
@@ -421,6 +605,14 @@ export const SCHEMAS = {
                     default: 5,
                     selector: { number: { min: 0, max: 14, mode: "box" } },
                 },
+                {
+                    name: "temperature_entity",
+                    selector: { entity: { domain: "sensor" } },
+                },
+                {
+                    name: "humidity_entity",
+                    selector: { entity: { domain: "sensor" } },
+                },
             ],
         },
         {
@@ -458,6 +650,11 @@ export const SCHEMAS = {
                 { name: "name", selector: { text: {} } },
                 { name: "icon", selector: { icon: {} } },
                 {
+                    name: "hide_icon",
+                    default: false,
+                    selector: { boolean: {} },
+                },
+                {
                     name: "hide_state",
                     default: false,
                     selector: { boolean: {} },
@@ -481,7 +678,7 @@ export const SCHEMAS = {
             flatten: true,
             title: "Appearance",
             icon: "mdi:palette",
-            schema: [cardStyleSelector(), iconStyleSelector()],
+            schema: [cardStyleSelector(), iconStyleSelector(), boldValueSelector()],
         },
     ],
     entity: (d) => [
@@ -501,6 +698,16 @@ export const SCHEMAS = {
                 },
                 { name: "name", selector: { text: {} } },
                 { name: "icon", selector: { icon: {} } },
+                {
+                    name: "hide_icon",
+                    default: false,
+                    selector: { boolean: {} },
+                },
+                {
+                    name: "hide_name",
+                    default: false,
+                    selector: { boolean: {} },
+                },
                 { name: "attribute", selector: { text: {} } },
                 { name: "unit", selector: { text: {} } },
             ],
@@ -519,7 +726,7 @@ export const SCHEMAS = {
             flatten: true,
             title: "Appearance",
             icon: "mdi:palette",
-            schema: [cardStyleSelector(), iconStyleSelector()],
+            schema: [cardStyleSelector(), iconStyleSelector(), boldValueSelector()],
         },
     ],
     entities: (d) => [
@@ -553,7 +760,7 @@ export const SCHEMAS = {
             flatten: true,
             title: "Appearance",
             icon: "mdi:palette",
-            schema: [cardStyleSelector(), iconStyleSelector()],
+            schema: [cardStyleSelector(), iconStyleSelector(), boldValueSelector()],
         },
     ],
     heading: (d) => [
@@ -644,7 +851,7 @@ export const SCHEMAS = {
             flatten: true,
             title: "Appearance",
             icon: "mdi:palette",
-            schema: [colorSelector(), cardStyleSelector()],
+            schema: [colorSelector(), cardStyleSelector(), boldValueSelector()],
         },
     ],
     sensor: (d) => [
@@ -668,6 +875,11 @@ export const SCHEMAS = {
                 },
                 { name: "name", selector: { text: {} } },
                 { name: "icon", selector: { icon: {} } },
+                {
+                    name: "hide_icon",
+                    default: false,
+                    selector: { boolean: {} },
+                },
                 { name: "unit", selector: { text: {} } },
                 {
                     name: "graph",
@@ -716,6 +928,21 @@ export const SCHEMAS = {
                         },
                     ],
                 },
+                {
+                    name: "hide_fill",
+                    default: false,
+                    selector: { boolean: {} },
+                },
+                {
+                    name: "hide_state",
+                    default: false,
+                    selector: { boolean: {} },
+                },
+                {
+                    name: "hide_name",
+                    default: false,
+                    selector: { boolean: {} },
+                },
             ],
         },
         {
@@ -732,7 +959,7 @@ export const SCHEMAS = {
             flatten: true,
             title: "Appearance",
             icon: "mdi:palette",
-            schema: [cardStyleSelector(), iconStyleSelector()],
+            schema: [cardStyleSelector(), iconStyleSelector(), boldValueSelector()],
         },
     ],
     waste_schedule: (d) => [
@@ -787,7 +1014,414 @@ export const SCHEMAS = {
             flatten: true,
             title: "Appearance",
             icon: "mdi:palette",
-            schema: [cardStyleSelector()],
+            schema: [cardStyleSelector(), boldValueSelector()],
+        },
+    ],
+    calendar: (d) => [
+        identitySection(),
+        {
+            name: "content",
+            type: "expandable",
+            flatten: true,
+            expanded: true,
+            title: "Content",
+            icon: "mdi:calendar",
+            schema: [
+                {
+                    name: "entity",
+                    required: true,
+                    selector: { entity: { domain: "calendar" } },
+                },
+                { name: "title", selector: { text: {} } },
+                {
+                    name: "max_events",
+                    default: 5,
+                    selector: {
+                        number: { min: 1, max: 20, mode: "box" },
+                    },
+                },
+                {
+                    name: "days_ahead",
+                    default: 7,
+                    selector: {
+                        number: { min: 1, max: 30, mode: "box" },
+                    },
+                },
+            ],
+        },
+        {
+            name: "layout_pos",
+            type: "expandable",
+            flatten: true,
+            title: "Layout",
+            icon: "mdi:move-resize",
+            schema: [{ type: "grid", name: "", schema: posXYWH(d) }],
+        },
+        {
+            name: "appearance",
+            type: "expandable",
+            flatten: true,
+            title: "Appearance",
+            icon: "mdi:palette",
+            schema: [cardStyleSelector(), boldValueSelector()],
+        },
+    ],
+    gauge: (d) => [
+        identitySection(),
+        {
+            name: "content",
+            type: "expandable",
+            flatten: true,
+            expanded: true,
+            title: "Content",
+            icon: "mdi:gauge",
+            schema: [
+                {
+                    name: "entity",
+                    required: true,
+                    selector: { entity: {} },
+                },
+                { name: "name", selector: { text: {} } },
+                { name: "icon", selector: { icon: {} } },
+                { name: "attribute", selector: { text: {} } },
+                {
+                    type: "grid",
+                    name: "",
+                    schema: [
+                        {
+                            name: "min",
+                            default: 0,
+                            selector: { number: { mode: "box" } },
+                        },
+                        {
+                            name: "max",
+                            default: 100,
+                            selector: { number: { mode: "box" } },
+                        },
+                    ],
+                },
+                { name: "unit", selector: { text: {} } },
+                {
+                    name: "show_unit",
+                    default: true,
+                    selector: { boolean: {} },
+                },
+                {
+                    name: "decimals",
+                    selector: {
+                        number: { min: 0, max: 4, mode: "box" },
+                    },
+                },
+                {
+                    name: "gauge_type",
+                    default: "standard",
+                    selector: {
+                        select: {
+                            mode: "dropdown",
+                            options: [
+                                { value: "standard", label: "Standard (270°)" },
+                                { value: "half", label: "Half (180°)" },
+                                { value: "full", label: "Full (360°)" },
+                            ],
+                        },
+                    },
+                },
+                {
+                    name: "needle",
+                    default: false,
+                    selector: { boolean: {} },
+                },
+                {
+                    name: "header_position",
+                    default: "bottom",
+                    selector: {
+                        select: {
+                            options: [
+                                { value: "bottom", label: "Bottom" },
+                                { value: "top", label: "Top" },
+                            ],
+                        },
+                    },
+                },
+            ],
+        },
+        {
+            name: "layout",
+            type: "expandable",
+            flatten: true,
+            title: "Layout",
+            icon: "mdi:move-resize",
+            schema: [{ type: "grid", name: "", schema: posXYWH(d) }],
+        },
+        {
+            name: "appearance",
+            type: "expandable",
+            flatten: true,
+            title: "Appearance",
+            icon: "mdi:palette",
+            schema: [cardStyleSelector(), boldValueSelector()],
+        },
+    ],
+    graph: (d) => [
+        identitySection(),
+        {
+            name: "content",
+            type: "expandable",
+            flatten: true,
+            expanded: true,
+            title: "Content",
+            icon: "mdi:chart-line",
+            schema: [
+                {
+                    name: "graph",
+                    default: "line",
+                    selector: {
+                        select: {
+                            mode: "dropdown",
+                            options: [
+                                { value: "line", label: "Line" },
+                                { value: "bar", label: "Bar" },
+                            ],
+                        },
+                    },
+                },
+                {
+                    name: "entity",
+                    required: true,
+                    selector: { entity: {} },
+                },
+                { name: "name", selector: { text: {} } },
+                { name: "icon", selector: { icon: {} } },
+                { name: "unit", selector: { text: {} } },
+                {
+                    name: "data_source",
+                    default: "history",
+                    selector: {
+                        select: {
+                            mode: "dropdown",
+                            options: [
+                                { value: "history", label: "History (recorder)" },
+                                { value: "attribute", label: "Attribute (forecast)" },
+                            ],
+                        },
+                    },
+                },
+                { name: "attribute", selector: { text: {} } },
+                {
+                    type: "grid",
+                    name: "",
+                    schema: [
+                        {
+                            name: "attribute_timestamp_key",
+                            selector: { text: {} },
+                        },
+                        {
+                            name: "attribute_value_key",
+                            selector: { text: {} },
+                        },
+                    ],
+                },
+                // hours_to_show, points_per_hour, and aggregate_func only
+                // apply to data_source="history"; ha-form has no field-level
+                // conditional visibility to hide them for "attribute" mode.
+                {
+                    type: "grid",
+                    name: "",
+                    schema: [
+                        {
+                            name: "hours_to_show",
+                            default: 24,
+                            selector: {
+                                number: { min: 1, max: 168, mode: "box" },
+                            },
+                        },
+                        {
+                            name: "points_per_hour",
+                            default: 0.5,
+                            selector: {
+                                number: {
+                                    min: 0.1,
+                                    max: 60,
+                                    step: 0.1,
+                                    mode: "box",
+                                },
+                            },
+                        },
+                    ],
+                },
+                {
+                    name: "aggregate_func",
+                    default: "avg",
+                    selector: {
+                        select: {
+                            mode: "dropdown",
+                            options: [
+                                { value: "avg", label: "Average" },
+                                { value: "min", label: "Minimum" },
+                                { value: "max", label: "Maximum" },
+                                { value: "first", label: "First" },
+                                { value: "last", label: "Last" },
+                                { value: "sum", label: "Sum" },
+                            ],
+                        },
+                    },
+                },
+                {
+                    name: "line_width",
+                    default: 2,
+                    selector: {
+                        number: { min: 1, max: 10, mode: "box" },
+                    },
+                },
+                {
+                    type: "grid",
+                    name: "",
+                    schema: [
+                        {
+                            name: "lower_bound",
+                            selector: { number: { mode: "box" } },
+                        },
+                        {
+                            name: "upper_bound",
+                            selector: { number: { mode: "box" } },
+                        },
+                    ],
+                },
+                {
+                    name: "show_fill",
+                    default: true,
+                    selector: { boolean: {} },
+                },
+                {
+                    name: "show_state",
+                    default: true,
+                    selector: { boolean: {} },
+                },
+                {
+                    name: "show_name",
+                    default: true,
+                    selector: { boolean: {} },
+                },
+                {
+                    name: "show_icon",
+                    default: true,
+                    selector: { boolean: {} },
+                },
+                {
+                    name: "smoothing",
+                    default: true,
+                    selector: { boolean: {} },
+                },
+                {
+                    name: "show_labels",
+                    default: true,
+                    selector: { boolean: {} },
+                },
+                {
+                    name: "show_extrema",
+                    default: false,
+                    selector: { boolean: {} },
+                },
+                {
+                    name: "group_by",
+                    default: "interval",
+                    selector: {
+                        select: {
+                            mode: "dropdown",
+                            options: [
+                                { value: "interval", label: "Interval" },
+                                { value: "hour", label: "Hour" },
+                                { value: "date", label: "Day" },
+                            ],
+                        },
+                    },
+                },
+                {
+                    name: "min_bound_range",
+                    selector: { number: { mode: "box" } },
+                },
+                {
+                    name: "color_thresholds_transition",
+                    default: "smooth",
+                    selector: {
+                        select: {
+                            mode: "dropdown",
+                            options: [
+                                { value: "smooth", label: "Smooth" },
+                                { value: "hard", label: "Hard" },
+                            ],
+                        },
+                    },
+                },
+                thresholdGrid(1),
+                thresholdGrid(2),
+                thresholdGrid(3),
+                thresholdGrid(4),
+                {
+                    name: "entity_2",
+                    selector: { entity: {} },
+                },
+                {
+                    type: "grid",
+                    name: "",
+                    schema: [
+                        { name: "name_2", selector: { text: {} } },
+                        {
+                            name: "y_axis_2",
+                            default: "primary",
+                            selector: {
+                                select: {
+                                    mode: "dropdown",
+                                    options: [
+                                        { value: "primary", label: "Primary (left)" },
+                                        { value: "secondary", label: "Secondary (right)" },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                },
+                {
+                    name: "entity_3",
+                    selector: { entity: {} },
+                },
+                {
+                    type: "grid",
+                    name: "",
+                    schema: [
+                        { name: "name_3", selector: { text: {} } },
+                        {
+                            name: "y_axis_3",
+                            default: "primary",
+                            selector: {
+                                select: {
+                                    mode: "dropdown",
+                                    options: [
+                                        { value: "primary", label: "Primary (left)" },
+                                        { value: "secondary", label: "Secondary (right)" },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            name: "layout",
+            type: "expandable",
+            flatten: true,
+            title: "Layout",
+            icon: "mdi:move-resize",
+            schema: [{ type: "grid", name: "", schema: posXYWH(d) }],
+        },
+        {
+            name: "appearance",
+            type: "expandable",
+            flatten: true,
+            title: "Appearance",
+            icon: "mdi:palette",
+            schema: [cardStyleSelector(), boldValueSelector()],
         },
     ],
 };
@@ -802,10 +1436,15 @@ export const LABELS = {
     entities: "Entities",
     name: "Name",
     icon: "Icon",
+    hide_icon: "Hide icon",
+    hide_name: "Hide name",
     hide_state: "Hide state",
     state_content: "State attribute",
     title: "Title",
     x: "X", y: "Y", w: "Width", h: "Height",
+    fill_color: "Fill color",
+    border_width: "Border width",
+    border_radius: "Corner radius",
     direction: "Direction", style: "Style", length: "Length",
     font_size: "Font size",
     color: "Color",
@@ -816,15 +1455,64 @@ export const LABELS = {
     badges: "Badges",
     card_style: "Card style",
     icon_style: "Icon style",
+    bold_value: "Bold value",
     layout: "Layout",
     show_all: "Show all upcoming dates",
     entries: "Entries",
     forecast_days: "Forecast days",
-    graph: "Graph",
+    temperature_entity: "Temperature sensor",
+    humidity_entity: "Humidity sensor",
+    graph: "Graph type",
+    data_source: "Data source",
+    attribute_timestamp_key: "Timestamp key",
+    attribute_value_key: "Value key",
     hours_to_show: "Hours to show",
     detail: "Detail",
     limits_min: "Y-axis minimum",
     limits_max: "Y-axis maximum",
+    hide_fill: "Hide fill",
+    max_events: "Max events",
+    days_ahead: "Days ahead",
+    min: "Minimum",
+    max: "Maximum",
+    gauge_type: "Gauge type",
+    needle: "Needle mode",
+    header_position: "Name position",
+    show_unit: "Show unit",
+    decimals: "Decimal places",
+    points_per_hour: "Points per hour",
+    aggregate_func: "Aggregate function",
+    line_width: "Line width",
+    upper_bound: "Y-axis upper bound",
+    lower_bound: "Y-axis lower bound",
+    show_fill: "Show fill",
+    show_state: "Show state",
+    show_name: "Show name",
+    show_icon: "Show icon",
+    smoothing: "Smoothing",
+    show_labels: "Show labels",
+    show_extrema: "Show extrema",
+    group_by: "Group by",
+    min_bound_range: "Min bound range",
+    color_thresholds_transition: "Threshold transition",
+    threshold_1_value: "Threshold 1 value",
+    threshold_1_color: "Threshold 1 color",
+    threshold_1_shade: "Threshold 1 shade",
+    threshold_2_value: "Threshold 2 value",
+    threshold_2_color: "Threshold 2 color",
+    threshold_2_shade: "Threshold 2 shade",
+    threshold_3_value: "Threshold 3 value",
+    threshold_3_color: "Threshold 3 color",
+    threshold_3_shade: "Threshold 3 shade",
+    threshold_4_value: "Threshold 4 value",
+    threshold_4_color: "Threshold 4 color",
+    threshold_4_shade: "Threshold 4 shade",
+    entity_2: "Second entity",
+    name_2: "Second entity name",
+    y_axis_2: "Second entity Y axis",
+    entity_3: "Third entity",
+    name_3: "Third entity name",
+    y_axis_3: "Third entity Y axis",
 };
 export async function loadHaComponents() {
     if (!customElements.get("ha-form")) {
@@ -847,12 +1535,25 @@ export async function loadHaComponents() {
 // ── Summary helper (extracted for testability) ───────────────────
 export function getSummary(widget) {
     const t = widget.type;
+    if (t === "frame") {
+        return `Frame at (${widget.x ?? 0}, ${widget.y ?? 0})`;
+    }
     if (t === "heading") {
         const s = String(widget.heading || "");
         return s.length > 30 ? s.slice(0, 30) + "…" : (s || "(empty)");
     }
-    if (t === "weather" || t === "tile" || t === "entity" || t === "sensor") {
+    if (t === "weather" || t === "tile" || t === "entity"
+        || t === "sensor" || t === "calendar" || t === "gauge") {
         return widget.entity || "(no entity)";
+    }
+    if (t === "graph") {
+        const primary = widget.entity || "";
+        const extras = [widget.entity_2, widget.entity_3].filter(Boolean);
+        if (!primary && !extras.length)
+            return "(no entity)";
+        const base = primary || extras[0] || "";
+        const total = (primary ? 1 : 0) + extras.length;
+        return total > 1 ? `${base} +${total - 1}` : base;
     }
     if (t === "device_battery") {
         return "Device battery";
@@ -1393,6 +2094,9 @@ class EinkDashboardEditor extends HTMLElement {
             };
             if ("color" in data && data.color !== undefined) {
                 data.color = parseInt(String(data.color), 10) || 0;
+            }
+            if ("fill_color" in data && data.fill_color !== undefined) {
+                data.fill_color = parseInt(String(data.fill_color), 10) || 0;
             }
             const cur = this._widgets[index];
             // Preserve entries — ha-form doesn't know about

@@ -1,6 +1,16 @@
-// Widget type picker dialog for the e-ink dashboard editor.
-// Shows a grid of widget type cards with icon, name, and description.
-// Fires "type-selected" (detail: { type }) on pick, "closed" on dismiss.
+// Copyright 2026 Andreas Schneider
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 const PICKER_TAG = "eink-widget-picker";
 // Unicode fallbacks for MDI icon names that the browser can't load.
 const ICON_FALLBACK = {
@@ -16,6 +26,9 @@ const ICON_FALLBACK = {
     "mdi:card-text-outline": "▢",
     "mdi:format-list-bulleted": "☰",
     "mdi:chart-line": "📈",
+    "mdi:calendar": "📅",
+    "mdi:gauge": "◎",
+    "mdi:rectangle-outline": "□",
 };
 /**
  * Widget-type picker dialog for the e-ink dashboard editor.

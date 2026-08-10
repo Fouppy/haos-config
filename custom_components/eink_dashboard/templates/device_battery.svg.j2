@@ -1,7 +1,6 @@
 {%- from "_macros.svg.j2" import card_container -%}
 <svg xmlns="http://www.w3.org/2000/svg"
      width="{{ w }}" height="{{ h }}">
-<rect width="{{ w }}" height="{{ h }}" fill="{{ hex_white }}"/>
 {%- if has_level -%}
 {%- call card_container(
     x=0, y=0, w=w, h=card_h,
@@ -23,6 +22,9 @@
 {%- endif -%}
 {%- endif -%}
 <text x="{{ text_abs_x }}" y="{{ text_y }}" font-family="Roboto"
+{%- if value_bold %}
+  font-weight="bold"
+{%- endif %}
   font-size="{{ font_sz }}" dominant-baseline="central"
   fill="{{ color_hex }}">{{ label }}</text>
 {%- else -%}
@@ -35,6 +37,9 @@
   height="{{ icon_fill_h }}" fill="{{ color_hex }}"/>
 {%- endif -%}
 <text x="{{ text_abs_x }}" y="{{ text_svg_y }}" font-family="Roboto"
+{%- if value_bold %}
+  font-weight="bold"
+{%- endif %}
   font-size="{{ font_sz }}" dominant-baseline="central"
   fill="{{ color_hex }}">{{ label }}</text>
 {%- endif -%}

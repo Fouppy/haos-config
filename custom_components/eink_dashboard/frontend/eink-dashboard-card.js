@@ -1,4 +1,16 @@
-// E-Ink Dashboard Lovelace card — SVG preview via WebSocket.
+// Copyright 2026 Andreas Schneider
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 import { MIN_RESIZE_DIM, snap, snapToEdges, applyEdgeResize, applyCornerResize, scaleSvgPreview, clearSvgScale, } from "./resize-math.js";
 const CARD_TAG = "eink-dashboard-card";
 const PADDING = 24;
@@ -25,8 +37,13 @@ class EinkDashboardCard extends HTMLElement {
         this._hass = null;
         this._layout = null;
         this._connected = false;
-        // Guards layout fetch only; SVG fetches use _fetchGeneration.
+        // Guards layout fetch only
         this._fetching = false;
+        // Guards SVG fetch and used to coalesce multiple preview requests to one
+        this._fetchingSvgs = null;
+        // Generation counter for SVG fetch only.
+        this._svgGeneration = 0;
+        // Generation counter for layout fetch. Incrementing this also invalidates any pending SVG fetch.
         this._fetchGeneration = 0;
         this._showServerImage = false;
         this._serverImg = null;
@@ -40,7 +57,6 @@ class EinkDashboardCard extends HTMLElement {
         this._svgContainer = null;
         this._scaleWrapper = null;
         this._resizeObserver = null;
-        this._stateDebounceTimer = null;
         // Drag/resize/hover state
         this._dragIndex = -1;
         this._dragStartX = 0;
@@ -69,10 +85,6 @@ class EinkDashboardCard extends HTMLElement {
             this._renderedSvgs = [];
             this._svgContainer = null;
             this._scaleWrapper = null;
-            if (this._stateDebounceTimer !== null) {
-                clearTimeout(this._stateDebounceTimer);
-                this._stateDebounceTimer = null;
-            }
             if (this._resizeObserver) {
                 this._resizeObserver.disconnect();
                 this._resizeObserver = null;
@@ -108,7 +120,7 @@ class EinkDashboardCard extends HTMLElement {
             this._fetchLayout();
         }
         if (this._layout) {
-            this._scheduleSvgRefresh();
+            void this._fetchWidgetSvgs();
             const newHeader = buildHeaderText(this._layout.device);
             if (this._headerEl.textContent !== newHeader) {
                 this._headerEl.textContent = newHeader;
@@ -128,14 +140,11 @@ class EinkDashboardCard extends HTMLElement {
         this._connected = false;
         this._fetchGeneration++;
         this._fetching = false;
-        if (this._stateDebounceTimer !== null) {
-            clearTimeout(this._stateDebounceTimer);
-            this._stateDebounceTimer = null;
-        }
         if (this._resizeObserver) {
             this._resizeObserver.disconnect();
             this._resizeObserver = null;
         }
+        this._fetchingSvgs = null;
     }
     getCardSize() {
         if (this._layout) {
@@ -548,22 +557,39 @@ class EinkDashboardCard extends HTMLElement {
      *   or rejects silently on error.
      */
     async _fetchWidgetSvgs() {
-        if (!this._connected || !this._hass || !this._layout || !this._resolvedEntryId)
+        if (!this._connected || !this._hass || !this._layout || !this._resolvedEntryId || this._showServerImage)
             return;
         const gen = this._fetchGeneration;
+        const svg_gen = ++this._svgGeneration;
+        if (this._fetchingSvgs) { // Another _fetchWidgetSvgs is pending
+            try {
+                await this._fetchingSvgs;
+            }
+            catch {
+                // Ignore exceptions caught here, it will also be caught by the original
+                // caller and logged below.
+            }
+            if (this._fetchGeneration != gen || svg_gen != this._svgGeneration) {
+                return; // This request has already become stale
+            }
+        }
         try {
-            const result = await this._hass.callWS({
+            this._fetchingSvgs = this._hass.callWS({
                 type: "eink_dashboard/render_widgets",
                 entry_id: this._resolvedEntryId,
                 widgets: this._layout.widgets,
             });
-            if (gen !== this._fetchGeneration)
+            const result = await this._fetchingSvgs;
+            if (gen !== this._fetchGeneration || svg_gen != this._svgGeneration)
                 return;
             this._widgetSvgs = result.svgs;
             this._updateSvgDom();
         }
         catch (err) {
             console.error("Failed to fetch widget SVGs:", err);
+        }
+        finally {
+            this._fetchingSvgs = null;
         }
     }
     /**
@@ -613,27 +639,6 @@ class EinkDashboardCard extends HTMLElement {
                 this._renderedSvgs[i] = svg;
             }
         }
-    }
-    /**
-     * Debounce SVG refreshes triggered by entity state changes.
-     * Batches rapid updates (e.g. multiple entities updating
-     * at once) into a single WS call 500 ms after the last
-     * hass assignment. Skips when the server image is visible
-     * because the SVG container is hidden. Also skips during
-     * active drag/resize to avoid overwriting in-flight CSS.
-     */
-    _scheduleSvgRefresh() {
-        if (!this._connected || !this._layout || this._showServerImage)
-            return;
-        if (this._dragIndex >= 0 || this._resizeIndex >= 0)
-            return;
-        if (this._stateDebounceTimer !== null) {
-            clearTimeout(this._stateDebounceTimer);
-        }
-        this._stateDebounceTimer = setTimeout(() => {
-            this._stateDebounceTimer = null;
-            void this._fetchWidgetSvgs();
-        }, 500);
     }
     // ── Server image toggle ───────────────────────────────────────────────────
     async _onToggle() {

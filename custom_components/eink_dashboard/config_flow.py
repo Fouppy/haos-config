@@ -1,3 +1,17 @@
+# Copyright 2026 Andreas Schneider
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Config and options flows for the e-ink dashboard integration."""
 
 from __future__ import annotations
@@ -34,11 +48,13 @@ from homeassistant.helpers.selector import (
 )
 
 from .const import (
-    DEFAULT_CONTRAST,
+    DEFAULT_DITHER_ALGORITHM,
+    DEFAULT_EXPOSURE,
     DEFAULT_GRAYSCALE_LEVELS,
     DEFAULT_HEIGHT,
+    DEFAULT_MEASURED_PALETTE,
     DEFAULT_OPTIMIZE,
-    DEFAULT_SHARPNESS,
+    DEFAULT_SATURATION,
     DEFAULT_UPDATE_INTERVAL,
     DEFAULT_WIDTH,
     DEVICE_PRESETS,
@@ -93,6 +109,25 @@ _TF_OPTIONS = [
     TimeFormat.LANGUAGE,
     TimeFormat.AM_PM,
     TimeFormat.TWENTY_FOUR,
+]
+
+_DITHER_ALGO_OPTIONS = [
+    "floyd_steinberg",
+    "atkinson",
+    "stucki",
+    "burkes",
+]
+
+_MEASURED_PALETTE_OPTIONS = [
+    "auto",
+    "spectra_7_3_6color",
+    "spectra_7_3_6color_v2",
+    "mono_4_26",
+    "bwry_4_2",
+    "bwry_3_97",
+    "solum_bwr",
+    "hanshow_bwr",
+    "hanshow_bwy",
 ]
 
 
@@ -195,6 +230,7 @@ class EinkDashboardConfigFlow(ConfigFlow, domain=DOMAIN):
     """Multi-step config flow for creating a new dashboard entry."""
 
     VERSION = 1
+    MINOR_VERSION = 2
 
     def __init__(self) -> None:
         """Initialise flow state."""
@@ -258,6 +294,9 @@ class EinkDashboardConfigFlow(ConfigFlow, domain=DOMAIN):
                     "rotation": rotation,
                     "optimize": preset.optimize,
                     "grayscale_levels": preset.grayscale_levels,
+                    "dither_algorithm": preset.dither_algorithm,
+                    "color_scheme": preset.color_scheme,
+                    "measured_palette": preset.measured_palette,
                 }
             )
             return self._create_pull_entry()
@@ -299,6 +338,9 @@ class EinkDashboardConfigFlow(ConfigFlow, domain=DOMAIN):
                         "rotation": rotation,
                         "optimize": preset.optimize,
                         "grayscale_levels": preset.grayscale_levels,
+                        "dither_algorithm": preset.dither_algorithm,
+                        "color_scheme": preset.color_scheme,
+                        "measured_palette": preset.measured_palette,
                         "screen_portion": "custom",
                     }
                 )
@@ -313,6 +355,9 @@ class EinkDashboardConfigFlow(ConfigFlow, domain=DOMAIN):
                     "rotation": rotation,
                     "optimize": preset.optimize,
                     "grayscale_levels": preset.grayscale_levels,
+                    "dither_algorithm": preset.dither_algorithm,
+                    "color_scheme": preset.color_scheme,
+                    "measured_palette": preset.measured_palette,
                     "screen_portion": portion,
                 }
             )
@@ -346,6 +391,9 @@ class EinkDashboardConfigFlow(ConfigFlow, domain=DOMAIN):
                         "rotation": 0,
                         "optimize": DEFAULT_OPTIMIZE,
                         "grayscale_levels": DEFAULT_GRAYSCALE_LEVELS,
+                        "dither_algorithm": DEFAULT_DITHER_ALGORITHM,
+                        "color_scheme": None,
+                        "measured_palette": DEFAULT_MEASURED_PALETTE,
                     }
                 )
             device_model = self._data.get("device_model", "")
@@ -375,8 +423,8 @@ class EinkDashboardConfigFlow(ConfigFlow, domain=DOMAIN):
             data={},
             options={
                 **self._data,
-                "sharpness": DEFAULT_SHARPNESS,
-                "contrast": DEFAULT_CONTRAST,
+                "exposure": DEFAULT_EXPOSURE,
+                "saturation": DEFAULT_SATURATION,
                 "webhook_urls": [],
             },
         )
@@ -428,8 +476,8 @@ class EinkDashboardConfigFlow(ConfigFlow, domain=DOMAIN):
                     data={},
                     options={
                         **self._data,
-                        "sharpness": DEFAULT_SHARPNESS,
-                        "contrast": DEFAULT_CONTRAST,
+                        "exposure": DEFAULT_EXPOSURE,
+                        "saturation": DEFAULT_SATURATION,
                         "webhook_urls": [
                             {
                                 "name": name,
@@ -727,6 +775,9 @@ class EinkDashboardOptionsFlow(OptionsFlow):
                             "rotation": rot,
                             "optimize": preset.optimize,
                             "grayscale_levels": preset.grayscale_levels,
+                            "dither_algorithm": preset.dither_algorithm,
+                            "color_scheme": preset.color_scheme,
+                            "measured_palette": preset.measured_palette,
                             "screen_portion": portion,
                         }
                     )
@@ -742,6 +793,9 @@ class EinkDashboardOptionsFlow(OptionsFlow):
                     "rotation": rotation,
                     "optimize": preset.optimize,
                     "grayscale_levels": preset.grayscale_levels,
+                    "dither_algorithm": preset.dither_algorithm,
+                    "color_scheme": preset.color_scheme,
+                    "measured_palette": preset.measured_palette,
                 }
             )
 
@@ -802,6 +856,9 @@ class EinkDashboardOptionsFlow(OptionsFlow):
                     "rotation": rotation,
                     "optimize": preset.optimize,
                     "grayscale_levels": preset.grayscale_levels,
+                    "dither_algorithm": preset.dither_algorithm,
+                    "color_scheme": preset.color_scheme,
+                    "measured_palette": preset.measured_palette,
                     "screen_portion": portion,
                 }
             )
@@ -829,6 +886,9 @@ class EinkDashboardOptionsFlow(OptionsFlow):
                     "rotation": 0,
                     "optimize": DEFAULT_OPTIMIZE,
                     "grayscale_levels": DEFAULT_GRAYSCALE_LEVELS,
+                    "dither_algorithm": DEFAULT_DITHER_ALGORITHM,
+                    "color_scheme": None,
+                    "measured_palette": DEFAULT_MEASURED_PALETTE,
                 }
             )
         return self.async_show_form(
@@ -924,6 +984,66 @@ class EinkDashboardOptionsFlow(OptionsFlow):
     ) -> ConfigFlowResult:
         """Update refresh interval, optimize, and image quality settings."""
         opts = self.config_entry.options
+        grayscale_levels = opts.get(
+            "grayscale_levels", DEFAULT_GRAYSCALE_LEVELS
+        )
+        # exposure/saturation are only forwarded to dither_image(), which
+        # is never called on the 256-level passthrough path, so those
+        # controls serve no purpose there.
+        advanced_fields: dict = {
+            vol.Optional(
+                "dither_algorithm",
+                default=opts.get(
+                    "dither_algorithm",
+                    DEFAULT_DITHER_ALGORITHM,
+                ),
+            ): SelectSelector(
+                SelectSelectorConfig(
+                    options=_DITHER_ALGO_OPTIONS,
+                    translation_key="dither_algorithm",
+                    mode=SelectSelectorMode.DROPDOWN,
+                )
+            ),
+            vol.Optional(
+                "measured_palette",
+                default=opts.get(
+                    "measured_palette",
+                    DEFAULT_MEASURED_PALETTE,
+                ),
+            ): SelectSelector(
+                SelectSelectorConfig(
+                    options=_MEASURED_PALETTE_OPTIONS,
+                    translation_key="measured_palette",
+                    mode=SelectSelectorMode.DROPDOWN,
+                )
+            ),
+            vol.Optional(
+                "grayscale_levels",
+                default=grayscale_levels,
+            ): vol.All(
+                vol.Coerce(int),
+                vol.In([2, 4, 16, 256]),
+            ),
+        }
+        if grayscale_levels != 256:
+            advanced_fields[
+                vol.Optional(
+                    "exposure",
+                    default=opts.get("exposure", DEFAULT_EXPOSURE),
+                )
+            ] = vol.All(
+                vol.Coerce(float),
+                vol.Range(min=0.0, max=10.0),
+            )
+            advanced_fields[
+                vol.Optional(
+                    "saturation",
+                    default=opts.get("saturation", DEFAULT_SATURATION),
+                )
+            ] = vol.All(
+                vol.Coerce(float),
+                vol.Range(min=0.0, max=10.0),
+            )
         schema = vol.Schema(
             {
                 vol.Required(
@@ -936,28 +1056,30 @@ class EinkDashboardOptionsFlow(OptionsFlow):
                     "optimize",
                     default=opts.get("optimize", DEFAULT_OPTIMIZE),
                 ): bool,
-                vol.Optional(
-                    "grayscale_levels",
-                    default=opts.get(
-                        "grayscale_levels", DEFAULT_GRAYSCALE_LEVELS
-                    ),
-                ): vol.In([2, 4, 16, 256]),
-                vol.Optional(
-                    "sharpness",
-                    default=opts.get("sharpness", DEFAULT_SHARPNESS),
-                ): vol.All(vol.Coerce(float), vol.Range(min=0.0, max=10.0)),
-                vol.Optional(
-                    "contrast",
-                    default=opts.get("contrast", DEFAULT_CONTRAST),
-                ): vol.All(vol.Coerce(float), vol.Range(min=0.0, max=10.0)),
+                vol.Required("advanced_section"): flow_section(
+                    vol.Schema(advanced_fields),
+                    {"collapsed": True},
+                ),
             }
         )
         if user_input is not None:
             validated = schema(user_input)
+            section = validated.pop("advanced_section", {})
             return self.async_create_entry(
-                data={**opts, **validated},
+                data={**opts, **validated, **section},
             )
+        device_model = opts.get("device_model", "")
+        preset = DEVICE_PRESETS.get(device_model)
+        if preset and preset.integration_dithers:
+            optimize_note = (
+                "This device's Home Assistant integration handles image"
+                " optimization. Leave e-ink optimization disabled to"
+                " avoid double processing."
+            )
+        else:
+            optimize_note = ""
         return self.async_show_form(
             step_id="display_settings",
             data_schema=schema,
+            description_placeholders={"optimize_note": optimize_note},
         )

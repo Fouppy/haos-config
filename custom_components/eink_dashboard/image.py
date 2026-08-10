@@ -1,3 +1,17 @@
+# Copyright 2026 Andreas Schneider
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """ImageEntity that renders and refreshes the e-ink dashboard PNG."""
 
 from __future__ import annotations
@@ -28,14 +42,21 @@ if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
 
-from . import _async_get_locale, _fetch_forecasts, _fetch_history
+from . import (
+    _async_get_locale,
+    _fetch_calendar_events,
+    _fetch_forecasts,
+    _fetch_history,
+)
 from .battery import resolve_battery_level
 from .const import (
-    DEFAULT_CONTRAST,
+    DEFAULT_DITHER_ALGORITHM,
+    DEFAULT_EXPOSURE,
     DEFAULT_GRAYSCALE_LEVELS,
     DEFAULT_HEIGHT,
+    DEFAULT_MEASURED_PALETTE,
     DEFAULT_OPTIMIZE,
-    DEFAULT_SHARPNESS,
+    DEFAULT_SATURATION,
     DEFAULT_UPDATE_INTERVAL,
     DEFAULT_WIDTH,
     DOMAIN,
@@ -215,6 +236,7 @@ class EinkDashboardImage(ImageEntity):
                 states = self._build_states()
                 await self._async_fetch_forecasts(states)
                 await self._async_fetch_history(states)
+                await self._async_fetch_calendar_events(states)
                 config = {
                     "width": self._entry.options.get("width", DEFAULT_WIDTH),
                     "height": self._entry.options.get(
@@ -227,12 +249,19 @@ class EinkDashboardImage(ImageEntity):
                     "grayscale_levels": self._entry.options.get(
                         "grayscale_levels", DEFAULT_GRAYSCALE_LEVELS
                     ),
-                    "sharpness": self._entry.options.get(
-                        "sharpness", DEFAULT_SHARPNESS
+                    "exposure": self._entry.options.get(
+                        "exposure", DEFAULT_EXPOSURE
                     ),
-                    "contrast": self._entry.options.get(
-                        "contrast", DEFAULT_CONTRAST
+                    "saturation": self._entry.options.get(
+                        "saturation", DEFAULT_SATURATION
                     ),
+                    "dither_algorithm": self._entry.options.get(
+                        "dither_algorithm", DEFAULT_DITHER_ALGORITHM
+                    ),
+                    "measured_palette": self._entry.options.get(
+                        "measured_palette", DEFAULT_MEASURED_PALETTE
+                    ),
+                    "color_scheme": self._entry.options.get("color_scheme"),
                     "number_format": number_format,
                     "language": language,
                     "first_weekday": first_weekday,
@@ -354,6 +383,21 @@ class EinkDashboardImage(ImageEntity):
                 in-place for sensor entities.
         """
         await _fetch_history(self.hass, self._widgets, states)
+
+    async def _async_fetch_calendar_events(
+        self, states: dict[str, Any]
+    ) -> None:
+        """Fetch calendar events for calendar widgets and inject into
+        states.
+
+        Delegates to the module-level ``_fetch_calendar_events`` so
+        the logic is shared with the WebSocket preview handlers.
+
+        Args:
+            states: Mutable states dict; event lists are injected
+                in-place for calendar entities.
+        """
+        await _fetch_calendar_events(self.hass, self._widgets, states)
 
     def _build_states(self) -> dict[str, Any]:
         """Snapshot all HA states as a plain dict for the renderer."""

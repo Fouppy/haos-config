@@ -1,3 +1,17 @@
+# Copyright 2026 Andreas Schneider
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Waste schedule widget context builder."""
 
 from __future__ import annotations
@@ -33,10 +47,12 @@ def _build_waste_schedule_context(
     styling.  Each entry maps an entity attribute (ISO date string
     or integer day offset) to a short label and colour scheme:
 
-    - ``days <= 1``: black-filled icon circle; date text is black
-      when ``days == 0`` (today) and gray otherwise.
+    - ``days <= 1``: black-filled icon circle.
     - ``days >= 2``: outlined icon circle (white fill, black
-      stroke); date text is gray.
+      stroke).
+
+    Date text is always black regardless of urgency; urgency is
+    conveyed by the icon fill/outline alone.
 
     Two layouts are supported via the ``layout`` parameter:
 
@@ -58,6 +74,8 @@ def _build_waste_schedule_context(
             ``entries`` (list of ``{"attribute": …, "label": …}``
             dicts), ``layout`` (``"list"`` or ``"card"``),
             ``show_all`` (``bool``, default ``False``),
+            ``bold_value`` (render the date text in bold; default
+            ``False``),
             ``card_style``, ``title``, ``x``, ``w``, ``h``.
         config: Display config with ``states`` (entity ID →
             state dict) and ``grayscale_levels``.
@@ -85,6 +103,7 @@ def _build_waste_schedule_context(
     card_style = widget.get("card_style", DEFAULT_CARD_STYLE)
     title: str = widget.get("title", "")
     show_all: bool = bool(widget.get("show_all", False))
+    value_bold: bool = widget.get("bold_value", False)
     states = config.get("states", {})
     grayscale_levels = config.get("grayscale_levels", 16)
 
@@ -164,13 +183,9 @@ def _build_waste_schedule_context(
     rows: list[dict[str, object]] = []
     for i, (label, raw, days) in enumerate(visible):
         date_str = _format_relative_date(days, raw)
-        # days == 0 (today): black date text for urgency.
-        # days >= 1: gray date text.
-        date_fill = (
-            color_to_hex(COLOR_BLACK)
-            if days == 0
-            else color_to_hex(COLOR_GRAY)
-        )
+        # Date text is always black; urgency is conveyed by the
+        # icon fill/outline instead.
+        date_fill = color_to_hex(COLOR_BLACK)
         use_outline = days >= 2
         # Outlined circles ignore icon_fill (macro uses white
         # fill + black stroke), but we still pass it correctly.
@@ -216,4 +231,5 @@ def _build_waste_schedule_context(
         "rpad": rpad,
         "icon_stroke_w": icon_stroke_w,
         "divider_stroke_w": divider_stroke_w,
+        "value_bold": value_bold,
     }

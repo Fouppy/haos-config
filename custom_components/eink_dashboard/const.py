@@ -1,3 +1,17 @@
+# Copyright 2026 Andreas Schneider
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Constants, enums, and device presets for the e-ink dashboard."""
 
 from dataclasses import dataclass
@@ -18,8 +32,10 @@ DEFAULT_UPDATE_INTERVAL = 60
 DEFAULT_GRAYSCALE_DEPTH = 8
 DEFAULT_OPTIMIZE = False
 DEFAULT_GRAYSCALE_LEVELS = 16
-DEFAULT_SHARPNESS = 1.0
-DEFAULT_CONTRAST = 1.0
+DEFAULT_DITHER_ALGORITHM = "floyd_steinberg"
+DEFAULT_MEASURED_PALETTE = "auto"
+DEFAULT_EXPOSURE = 1.0
+DEFAULT_SATURATION = 1.0
 DEFAULT_ROW_H = 56
 # DEFAULT_METRICS = _compute_metrics(DEFAULT_ROW_H) lives in render.py
 # rather than here to avoid a circular import (render.py imports const.py).
@@ -30,6 +46,7 @@ PADDING = 24
 COLOR_BLACK = 0
 COLOR_WHITE = 255
 COLOR_GRAY = 120
+COLOR_MEDIUM_GRAY = 150
 COLOR_LIGHT_GRAY = 180
 
 
@@ -70,6 +87,17 @@ class DevicePreset:
     optimize: bool
     manufacturer: str
     native_landscape: bool = False
+    integration_dithers: bool = False
+    dither_algorithm: str = DEFAULT_DITHER_ALGORITHM
+    color_scheme: str | None = None
+    """Color palette for color e-ink displays (e.g. ``"bwgbry"`` for
+    Spectra 6-color).  ``None`` means grayscale.  String values match
+    keys in ``optimize._COLOR_SCHEMES``."""
+    measured_palette: str = DEFAULT_MEASURED_PALETTE
+    """Measured palette key for photographically calibrated dithering.
+    ``"auto"`` means use the idealized ``ColorScheme`` derived from
+    ``color_scheme`` or ``grayscale_levels``.  Non-auto values match
+    keys in ``optimize._MEASURED_PALETTES``."""
 
 
 DEVICE_PRESETS: dict[str, DevicePreset] = {
@@ -131,6 +159,36 @@ DEVICE_PRESETS: dict[str, DevicePreset] = {
         True,
         "TRMNL",
         native_landscape=True,
+    ),
+    "reterminal_e1001": DevicePreset(
+        "reTerminal E1001",
+        800,
+        480,
+        4,
+        False,
+        "Seeed",
+        native_landscape=True,
+        integration_dithers=True,
+    ),
+    "reterminal_e1002": DevicePreset(
+        "reTerminal E1002",
+        800,
+        480,
+        256,
+        False,
+        "Seeed",
+        native_landscape=True,
+        integration_dithers=True,
+        color_scheme="bwgbry",
+    ),
+    "reterminal_e1003": DevicePreset(
+        "reTerminal E1003",
+        1404,
+        1872,
+        16,
+        False,
+        "Seeed",
+        integration_dithers=True,
     ),
     "custom": DevicePreset(
         "Custom",
@@ -243,9 +301,13 @@ class WidgetType(StrEnum):
     SEPARATOR = "separator"
     ENTITIES = "entities"
     ENTITY = "entity"
+    FRAME = "frame"
+    GAUGE = "gauge"
+    GRAPH = "graph"
     HEADING = "heading"
     SENSOR = "sensor"
     TILE = "tile"
     WEATHER = "weather"
     DEVICE_BATTERY = "device_battery"
     WASTE_SCHEDULE = "waste_schedule"
+    CALENDAR = "calendar"

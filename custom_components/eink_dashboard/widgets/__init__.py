@@ -1,3 +1,17 @@
+# Copyright 2026 Andreas Schneider
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Per-widget SVG context builders.
 
 Each submodule exports a single ``_build_<type>_context()`` function
@@ -7,6 +21,7 @@ template context dict.  This package re-exports all builders so
 import.
 """
 
+from .calendar import _build_calendar_context
 from .device_battery import (
     _build_device_battery_context,
 )
@@ -14,6 +29,9 @@ from .entities import (
     _build_entities_context,
 )
 from .entity import _build_entity_context
+from .frame import _build_frame_context
+from .gauge import _build_gauge_context
+from .graph import _build_graph_context
 from .heading import _build_heading_context
 from .sensor import _build_sensor_context
 from .separator import _build_separator_context
@@ -24,9 +42,13 @@ from .waste_schedule import (
 from .weather import _build_weather_context
 
 __all__ = [
+    "_build_calendar_context",
     "_build_device_battery_context",
     "_build_entities_context",
     "_build_entity_context",
+    "_build_frame_context",
+    "_build_gauge_context",
+    "_build_graph_context",
     "_build_heading_context",
     "_build_sensor_context",
     "_build_separator_context",

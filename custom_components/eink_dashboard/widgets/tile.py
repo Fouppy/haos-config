@@ -1,3 +1,17 @@
+# Copyright 2026 Andreas Schneider
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Tile widget context builder."""
 
 from __future__ import annotations
@@ -52,11 +66,13 @@ def _build_tile_context(
             ``entity`` (required entity ID),
             ``name`` (display name override),
             ``icon`` (MDI icon override, e.g. ``"mdi:lightbulb"``),
+            ``hide_icon`` (suppress icon and letter entirely),
             ``hide_state`` (suppress secondary text),
             ``state_content`` (attribute name or list; first element
             used when a list is provided),
             ``icon_style`` (``"filled"`` / ``"outlined"`` /
-            ``"none"``), ``card_style``,
+            ``"none"``), ``bold_value`` (render the secondary
+            state line in bold; default ``False``), ``card_style``,
             ``x``, ``w``, ``h``.
         config: Display config with ``width``, ``height``,
             ``states``, and ``grayscale_levels``.
@@ -82,7 +98,9 @@ def _build_tile_context(
     entity_id: str = widget.get("entity", "")
     name_override = widget.get("name")
     icon_override = widget.get("icon")
+    hide_icon: bool = widget.get("hide_icon", False)
     hide_state: bool = widget.get("hide_state", False)
+    value_bold: bool = widget.get("bold_value", False)
     state_content = widget.get("state_content")
     icon_style = widget.get("icon_style")
     card_style = widget.get("card_style", DEFAULT_CARD_STYLE)
@@ -137,18 +155,24 @@ def _build_tile_context(
         secondary = f"{fmtd}{unit}" if unit else fmtd
 
     # Icon: explicit override → device_class → letter fallback.
-    icon_svg, letter = _resolve_icon_svg(
-        icon_override,
-        attrs,
-        state_val,
-        domain,
-        m.icon_inner,
-        entity_id,
-    )
-
-    icon_outline, icon_no_circle = _resolve_icon_style(
-        icon_style, state_val, grayscale_levels
-    )
+    # Skipped entirely when hide_icon is set.
+    if hide_icon:
+        icon_svg = ""
+        letter = ""
+        icon_outline = False
+        icon_no_circle = True
+    else:
+        icon_svg, letter = _resolve_icon_svg(
+            icon_override,
+            attrs,
+            state_val,
+            domain,
+            m.icon_inner,
+            entity_id,
+        )
+        icon_outline, icon_no_circle = _resolve_icon_style(
+            icon_style, state_val, grayscale_levels
+        )
     # Filled style always uses gray; state is conveyed by
     # icon_style (filled vs outlined), not fill colour.
     icon_fill = color_to_hex(COLOR_GRAY)
@@ -156,7 +180,7 @@ def _build_tile_context(
     # dithering.
     icon_stroke_w = m.border * 3 if grayscale_levels <= 2 else m.border
 
-    return {
+    ctx: dict[str, object] = {
         "w": svg_w,
         "h": svg_h,
         "has_entity": True,
@@ -171,6 +195,7 @@ def _build_tile_context(
         "rpad": rpad,
         "primary": primary,
         "secondary": secondary,
+        "value_bold": value_bold,
         "icon_svg": icon_svg,
         "icon_fill": icon_fill,
         "icon_outline": icon_outline,
@@ -178,3 +203,9 @@ def _build_tile_context(
         "icon_stroke_w": icon_stroke_w,
         "letter": letter,
     }
+    # When icon is hidden, collapse the icon column so text starts
+    # at the left edge.
+    if hide_icon:
+        ctx["m_icon_dia"] = 0
+        ctx["m_inner_gap"] = 0
+    return ctx

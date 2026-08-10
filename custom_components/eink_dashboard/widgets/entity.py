@@ -1,3 +1,17 @@
+# Copyright 2026 Andreas Schneider
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Entity widget context builder."""
 
 from __future__ import annotations
@@ -36,11 +50,16 @@ def _build_entity_context(
             ``entity`` (HA entity ID, required),
             ``name`` (display name override),
             ``icon`` (MDI icon name, e.g. ``"mdi:thermometer"``),
+            ``hide_icon`` (suppress the icon; default ``False``),
+            ``hide_name`` (suppress the entity name text; default
+            ``False``),
             ``attribute`` (attribute key to show as value instead
             of state),
             ``unit`` (unit string override),
             ``icon_style`` (``"filled"`` / ``"outlined"`` /
             ``"none"``),
+            ``bold_value`` (render the state value in bold;
+            default ``False``),
             ``card_style``, ``x``, ``w``, ``h``.
         config: Display config with ``width``, ``states``, and
             ``grayscale_levels``.
@@ -70,6 +89,7 @@ def _build_entity_context(
             "w": svg_w,
             "h": svg_h,
             "has_entity": False,
+            "hide_state": False,
             **_color_context(),
         }
-    return {**ctx, "has_graph": False}
+    return {**ctx, "has_graph": False, "hide_state": False}

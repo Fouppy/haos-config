@@ -9,181 +9,67 @@ living_room_goodnight:
   alias: 'Living Room: Goodnight'
   mode: single
   sequence:
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: media_player.wiim_living_room
-        state: playing
-      sequence:
-      - action: media_player.media_pause
-        target:
-          entity_id: media_player.wiim_living_room
+  - action: media_player.media_pause
+    target:
+      entity_id: media_player.wiim_living_room
   - action: switch.turn_off
     target:
       entity_id: switch.jvc
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: media_player.living_room_chromecast
-        state:
-        - 'on'
-        - playing
-        - paused
-      sequence:
-      - action: media_player.turn_off
-        target:
-          entity_id: media_player.living_room_chromecast
+  - action: media_player.turn_off
+    target:
+      entity_id: media_player.living_room_chromecast
   - action: light.turn_off
     target:
       entity_id: light.living_room_lights
-switch_to_optical:
-  sequence:
-  - action: switch.turn_on
+  - action: light.turn_on
     metadata: {}
     target:
-      entity_id: switch.jvc
+      entity_id: light.living_room_string_lights
     data: {}
-    continue_on_error: true
-  - action: remote.send_command
-    metadata: {}
-    target:
-      entity_id: remote.living_room_tv
-    data:
-      num_repeats: 1
-      delay_secs: 0.4
-      hold_secs: 0
-      command:
-      - KEY_HOME
-      - KEY_LEFT
-      - KEY_LEFT
-      - KEY_LEFT
-      - KEY_UP
-      - KEY_RIGHT
-      - KEY_ENTER
-      - KEY_ENTER
-      - KEY_RETURN
-      - KEY_RETURN
-    continue_on_error: true
-  - action: media_player.select_source
-    metadata: {}
-    target:
-      entity_id: media_player.wiim_living_room
-    data:
-      source: Optical In
-    continue_on_error: true
-  - action: media_player.volume_set
-    metadata: {}
-    target:
-      entity_id: media_player.wiim_living_room
-    data:
-      volume_level: 0.8
-    continue_on_error: true
-  - action: media_player.select_sound_mode
-    metadata: {}
-    target:
-      entity_id: media_player.wiim_living_room
-    data:
-      sound_mode: Spoken Word
-    continue_on_error: true
-  - action: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: input_boolean.cinema_audio
-    continue_on_error: true
-  alias: 'Living Room: Enter Cinema Mode'
-  description: ''
-  icon: mdi:movie-outline
-switch_to_tv_speakers:
-  sequence:
-  - action: remote.send_command
-    metadata: {}
-    target:
-      entity_id: remote.living_room_tv
-    data:
-      num_repeats: 1
-      delay_secs: 0.4
-      hold_secs: 0
-      command:
-      - KEY_HOME
-      - KEY_LEFT
-      - KEY_LEFT
-      - KEY_LEFT
-      - KEY_UP
-      - KEY_RIGHT
-      - KEY_ENTER
-      - KEY_RETURN
-      - KEY_RETURN
-    continue_on_error: true
-  - action: media_player.select_source
-    metadata: {}
-    target:
-      entity_id: media_player.wiim_living_room
-    data:
-      source: Network
-    continue_on_error: true
-  - action: media_player.volume_set
-    metadata: {}
-    target:
-      entity_id: media_player.wiim_living_room
-    data:
-      volume_level: 0.4
-    continue_on_error: true
-  - action: media_player.select_sound_mode
-    metadata: {}
-    target:
-      entity_id: media_player.wiim_living_room
-    data:
-      sound_mode: Hip-Hop
-    continue_on_error: true
-  - action: switch.turn_off
-    metadata: {}
-    target:
-      entity_id: switch.jvc
-    data: {}
-    continue_on_error: true
-  - action: input_boolean.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id: input_boolean.cinema_audio
-    continue_on_error: true
-  alias: 'Living Room: Exit Cinema Mode'
-  description: ''
-  icon: mdi:movie-off-outline
-living_room_switch_to_late_night_mode:
-  sequence:
-  - action: light.turn_off
-    metadata: {}
-    target:
-      entity_id: light.living_room_lights
-    data: {}
-    continue_on_error: true
   - delay:
       hours: 0
-      minutes: 0
-      seconds: 4
+      minutes: 5
+      seconds: 0
       milliseconds: 0
-    continue_on_error: true
+  - action: light.turn_off
+    metadata: {}
+    target:
+      entity_id: light.living_room_string_lights
+    data: {}
+living_room_switch_to_late_night_mode:
+  sequence:
+  - action: switch.turn_off
+    metadata: {}
+    target:
+      entity_id: switch.jvc
+    data: {}
+  - action: light.turn_off
+    metadata: {}
+    target:
+      entity_id: light.living_room_lights
+    data: {}
   - action: light.turn_on
     metadata: {}
     target:
       entity_id: light.living_room_red_lamp
     data: {}
-    continue_on_error: true
   - action: media_player.turn_on
     metadata: {}
     target:
       entity_id: media_player.living_room_chromecast
     data: {}
-    continue_on_error: true
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+    enabled: true
   - action: media_player.volume_set
     metadata: {}
     target:
-      device_id: 59ba334094a65a5e1d17b9947382a40a
+      device_id: 1afc8c66a55ad10c811c83c17b089188
     data:
       volume_level: 0.05
-    continue_on_error: true
   - action: media_player.play_media
     metadata: {}
     target:
@@ -200,7 +86,6 @@ living_room_switch_to_late_night_mode:
           navigateIds:
           - {}
           browse_entity_id: media_player.living_room_chromecast
-    continue_on_error: true
   alias: 'Living Room: Switch to late night mode'
   description: ''
   icon: mdi:lightbulb-night-outline
@@ -211,115 +96,96 @@ living_room_change_audio_to_optical:
     target:
       entity_id: switch.jvc
     data: {}
-    continue_on_error: true
-  - action: remote.send_command
+  - action: media_player.turn_on
     metadata: {}
     target:
-      entity_id: remote.living_room_tv
+      entity_id: media_player.living_room_chromecast
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+    enabled: true
+  - action: media_player.volume_set
+    metadata: {}
+    target:
+      device_id: 1afc8c66a55ad10c811c83c17b089188
     data:
-      num_repeats: 1
-      delay_secs: 0.4
-      hold_secs: 0
-      command:
-      - KEY_HOME
-      - KEY_LEFT
-      - KEY_LEFT
-      - KEY_LEFT
-      - KEY_UP
-      - KEY_RIGHT
-      - KEY_ENTER
-      - KEY_ENTER
-      - KEY_RETURN
-      - KEY_RETURN
-    continue_on_error: true
-    enabled: false
+      volume_level: 0
+  - action: media_player.volume_set
+    metadata: {}
+    target:
+      entity_id: media_player.wiim_living_room
+    data:
+      volume_level: 0.75
+    enabled: true
   - action: media_player.select_source
     metadata: {}
     target:
       entity_id: media_player.wiim_living_room
     data:
       source: Optical In
-    continue_on_error: true
-  - action: media_player.volume_set
-    metadata: {}
-    target:
-      entity_id: media_player.wiim_living_room
-    data:
-      volume_level: 0.8
-    continue_on_error: true
   - action: media_player.select_sound_mode
     metadata: {}
     target:
       entity_id: media_player.wiim_living_room
     data:
       sound_mode: Spoken Word
-    continue_on_error: true
-  - action: input_boolean.turn_on
+    enabled: true
+  - action: media_player.media_play
     metadata: {}
-    data: {}
     target:
-      entity_id: input_boolean.cinema_audio
-    continue_on_error: true
-    enabled: false
+      entity_id: media_player.wiim_living_room
+    data: {}
+  - choose:
+    - conditions:
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: media_player.living_room_chromecast
+          state:
+          - com.github.damontecres.wholphin
+          attribute: app_id
+      sequence:
+      - action: media_player.play_media
+        metadata: {}
+        target:
+          entity_id: media_player.living_room_chromecast
+        data:
+          media:
+            media_content_id: com.github.damontecres.wholphin
+            media_content_type: app
+            metadata:
+              navigateIds:
+              - {}
+              - media_content_type: ''
+                media_content_id: __MANUAL_ENTRY__
+              browse_entity_id: media_player.living_room_chromecast
   alias: 'Living Room: Change audio to optical'
   description: ''
   icon: mdi:movie-outline
-living_room_change_audio_to_network:
+living_room_turn_movie_lights_on:
   sequence:
-  - action: remote.send_command
+  - action: light.turn_off
     metadata: {}
     target:
-      entity_id: remote.living_room_tv
-    data:
-      num_repeats: 1
-      delay_secs: 0.4
-      hold_secs: 0
-      command:
-      - KEY_HOME
-      - KEY_LEFT
-      - KEY_LEFT
-      - KEY_LEFT
-      - KEY_UP
-      - KEY_RIGHT
-      - KEY_ENTER
-      - KEY_RETURN
-      - KEY_RETURN
-    continue_on_error: true
-    enabled: false
-  - action: media_player.select_source
-    metadata: {}
-    target:
-      entity_id: media_player.wiim_living_room
-    data:
-      source: Network
-    continue_on_error: true
-  - action: media_player.volume_set
-    metadata: {}
-    target:
-      entity_id: media_player.wiim_living_room
-    data:
-      volume_level: 0.4
-    continue_on_error: true
-  - action: media_player.select_sound_mode
-    metadata: {}
-    target:
-      entity_id: media_player.wiim_living_room
-    data:
-      sound_mode: Hip-Hop
-    continue_on_error: true
-  - action: switch.turn_off
-    metadata: {}
-    target:
-      entity_id: switch.jvc
+      entity_id: light.living_room_red_lamp
     data: {}
-    continue_on_error: true
-  - action: input_boolean.turn_off
+  - action: light.turn_off
     metadata: {}
-    data: {}
     target:
-      entity_id: input_boolean.cinema_audio
-    continue_on_error: true
-    enabled: false
-  alias: 'Living Room: Change audio to network'
+      entity_id: light.living_room_main_light
+    data: {}
+  - action: light.turn_on
+    metadata: {}
+    target:
+      entity_id: light.living_room_tv_light
+    data: {}
+  - action: light.turn_on
+    metadata: {}
+    target:
+      entity_id: light.living_room_string_lights
+    data: {}
+  alias: 'Living Room: Turn movie lights on'
   description: ''
-  icon: mdi:movie-off-outline

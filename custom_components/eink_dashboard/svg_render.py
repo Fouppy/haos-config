@@ -1,3 +1,17 @@
+# Copyright 2026 Andreas Schneider
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """SVG-based widget rendering pipeline.
 
 Provides a Jinja2 template environment for SVG widget templates and a
@@ -140,6 +154,9 @@ def _compose_svg(
         f'<svg xmlns="http://www.w3.org/2000/svg"'
         f' width="{width}" height="{height}"'
         f' viewBox="0 0 {width} {height}">',
+        # Root canvas fill — kept here unlike per-widget backgrounds
+        # (removed in commit 28ede13) because _compose_svg() is the
+        # preview path and has no PIL canvas to fall back on.
         f'<rect width="{width}" height="{height}" fill="{_hex_white}"/>',
     ]
     for svg, (x, y) in zip(svg_parts, positions, strict=True):
@@ -415,9 +432,13 @@ type SvgContextFn = Callable[[Widget, DisplayConfig], dict[str, object]]
 # from this module; by this point all icon/filter helpers exist in
 # the partially-loaded svg_render module namespace.
 from .widgets import (  # noqa: E402
+    _build_calendar_context,
     _build_device_battery_context,
     _build_entities_context,
     _build_entity_context,
+    _build_frame_context,
+    _build_gauge_context,
+    _build_graph_context,
     _build_heading_context,
     _build_sensor_context,
     _build_separator_context,
@@ -427,9 +448,13 @@ from .widgets import (  # noqa: E402
 )
 
 _SVG_RENDERERS: dict[str, SvgContextFn] = {
+    WidgetType.CALENDAR: _build_calendar_context,
     WidgetType.DEVICE_BATTERY: _build_device_battery_context,
     WidgetType.ENTITIES: _build_entities_context,
     WidgetType.ENTITY: _build_entity_context,
+    WidgetType.FRAME: _build_frame_context,
+    WidgetType.GAUGE: _build_gauge_context,
+    WidgetType.GRAPH: _build_graph_context,
     WidgetType.HEADING: _build_heading_context,
     WidgetType.SENSOR: _build_sensor_context,
     WidgetType.SEPARATOR: _build_separator_context,

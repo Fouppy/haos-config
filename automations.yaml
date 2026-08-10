@@ -1,101 +1,3 @@
-- id: '1779534247472'
-  alias: 'Living Room: Switch to Late Night Mode'
-  description: ''
-  triggers:
-  - trigger: tag
-    tag_id: bb50a113-1d63-43b9-bfe2-6d15428e5246
-  conditions: []
-  actions:
-  - action: script.living_room_switch_to_late_night_mode
-    metadata: {}
-    data: {}
-    continue_on_error: true
-  mode: single
-- id: '1779719901625'
-  alias: 'Living Room: Leave Jellyfin audio via TV'
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - media_player.living_room_chromecast
-    enabled: true
-    attribute: app_id
-  - trigger: state
-    entity_id: media_player.living_room_tv
-    to: 'off'
-  conditions:
-  - condition: state
-    entity_id: input_boolean.cinema_audio
-    state:
-    - 'on'
-  - condition: or
-    conditions:
-    - condition: state
-      entity_id: media_player.living_room_tv
-      state: 'off'
-      enabled: true
-    - condition: template
-      value_template: '{{ state_attr(''media_player.living_room_chromecast'', ''app_id'')
-        != ''org.jellyfin.androidtv'' }}
-
-        '
-  actions:
-  - delay: 00:00:05
-    continue_on_error: true
-  - action: script.switch_to_tv_speakers
-    data: {}
-    continue_on_error: true
-  mode: restart
-- id: '1779719977392'
-  alias: 'Living Room: Jellyfin audio via JVC'
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - media_player.living_room_chromecast
-    enabled: true
-    attribute: app_id
-  conditions:
-  - condition: template
-    value_template: '{{ state_attr(''media_player.living_room_chromecast'', ''app_id'')
-      == ''org.jellyfin.androidtv'' }}
-
-      '
-  - condition: state
-    entity_id: input_boolean.cinema_audio
-    state:
-    - 'off'
-  actions:
-  - action: script.switch_to_optical
-    data: {}
-    continue_on_error: true
-  - action: light.turn_off
-    metadata: {}
-    target:
-      entity_id: light.living_room_main_light
-    data: {}
-    continue_on_error: true
-  - condition: state
-    state:
-    - home
-    entity_id: person.moom_2
-  - action: light.turn_off
-    metadata: {}
-    target:
-      entity_id: light.living_room_red_lamp
-    data: {}
-    continue_on_error: true
-  - condition: state
-    state:
-    - 'on'
-    entity_id: fan.dyson
-  - action: switch.turn_on
-    metadata: {}
-    target:
-      entity_id: switch.dyson_night_mode
-    data: {}
-    continue_on_error: true
-  mode: single
 - id: '1779820491973'
   alias: 'Buttons: Kitchen Rodret dimmer switch'
   description: ''
@@ -114,37 +16,6 @@
       remote_devices:
       - 8b9d1a82015ce6dcacc147b0beba435a
       light: light.office_bookcases
-- id: '1779820993124'
-  alias: 'Living Room: Automatic Lights'
-  description: ''
-  use_blueprint:
-    path: Blackshome/sensor-light.yaml
-    input:
-      include_sun: sun_enabled
-      include_ambient: ambient_enabled
-      ambient_light_sensor: sensor.illuminance_sensor
-      ambient_light_options: ambient_light_option_enabled
-      ambient_light_high_value: 100
-      ambient_light_value: 20
-      light_switch:
-        entity_id:
-        - light.living_room_tv_light
-        - light.living_room_string_lights
-        - light.living_room_red_lamp
-        - light.living_room_main_light
-      zone: zone.home
-      include_device_tracker: zone_people_enabled
-      people:
-      - person.fouppy_2
-      - person.moom_2
-      include_night_lights: night_lights_disabled
-      motion_trigger:
-      - binary_sensor.living_room_lux
-      include_bypass:
-      - bypass_enabled_stop
-      motion_bypass_lights_stop:
-      - input_boolean.automation_link_media_movie
-      bypass_time_delay: 5
 - id: '1780062791591'
   alias: 'Utilities: Washing Machine Notification'
   description: ''
@@ -208,42 +79,9 @@
       end_message_title: Dishwasher
       end_message: Yippee the dishwasher is finished!
       end_notify_icon: mdi:dishwasher
-      end_appliance_power: 1
+      end_appliance_power: 2
       start_appliance_power: 2
-- id: '1780065850020'
-  alias: 'Living Room: Automatic Movie Lights'
-  description: ''
-  use_blueprint:
-    path: Blackshome/sensor-light-add-on.yaml
-    input:
-      trigger_entities:
-      - media_player.living_room_chromecast
-      trigger_on_state:
-      - 'on'
-      app_attribute:
-      - org.jellyfin.androidtv
-      trigger_off_state:
-      - idle
-      include_start_turn_off: enable_start_turn_off
-      off_light_switch:
-        entity_id:
-        - light.living_room_red_lamp
-        - light.living_room_main_light
-      light_switch:
-        entity_id:
-        - light.living_room_string_lights
-        - script.living_room_change_audio_to_optical
-      include_sun: sun_enabled
-      include_ambient: ambient_enabled
-      ambient_light_sensor: sensor.living_room_light_sensor
-      ambient_light_options: ambient_light_option_enabled
-      include_automation_link: enable_automation_link
-      automation_link:
-      - input_boolean.automation_link_media_movie
-      include_end_turn_on: enable_end_turn_on
-      include_automation_link_time_delay: enable_time_delay
-      end_light_switch:
-        entity_id: script.living_room_change_audio_to_network
+      end_message_cost: Approx Cost €
 - id: '1780066577270'
   alias: 'Utilities: Low Power Notification'
   description: ''
@@ -259,6 +97,8 @@
       notify_message: sensors
       notify_data:
       - high_priority
+      include_time: time_enabled
+      time: '14:00:00'
 - id: '1780067128377'
   alias: 'System: Sensor Light Blueprint Update Notification'
   description: ''
@@ -466,15 +306,25 @@
         id: 'on'
       sequence:
       - action: switch.turn_on
+        data: {}
         target:
-          entity_id: switch.living_room_mosquito_plug
+          entity_id: switch.salon_living_room_mosquito_plug
+      - action: switch.turn_on
+        target:
+          entity_id: switch.chambre_mosquito_plug_bedroom
+        data: {}
     - conditions:
       - condition: trigger
         id: 'off'
       sequence:
       - action: switch.turn_off
+        data: {}
         target:
-          entity_id: switch.living_room_mosquito_plug
+          entity_id: switch.salon_living_room_mosquito_plug
+      - action: switch.turn_off
+        target:
+          entity_id: switch.chambre_mosquito_plug_bedroom
+        data: {}
   mode: single
 - id: '1780075459948'
   alias: 'System: Containers Down Notification'
@@ -559,10 +409,12 @@
   - condition: state
     entity_id: person.fouppy
     state: home
-  - condition: state
-    entity_id: person.moom
-    state:
-    - not_home
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: person.moom
+      state:
+      - home
   actions:
   - action: switch.turn_on
     target:
@@ -575,13 +427,13 @@
       volume_level: 0.4
   - delay: 00:00:01
   - action: media_player.play_media
-    target:
-      entity_id: media_player.wiim_living_room_ma
     data:
       media:
         media_content_id: spotify:playlist:37i9dQZF1CKMFBxUbxRIAg
         media_content_type: music
         metadata: {}
+    target:
+      device_id: 1cc22624572220030cae3f8704c8ff20
   mode: single
 - id: '1780077264426'
   alias: 'Living Room: Pause WiiM on Fouppy call'
@@ -605,17 +457,20 @@
   alias: 'Living Room: Turn JVC off when WiiM idle'
   description: ''
   triggers:
-  - entity_id: media_player.wiim_living_room
+  - entity_id:
+    - media_player.wiim_living_room
     to:
     - idle
-    - paused
     - 'off'
     - standby
+    - paused
     for:
       minutes: 20
     trigger: state
+    enabled: true
   - minutes: /5
     trigger: time_pattern
+    enabled: true
   conditions:
   - condition: state
     entity_id: media_player.wiim_living_room
@@ -626,6 +481,7 @@
     - standby
     for:
       minutes: 20
+    enabled: true
   actions:
   - action: switch.turn_off
     target:
@@ -638,10 +494,7 @@
   - entity_id: media_player.wiim_living_room
     to: playing
     trigger: state
-  conditions:
-  - condition: state
-    entity_id: switch.jvc
-    state: 'off'
+  conditions: []
   actions:
   - action: switch.turn_on
     target:
@@ -662,3 +515,29 @@
       - action: script.living_room_switch_to_late_night_mode
         metadata: {}
         data: {}
+      single_press:
+      - action: script.living_room_change_audio_to_optical
+        metadata: {}
+        data: {}
+      - action: script.living_room_turn_movie_lights_on
+        metadata: {}
+        data: {}
+- id: '1780853916987'
+  alias: 'Living Room: Set WiiM to Hip-Hop on Network'
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.wiim_living_room
+    attribute: source
+    to:
+    - Network
+  conditions: []
+  actions:
+  - action: media_player.select_sound_mode
+    metadata: {}
+    target:
+      entity_id: media_player.wiim_living_room
+    data:
+      sound_mode: Hip-Hop
+  mode: single

@@ -1,7 +1,6 @@
 {%- from "_macros.svg.j2" import card_container, icon_circle -%}
 <svg xmlns="http://www.w3.org/2000/svg"
      width="{{ w }}" height="{{ h }}">
-<rect width="{{ w }}" height="{{ h }}" fill="{{ hex_white }}"/>
 {%- if has_entity -%}
 {%- call card_container(
     x=0, y=0, w=w, h=h,
@@ -20,6 +19,7 @@
     icon_outline=icon_outline, icon_no_circle=icon_no_circle,
     letter=letter, letter_font_sz=letter_font_sz) -}}
 {%- endif -%}
+{%- if not hide_name -%}
 <text
   x="{{ name_x }}" y="{{ name_y }}"
   font-family="Roboto"
@@ -27,10 +27,15 @@
   font-size="{{ name_font_sz }}"
   dominant-baseline="central"
   fill="{{ hex_gray }}">{{ name_text }}</text>
+{%- endif -%}
 {#- Info section: large value with optional unit beside it. -#}
+{%- if not hide_state -%}
 <text
   x="{{ value_x }}" y="{{ value_y }}"
   font-family="Roboto"
+{%- if value_bold %}
+  font-weight="bold"
+{%- endif %}
   font-size="{{ value_font_sz }}"
   dominant-baseline="auto"
   fill="{{ hex_black }}">{{ value_text }}</text>
@@ -41,6 +46,7 @@
   font-size="{{ unit_font_sz }}"
   dominant-baseline="auto"
   fill="{{ hex_gray }}">{{ unit_text }}</text>
+{%- endif -%}
 {%- endif -%}
 {#- Graph section: sparkline history chart below the info section. -#}
 {%- if has_graph and polyline_points -%}

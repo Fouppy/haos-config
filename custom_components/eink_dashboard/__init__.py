@@ -1,3 +1,17 @@
+# Copyright 2026 Andreas Schneider
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """E-ink dashboard Home Assistant integration setup."""
 
 from __future__ import annotations
@@ -26,8 +40,10 @@ if TYPE_CHECKING:
 
 from .battery import resolve_battery_level
 from .const import (
+    DEFAULT_EXPOSURE,
     DEFAULT_GRAYSCALE_LEVELS,
     DEFAULT_HEIGHT,
+    DEFAULT_SATURATION,
     DEFAULT_WIDTH,
     DEVICE_PRESETS,
     DOMAIN,
@@ -254,6 +270,7 @@ async def _build_display_config(
         "grayscale_levels": entry.options.get(
             "grayscale_levels", DEFAULT_GRAYSCALE_LEVELS
         ),
+        "color_scheme": entry.options.get("color_scheme"),
         "number_format": number_format,
         "language": language,
         "first_weekday": first_weekday,
@@ -325,15 +342,15 @@ async def _fetch_history(
     widgets: list[dict[str, Any]],
     states: dict[str, Any],
 ) -> None:
-    """Fetch state history for sensor widgets and inject into states.
+    """Fetch state history for sensor and graph widgets.
 
-    Scans ``widgets`` for sensor widgets with ``graph == "line"``,
-    then fetches compressed state history from the recorder component
-    for each referenced entity and writes it into
-    ``states[entity_id]["history"]`` as a list of
-    ``{"s": state_str, "lu": unix_timestamp_float}`` dicts so
-    ``_build_sensor_context`` can compute sparkline coordinates
-    without real-time HA access.
+    Scans ``widgets`` for sensor widgets with ``graph == "line"``
+    and for graph widgets, then fetches compressed state history
+    from the recorder component for each referenced entity and
+    writes it into ``states[entity_id]["history"]`` as a list of
+    ``{"s": state_str, "lu": unix_timestamp_float}`` dicts so the
+    context builders can compute graph coordinates without real-time
+    HA access.
 
     Silently skips if the recorder is not loaded or if fetching fails
     for any individual entity.  Tests inject history data directly
@@ -341,23 +358,48 @@ async def _fetch_history(
 
     Args:
         hass: Home Assistant instance.
-        widgets: Widget dicts to scan for sensor widgets needing
-            history data.
+        widgets: Widget dicts to scan for widgets needing history
+            data.
         states: Mutable states dict built by ``_build_display_config``.
     """
     # Build a map of entity_id → maximum hours_to_show across all
-    # sensor widgets referencing that entity.
+    # widgets that require history data.
     sensor_entities: dict[str, int] = {}
     for w in widgets:
-        if w.get("type") == WidgetType.SENSOR and w.get("graph") == "line":
-            eid = w.get("entity", "")
-            if eid and eid in states:
-                try:
-                    hours = max(1, int(w.get("hours_to_show", 24)))
-                except (ValueError, TypeError):
-                    hours = 24
-                if hours > sensor_entities.get(eid, 0):
-                    sensor_entities[eid] = hours
+        needs_history = (
+            w.get("type") == WidgetType.SENSOR and w.get("graph") == "line"
+        ) or w.get("type") == WidgetType.GRAPH
+        if needs_history:
+            # Collect all entity IDs from the entities list,
+            # single entity= key, and flat editor keys entity_2/3.
+            # Entities configured with data_source="attribute" read
+            # a forecast-style attribute instead, so they are
+            # skipped here to avoid an unnecessary recorder query.
+            eids: list[str] = []
+            entities_list = w.get("entities")
+            if isinstance(entities_list, list):
+                for e in entities_list:
+                    if isinstance(e, dict):
+                        eid = str(e.get("entity", ""))
+                        if eid and e.get("data_source") != "attribute":
+                            eids.append(eid)
+            if not eids:
+                if w.get("data_source") != "attribute":
+                    eid = str(w.get("entity", ""))
+                    if eid:
+                        eids.append(eid)
+                for suffix in ("_2", "_3"):
+                    eid2 = str(w.get(f"entity{suffix}", ""))
+                    if eid2:
+                        eids.append(eid2)
+            for eid in eids:
+                if eid in states:
+                    try:
+                        hours = max(1, int(w.get("hours_to_show", 24)))
+                    except (ValueError, TypeError):
+                        hours = 24
+                    if hours > sensor_entities.get(eid, 0):
+                        sensor_entities[eid] = hours
 
     if not sensor_entities:
         return
@@ -366,6 +408,7 @@ async def _fetch_history(
         _LOGGER.debug("_fetch_history: recorder not loaded, skipping history")
         return
 
+    from homeassistant.components.recorder import get_instance
     from homeassistant.components.recorder.history import (
         get_significant_states,
     )
@@ -374,7 +417,7 @@ async def _fetch_history(
     for entity_id, hours in sensor_entities.items():
         start_time = now - timedelta(hours=hours)
         try:
-            result = await hass.async_add_executor_job(
+            result = await get_instance(hass).async_add_executor_job(
                 partial(
                     get_significant_states,
                     hass,
@@ -404,6 +447,86 @@ async def _fetch_history(
 
         if entries:
             states[entity_id]["history"] = entries
+
+
+async def _fetch_calendar_events(
+    hass: HomeAssistant,
+    widgets: list[dict[str, Any]],
+    states: dict[str, Any],
+) -> None:
+    """Fetch upcoming events for calendar widgets and inject into states.
+
+    Calls the ``calendar.get_events`` service for each unique calendar
+    entity referenced by ``widgets`` and writes the event list into
+    ``states[entity_id]["attributes"]["events"]`` so the widget
+    context builder can access multiple events without real-time HA
+    access at render time.
+
+    The fetch window starts at the current time and extends to the
+    maximum ``days_ahead`` configured across all calendar widgets that
+    reference the same entity.  Silently skips any entity where the
+    service call fails (entity offline, integration not loaded, etc.).
+
+    Args:
+        hass: Home Assistant instance.
+        widgets: Widget dicts to scan for calendar entity IDs.
+        states: Mutable states dict; events are injected in-place
+            under ``states[entity_id]["attributes"]["events"]``.
+    """
+    calendar_entities: dict[str, int] = {}
+    for w in widgets:
+        if w.get("type") == WidgetType.CALENDAR:
+            eid = w.get("entity", "")
+            if not eid:
+                continue
+            if eid not in states:
+                _LOGGER.warning(
+                    "Calendar entity %r is not in the states snapshot; "
+                    "events will not be fetched and the widget will render "
+                    "blank. Check that the entity exists in Home Assistant.",
+                    eid,
+                )
+                continue
+            try:
+                days = max(1, int(w.get("days_ahead", 7)))
+            except (ValueError, TypeError):
+                days = 7
+            if days > calendar_entities.get(eid, 0):
+                calendar_entities[eid] = days
+
+    if not calendar_entities:
+        return
+
+    now = dt.datetime.now(dt.UTC)
+    for entity_id, days in calendar_entities.items():
+        end_dt = now + timedelta(days=days)
+        try:
+            result = await hass.services.async_call(
+                "calendar",
+                "get_events",
+                {
+                    "entity_id": entity_id,
+                    "start_date_time": now.isoformat(),
+                    "end_date_time": end_dt.isoformat(),
+                },
+                blocking=True,
+                return_response=True,
+            )
+            if result is None:
+                continue
+            entity_data = result.get(entity_id)
+            raw = (
+                entity_data.get("events")
+                if isinstance(entity_data, dict)
+                else None
+            )
+            events: list[dict[str, Any]] = cast(
+                "list[dict[str, Any]]",
+                raw if isinstance(raw, list) else [],
+            )
+            states[entity_id]["attributes"]["events"] = events
+        except Exception:  # noqa: BLE001
+            _LOGGER.debug("Could not fetch calendar events for %s", entity_id)
 
 
 @websocket_api.websocket_command(
@@ -458,6 +581,7 @@ async def ws_render_widget(
     config = await _build_display_config(hass, entry_id)
     await _fetch_forecasts(hass, [widget], config["states"])
     await _fetch_history(hass, [widget], config["states"])
+    await _fetch_calendar_events(hass, [widget], config["states"])
     try:
         svg = await hass.async_add_executor_job(
             render_widget_svg, widget, config
@@ -523,6 +647,7 @@ async def ws_render_widgets(
     config = await _build_display_config(hass, entry_id)
     await _fetch_forecasts(hass, widgets, config["states"])
     await _fetch_history(hass, widgets, config["states"])
+    await _fetch_calendar_events(hass, widgets, config["states"])
 
     # Render all widgets in a single executor job: render_widget_svg
     # is CPU-bound (Jinja2 + resvg), and one thread per widget would
@@ -593,6 +718,43 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
     websocket_api.async_register_command(hass, ws_render_widget)
     websocket_api.async_register_command(hass, ws_render_widgets)
     _LOGGER.debug("async_setup: complete")
+    return True
+
+
+async def async_migrate_entry(
+    hass: HomeAssistant, config_entry: ConfigEntry
+) -> bool:
+    """Migrate a config entry to the current schema version.
+
+    Version 1.1 → 1.2: replace ``sharpness`` and ``contrast`` with
+    ``exposure`` and ``saturation``.  ``sharpness`` has no equivalent
+    in epaper-dithering; ``contrast`` is superseded by ``exposure``.
+    Both new keys default to 1.0 (no change).
+
+    Args:
+        hass: Home Assistant instance.
+        config_entry: The config entry to migrate.
+
+    Returns:
+        ``True`` if migration succeeded or was not needed.
+    """
+    if config_entry.minor_version == 1:
+        _LOGGER.debug(
+            "Migrating %s from minor version %d to 2",
+            config_entry.entry_id,
+            config_entry.minor_version,
+        )
+        new_options = dict(config_entry.options)
+        new_options.pop("sharpness", None)
+        new_options.pop("contrast", None)
+        new_options.setdefault("exposure", DEFAULT_EXPOSURE)
+        new_options.setdefault("saturation", DEFAULT_SATURATION)
+        hass.config_entries.async_update_entry(
+            config_entry,
+            options=new_options,
+            minor_version=2,
+        )
+
     return True
 
 

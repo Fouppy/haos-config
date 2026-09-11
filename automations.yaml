@@ -90,7 +90,7 @@
     input:
       exclude_sensors:
         entity_id:
-        - sensor.cph2465_battery_level
+        - sensor.sensor.moom_s_phone_battery_level
       include_easy_notify: enable_easy_notify
       notify_device:
       - 5eba282c0bb6d3d0d3cbfc09725ed4c3

@@ -22,6 +22,52 @@ play_on_chromecast:
       selector:
         config_entry:
           integration: jellyha
+    server_entity_id:
+      name: JellyHA Server Entity
+      description: The JellyHA entity providing the media (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
+    use_series_image:
+      name: Use Series Poster
+      description: For TV episodes, send the official Series vertical poster to Chromecast instead of the episode screenshot
+      required: false
+      default: true
+      selector:
+        boolean:
+    subtitle_mode:
+      name: Subtitle Mode
+      description: Subtitle selection strategy (auto, none, forced_only, custom)
+      required: false
+      default: auto
+      selector:
+        select:
+          options:
+            - label: Auto (Jellyfin Profile)
+              value: auto
+            - label: None (Disabled)
+              value: none
+            - label: Forced Only
+              value: forced_only
+            - label: Custom Language List
+              value: custom
+    subtitle_language:
+      name: Subtitle Languages
+      description: Prioritized comma-separated list of subtitle language codes or names (e.g. "sl, en" or "slv, eng")
+      required: false
+      selector:
+        text:
+    subtitle_index:
+      name: Subtitle Stream Index
+      description: Direct subtitle stream index to force a specific subtitle track
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 100
+          mode: box
+
 
 refresh_library:
   name: Refresh Library
@@ -52,6 +98,20 @@ delete_item:
       selector:
         config_entry:
           integration: jellyha
+    entity_id:
+      name: JellyHA Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
+    server_entity_id:
+      name: JellyHA Server Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
 
 mark_watched:
   name: Mark Watched
@@ -75,6 +135,20 @@ mark_watched:
       required: false
       selector:
         config_entry:
+          integration: jellyha
+    entity_id:
+      name: JellyHA Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
+    server_entity_id:
+      name: JellyHA Server Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
           integration: jellyha
 
 update_favorite:
@@ -100,6 +174,21 @@ update_favorite:
       selector:
         config_entry:
           integration: jellyha
+    entity_id:
+      name: JellyHA Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
+    server_entity_id:
+      name: JellyHA Server Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
+
 
 session_control:
   name: Session Control
@@ -141,6 +230,97 @@ session_control:
       selector:
         config_entry:
           integration: jellyha
+    entity_id:
+      name: JellyHA Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
+    server_entity_id:
+      name: JellyHA Server Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
+
+session_play:
+  name: Session Play
+  description: Instruct an active Jellyfin client session or device player to play a media item (Movie, Episode, Song, etc.).
+  fields:
+    item_id:
+      name: Item ID
+      description: The Jellyfin item ID to play.
+      required: true
+      selector:
+        text:
+    entity_id:
+      name: Player Entity
+      description: The JellyHA media player entity to target (e.g. media_player.jellyha_android_tv).
+      required: false
+      selector:
+        entity:
+          domain: media_player
+    device_name:
+      name: Device Name
+      description: The name of the client device (e.g. "Android TV").
+      required: false
+      selector:
+        text:
+    device_id:
+      name: Device ID
+      description: The unique device ID of the client session.
+      required: false
+      selector:
+        text:
+    client:
+      name: Client Name
+      description: The client application name (e.g. "Wholphin", "Jellyfin Web").
+      required: false
+      selector:
+        text:
+    session_id:
+      name: Session ID
+      description: The direct Jellyfin session ID (optional).
+      required: false
+      selector:
+        text:
+    play_command:
+      name: Play Command
+      description: How to play the item (PlayNow, PlayNext, PlayLast). Default is PlayNow.
+      required: false
+      selector:
+        select:
+          options:
+            - label: Play Now
+              value: PlayNow
+            - label: Play Next
+              value: PlayNext
+            - label: Play Last
+              value: PlayLast
+    start_position_ticks:
+      name: Start Position Ticks
+      description: Optional start position in ticks (1 second = 10,000,000 ticks).
+      required: false
+      selector:
+        number:
+          min: 0
+          mode: box
+    config_entry_id:
+      name: JellyHA Instance
+      description: The JellyHA instance to use (defaults to first available)
+      required: false
+      selector:
+        config_entry:
+          integration: jellyha
+    server_entity_id:
+      name: JellyHA Server Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
 
 session_seek:
   name: Session Seek
@@ -154,8 +334,16 @@ session_seek:
         text:
     position_ticks:
       name: Position Ticks
-      description: The position in ticks (1 second = 10,000,000 ticks).
-      required: true
+      description: The position in ticks (1 second = 10,000,000 ticks). Either position_ticks or position_seconds is required.
+      required: false
+      selector:
+        number:
+          min: 0
+          mode: box
+    position_seconds:
+      name: Position Seconds
+      description: The position in seconds. Automatically converted to ticks.
+      required: false
       selector:
         number:
           min: 0
@@ -166,6 +354,20 @@ session_seek:
       required: false
       selector:
         config_entry:
+          integration: jellyha
+    entity_id:
+      name: JellyHA Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
+    server_entity_id:
+      name: JellyHA Server Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
           integration: jellyha
 
 session_general_command:
@@ -197,6 +399,21 @@ session_general_command:
       selector:
         config_entry:
           integration: jellyha
+    entity_id:
+      name: JellyHA Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
+    server_entity_id:
+      name: JellyHA Server Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
+
 
 search:
   name: Search
@@ -235,6 +452,46 @@ search:
               value: Playlist
             - label: Collection (BoxSet)
               value: BoxSet
+    sort_by:
+      name: Sort By
+      description: Field to sort results by (default Date Added).
+      required: false
+      selector:
+        select:
+          options:
+            - label: Date Added (Default)
+              value: DateCreated
+            - label: Title / Name
+              value: SortName
+            - label: Release Date
+              value: PremiereDate
+            - label: Rating
+              value: CommunityRating
+            - label: Episode / Track Number
+              value: IndexNumber
+            - label: Recently Played
+              value: DatePlayed
+            - label: Play Count
+              value: PlayCount
+            - label: Random / Shuffle
+              value: Random
+    sort_order:
+      name: Sort Order
+      description: Order of sorted results (default Descending).
+      required: false
+      selector:
+        select:
+          options:
+            - label: Descending
+              value: Descending
+            - label: Ascending
+              value: Ascending
+    parent_id:
+      name: Parent / Series ID
+      description: Filter media within a specific TV Series, Season, or Album ID.
+      required: false
+      selector:
+        text:
     is_played:
       name: Is Watched
       description: Filter by watched status.
@@ -272,6 +529,24 @@ search:
           max: 10
           step: 0.1
           mode: box
+    official_rating:
+      name: Parental / Content Rating
+      description: Filter by certification (e.g. "PG", "PG-13", "R", "TV-MA").
+      required: false
+      selector:
+        text:
+    studio:
+      name: Studio / Network
+      description: Filter by studio or network (e.g. "Pixar", "HBO", "Marvel Studios").
+      required: false
+      selector:
+        text:
+    person:
+      name: Person (Actor / Director)
+      description: Filter media featuring a specific actor or director (e.g. "Tom Hanks").
+      required: false
+      selector:
+        text:
     season:
       name: Season Number
       description: Filter by season number (ParentIndexNumber).
@@ -288,6 +563,14 @@ search:
         number:
           min: 1
           mode: box
+    offset:
+      name: Offset
+      description: Number of items to skip (for pagination).
+      required: false
+      selector:
+        number:
+          min: 0
+          mode: box
     limit:
       name: Limit
       description: Maximum number of results to return (default 5).
@@ -303,6 +586,20 @@ search:
       required: false
       selector:
         config_entry:
+          integration: jellyha
+    entity_id:
+      name: JellyHA Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
+    server_entity_id:
+      name: JellyHA Server Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
           integration: jellyha
 
 get_recommendations:
@@ -331,6 +628,20 @@ get_recommendations:
       selector:
         config_entry:
           integration: jellyha
+    entity_id:
+      name: JellyHA Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
+    server_entity_id:
+      name: JellyHA Server Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
 
 get_item:
   name: Get Item Details
@@ -349,3 +660,18 @@ get_item:
       selector:
         config_entry:
           integration: jellyha
+    entity_id:
+      name: JellyHA Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
+    server_entity_id:
+      name: JellyHA Server Entity
+      description: The JellyHA entity to target (optional, alternative to config_entry_id)
+      required: false
+      selector:
+        entity:
+          integration: jellyha
+

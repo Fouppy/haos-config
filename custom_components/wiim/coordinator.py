@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from pywiim import Player, PollingStrategy, WiiMClient
-from pywiim.exceptions import WiiMError
+from pywiim.exceptions import WiiMConnectionError, WiiMError, WiiMTimeoutError
 
 _LOGGER = logging.getLogger(__name__)
 _PYWIIM_MISC_LOGGER_NAME = "pywiim.api.misc"
@@ -41,10 +41,30 @@ def _install_expected_pywiim_log_filter() -> None:
     _EXPECTED_PYWIIM_LOG_FILTER_INSTALLED = True
 
 
+_UNREACHABLE_ERROR_MARKERS = (
+    "device unreachable",
+    "connection failed on all attempted protocols",
+    "cannot connect to host",
+    "connect call failed",
+    "connection refused",
+    "connection reset",
+    "network is unreachable",
+    "name or service not known",
+)
+
+
 def _is_expected_unreachable_error(err: Exception) -> bool:
     """Return True when error indicates expected offline/unreachable device."""
+    if isinstance(err, (WiiMConnectionError, WiiMTimeoutError)):
+        return True
+    last_error = getattr(err, "last_error", None)
+    if last_error is not None and last_error is not err and _is_expected_unreachable_error(last_error):
+        return True
+    # Powered-off devices often surface as WiiMRequestError after retries
+    # ("Request failed after 2 attempts: Cannot connect to host"), not as
+    # WiiMConnectionError. Treat those connect failures as unreachable too.
     err_text = str(err).lower()
-    return "device unreachable" in err_text or "connection failed on all attempted protocols" in err_text
+    return any(marker in err_text for marker in _UNREACHABLE_ERROR_MARKERS)
 
 
 def _compact_wiim_error(err: Exception) -> str:
@@ -229,9 +249,13 @@ class WiiMCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         except WiiMError as err:
             if _is_expected_unreachable_error(err):
                 _LOGGER.debug("Update failed for %s: %s", self.player.host, _compact_wiim_error(err))
-            else:
-                _LOGGER.warning("Update failed for %s: %s", self.player.host, _compact_wiim_error(err))
-            # Return cached Player object even on error
+                # Powered-off / unreachable devices must go unavailable so automations
+                # that wait on availability (e.g. smart-plug scripts) can proceed.
+                raise UpdateFailed(
+                    f"Failed to communicate with {self.player.host}: {_compact_wiim_error(err)}"
+                ) from err
+            _LOGGER.warning("Update failed for %s: %s", self.player.host, _compact_wiim_error(err))
+            # Return cached Player object for non-connectivity errors (parse blips, etc.)
             if self.data:
                 return self.data
             raise UpdateFailed(f"Failed to communicate with {self.player.host}: {_compact_wiim_error(err)}") from err

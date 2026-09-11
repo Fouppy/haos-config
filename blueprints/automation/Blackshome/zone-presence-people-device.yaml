@@ -50,9 +50,9 @@ blueprint:
                 value: inside_zone
               - label: Outside Zone
                 value: outside_zone
-              sort: false
-              custom_value: false
               multiple: false
+              custom_value: false
+              sort: false
         tracking_mode:
           name: Tracking Mode
           description: 'Select if you want to track `People` or `Devices`.
@@ -66,9 +66,9 @@ blueprint:
                 value: people
               - label: Devices
                 value: devices
-              sort: false
-              custom_value: false
               multiple: false
+              custom_value: false
+              sort: false
         people:
           name: People to Track
           description: 'The person entities to monitor. Only used if Tracking Mode
@@ -169,9 +169,9 @@ blueprint:
                 value: enable_presence_helper
               - label: Disable presence helper option
                 value: disable_presence_helper
-              sort: false
-              custom_value: false
               multiple: false
+              custom_value: false
+              sort: false
         presence_helper:
           name: Presence Helper
           description: 'The presence helper (toggle helper) that will be toggled ON
@@ -233,9 +233,9 @@ blueprint:
                 value: enable_bypass
               - label: Disable bypass option
                 value: disable_bypass
-              sort: false
-              custom_value: false
               multiple: false
+              custom_value: false
+              sort: false
         bypass_entity:
           name: Bypass Switch
           description: 'Select a toggle helper (input_boolean) that will bypass this
@@ -270,8 +270,8 @@ blueprint:
               - label: Enable Custom Actions - OFF
                 value: enable_off_custom_actions
               multiple: true
-              sort: false
               custom_value: false
+              sort: false
         on_custom_actions:
           name: Custom Actions - Start
           description: 'The actions to run when the automation turns ON.

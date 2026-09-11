@@ -76,8 +76,8 @@ blueprint:
               filter:
               - domain:
                 - sensor
-              reorder: false
               multiple: false
+              reorder: false
         start_appliance_power:
           name: Start - Appliance Power Setpoint
           description: 'Specify the threshold that the power must exceed to indicate
@@ -196,8 +196,8 @@ blueprint:
                 value: enable_start_notify_options
               - label: Disable Start Notify Options
                 value: disable_start_notify_options
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         start_notify_device:
           name: Devices Notified
@@ -311,8 +311,8 @@ blueprint:
                 value: time-sensitive
               - label: Quiet Notifications Without Waking Screen
                 value: passive
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         start_notify_sound:
           name: Notification Sound - iOS Only
@@ -430,8 +430,8 @@ blueprint:
                 value: enable_end_notify_options
               - label: Disable End Notify Options
                 value: disable_end_notify_options
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         end_notify_device:
           name: Devices Notified
@@ -545,8 +545,8 @@ blueprint:
                 value: time-sensitive
               - label: Quiet Notifications Without Waking Screen
                 value: passive
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         end_notify_sound:
           name: Notification Sound - iOS Only
@@ -679,8 +679,8 @@ blueprint:
                 value: enable_reminder_notification_clear
               - label: Disable Reminder Notification
                 value: disable_reminder_notification
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         end_reminder_notification_entity:
           name: Reminder Notification Entity
@@ -699,8 +699,8 @@ blueprint:
               filter:
               - domain:
                 - binary_sensor
-              reorder: false
               multiple: false
+              reorder: false
         end_reminder_notification_message:
           name: Reminder Notification Message
           description: 'Enter the message you would like to receive as a reminder
@@ -780,8 +780,8 @@ blueprint:
                 value: run_status_enabled
               - label: Disable run status
                 value: run_status_disabled
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         run_status_entity:
           name: Run Status Entity
@@ -804,8 +804,8 @@ blueprint:
               filter:
               - domain:
                 - input_select
-              reorder: false
               multiple: false
+              reorder: false
         run_status_start:
           name: Start Status
           description: 'Enter the status you want to display when the appliance starts.
@@ -909,8 +909,8 @@ blueprint:
                 value: time_enabled
               - label: Disable notify time restrictions
                 value: time_disabled
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         after_time:
           name: Start Time
@@ -994,8 +994,8 @@ blueprint:
                 value: enable_start_end_helpers
               - label: Disable - Energy Tracking
                 value: disable_power_tracking
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         power_consumption_sensor:
           name: Energy Tracking - Energy Sensor
@@ -1015,8 +1015,8 @@ blueprint:
               filter:
               - domain:
                 - sensor
-              reorder: false
               multiple: false
+              reorder: false
         end_message_kwh:
           name: Energy Tracking - End Message - Energy Consumption
           description: 'Enter the title used in the end notification for the estimated
@@ -1060,8 +1060,8 @@ blueprint:
               - domain:
                 - input_number
                 - sensor
-              reorder: false
               multiple: false
+              reorder: false
         start_power_consumption:
           name: Energy Tracking - Start Number Helper
           description: 'Select a number helper to store the kWh reading at the **start**
@@ -1076,8 +1076,8 @@ blueprint:
               filter:
               - domain:
                 - input_number
-              reorder: false
               multiple: false
+              reorder: false
         end_power_consumption:
           name: Energy Tracking - End Number Helper
           description: 'Select a number helper to store the kWh reading at the **end**
@@ -1092,8 +1092,8 @@ blueprint:
               filter:
               - domain:
                 - input_number
-              reorder: false
               multiple: false
+              reorder: false
     time_tracking_settings:
       name: Time Tracking
       icon: mdi:timer-sand-complete
@@ -1117,8 +1117,8 @@ blueprint:
                 value: enable_runtime_tracking_and_notify
               - label: Disable Runtime Tracking
                 value: disable_runtime_tracking
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         runtime_tracking_helper:
           name: Runtime Tracking - Text Helper
@@ -1132,8 +1132,8 @@ blueprint:
               filter:
               - domain:
                 - input_text
-              reorder: false
               multiple: false
+              reorder: false
         runtime_tracking_end_message:
           name: Runtime Tracking - End Message
           description: 'Enter the title to display just before the total runtime in
@@ -1160,8 +1160,8 @@ blueprint:
                 value: enable_duration_tracking
               - label: Disable Duration Tracking
                 value: disable_duration_tracking
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         end_message_duration_tracking:
           name: Duration Tracking - End Message - Duration
@@ -1196,8 +1196,8 @@ blueprint:
                 value: enable_cycle_counter_and_notify
               - label: Disable Cycle Counter
                 value: disable_cycle_counter
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         cycle_counter_helper:
           name: Cycle Counter - Counter Helper
@@ -1211,8 +1211,8 @@ blueprint:
               filter:
               - domain:
                 - counter
-              reorder: false
               multiple: false
+              reorder: false
         cycle_counter_end_message:
           name: Cycle Counter - End Message
           description: 'Enter the title to display just before the cycle count in
@@ -1246,8 +1246,8 @@ blueprint:
                 value: enable_service_reminder_and_notify
               - label: Disable Service Reminder
                 value: disable_service_reminder
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         service_reminder_counter_helper:
           name: Cycle Counter Service Reminder - Counter Helper
@@ -1261,8 +1261,8 @@ blueprint:
               filter:
               - domain:
                 - counter
-              reorder: false
               multiple: false
+              reorder: false
         service_reminder_cycles:
           name: Cycle Counter Service Reminder - Service Cycles
           description: 'Specify the number of appliance cycles required before a service
@@ -1313,8 +1313,8 @@ blueprint:
                 value: enable_time_service_reminder_and_notify
               - label: Disable Time-Based Service Reminder
                 value: disable_time_service_reminder
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         service_reminder_time_helper:
           name: Time-Based Service Reminder - Text Helper
@@ -1331,8 +1331,8 @@ blueprint:
               filter:
               - domain:
                 - input_text
-              reorder: false
               multiple: false
+              reorder: false
         service_reminder_time_threshold:
           name: Time-Based Service Reminder - Service Time
           description: 'Specify the time threshold (in HH:MM:SS format) that will
@@ -1387,8 +1387,8 @@ blueprint:
                 value: enable_watchdog
               - label: Disable Watchdog
                 value: disable_watchdog
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         watchdog_timeframe:
           name: Time Frame
@@ -1514,8 +1514,8 @@ blueprint:
                 value: time-sensitive
               - label: Quiet Notifications Without Waking Screen
                 value: passive
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         watchdog_notify_sound:
           name: Notification Sound - iOS Only
@@ -1660,8 +1660,8 @@ blueprint:
               filter:
               - domain:
                 - zone
-              reorder: false
               multiple: false
+              reorder: false
     custom_actions_settings:
       name: Custom Actions
       icon: mdi:code-tags

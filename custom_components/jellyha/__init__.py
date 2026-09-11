@@ -94,7 +94,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: JellyHAConfigEntry) -> b
         www_path = os.path.join(os.path.dirname(__file__), "www")
         await hass.http.async_register_static_paths([
             StaticPathConfig("/jellyha_static", static_path, False),
-            StaticPathConfig("/jellyha", www_path, True)
+            StaticPathConfig("/jellyha", www_path, False)
         ])
         
         # Register image and stream proxy views
@@ -128,6 +128,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: JellyHAConfigEntry) -> b
     entry.async_on_unload(
         hass.bus.async_listen(f"{DOMAIN}_event", _handle_media_event)
     )
+    entry.async_on_unload(entry.add_update_listener(async_reload_entry))
     
     return True
 
@@ -143,7 +144,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: JellyHAConfigEntry) -> 
         # Close API client session
         lib_coordinator = data.library
         if lib_coordinator and lib_coordinator._api:
-            await lib_coordinator._api.logout()
             await lib_coordinator._api.close()
     
     return unload_ok
@@ -151,5 +151,5 @@ async def async_unload_entry(hass: HomeAssistant, entry: JellyHAConfigEntry) -> 
 
 async def async_reload_entry(hass: HomeAssistant, entry: JellyHAConfigEntry) -> None:
     """Reload config entry."""
-    await async_unload_entry(hass, entry)
-    await async_setup_entry(hass, entry)
+    await hass.config_entries.async_reload(entry.entry_id)
+

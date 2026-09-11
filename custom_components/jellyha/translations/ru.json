@@ -181,6 +181,33 @@
             },
             "refresh_duration": {
                 "name": "Длительность обновления"
+            },
+            "movies": {
+                "name": "Фильмы"
+            },
+            "series": {
+                "name": "Сериалы"
+            },
+            "episodes": {
+                "name": "Эпизоды"
+            },
+            "latest_movie": {
+                "name": "Последний фильм"
+            },
+            "latest_episode": {
+                "name": "Последний эпизод"
+            },
+            "transcoding_streams": {
+                "name": "Потоки транскодирования"
+            },
+            "connected_clients": {
+                "name": "Подключённые клиенты"
+            },
+            "storage_free": {
+                "name": "Свободно на медиа-хранилище"
+            },
+            "storage_free_percent": {
+                "name": "Процент свободного медиа-хранилища"
             }
         },
         "media_player": {
@@ -201,6 +228,18 @@
                 "item_id": {
                     "name": "ID элемента",
                     "description": "ID элемента Jellyfin для воспроизведения"
+                },
+                "use_series_image": {
+                    "name": "Использовать постер сериала",
+                    "description": "Для эпизодов ТВ-сериалов отправлять официальный вертикальный постер сериала на Chromecast вместо скриншота эпизода"
+                },
+                "subtitle_mode": {
+                    "name": "Режим субтитров",
+                    "description": "Стратегия выбора субтитров: auto (профиль пользователя Jellyfin), none (отключено), forced_only или custom"
+                },
+                "subtitle_language": {
+                    "name": "Языки субтитров",
+                    "description": "Приоритетный список языковых кодов или названий через запятую (напр. 'sl, en' или 'slv, eng')"
                 }
             }
         },

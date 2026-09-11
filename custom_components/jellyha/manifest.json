@@ -1,6 +1,9 @@
 {
   "domain": "jellyha",
   "name": "JellyHA",
+  "after_dependencies": [
+    "zeroconf"
+  ],
   "codeowners": [
     "@zupancicmarko"
   ],
@@ -17,5 +20,5 @@
     "aiohttp>=3.8.0",
     "pychromecast"
   ],
-  "version": "1.2.0"
+  "version": "1.3.0"
 }

@@ -76,7 +76,7 @@ _MAX_ATTRIBUTE_POINTS: int = 500
 
 def _rgb_hex_to_grayscale(
     hex_color: str,
-    grayscale_levels: int,
+    display_levels: int,
 ) -> str:
     """Convert an RGB hex color string to a grayscale hex string.
 
@@ -89,7 +89,7 @@ def _rgb_hex_to_grayscale(
         hex_color: CSS hex color string, e.g. ``"#ff0000"``.  Must
             start with ``#`` followed by exactly six hex digits.
             Values that do not match this form are treated as black.
-        grayscale_levels: Number of distinct gray levels on the
+        display_levels: Number of distinct gray levels on the
             display.  ``2`` produces only black or white; higher
             values quantize to the nearest available step.
 
@@ -108,11 +108,11 @@ def _rgb_hex_to_grayscale(
         return color_to_hex(COLOR_BLACK)
     # ITU-R BT.601 luminance coefficients.
     gray = round(0.299 * r + 0.587 * g + 0.114 * b)
-    if grayscale_levels <= 2:
+    if display_levels <= 2:
         # Hard threshold at mid-gray.
         return color_to_hex(0 if gray < 128 else 255)
     # Quantize to the nearest available step.
-    steps = grayscale_levels - 1
+    steps = display_levels - 1
     quantized = round(gray / 255 * steps) * 255 // steps
     return color_to_hex(quantized)
 
@@ -132,7 +132,7 @@ def _shade_to_hex(shade: str) -> str:
 
 def _resolve_threshold_color(
     entry: dict[str, object],
-    grayscale_levels: int,
+    display_levels: int,
 ) -> str:
     """Resolve the final hex color for one threshold entry.
 
@@ -142,7 +142,7 @@ def _resolve_threshold_color(
     Args:
         entry: Threshold dict with optional ``"shade"`` and
             ``"color"`` keys.
-        grayscale_levels: Display grayscale depth, used when mapping
+        display_levels: Display grayscale depth, used when mapping
             RGB colors to grayscale.
 
     Returns:
@@ -153,7 +153,7 @@ def _resolve_threshold_color(
         return _shade_to_hex(shade)
     color = str(entry.get("color", ""))
     if color:
-        return _rgb_hex_to_grayscale(color, grayscale_levels)
+        return _rgb_hex_to_grayscale(color, display_levels)
     return color_to_hex(COLOR_BLACK)
 
 
@@ -184,7 +184,7 @@ def _threshold_gradient_stops(
     transition: str,
     y_min: float,
     y_max: float,
-    grayscale_levels: int,
+    display_levels: int,
 ) -> list[dict[str, str]]:
     """Compute SVG linearGradient stop entries for color thresholds.
 
@@ -203,7 +203,7 @@ def _threshold_gradient_stops(
         transition: ``"smooth"`` or ``"hard"``.
         y_min: Y-axis lower bound (bottom of graph area).
         y_max: Y-axis upper bound (top of graph area).
-        grayscale_levels: Display grayscale depth for color mapping.
+        display_levels: Display grayscale depth for color mapping.
 
     Returns:
         List of ``{"offset": "XX.XX%", "color": "#hex"}`` dicts,
@@ -218,9 +218,7 @@ def _threshold_gradient_stops(
         pct = max(0.0, min(100.0, pct))
         return f"{pct:.2f}%"
 
-    colors = [
-        _resolve_threshold_color(t, grayscale_levels) for t in thresholds
-    ]
+    colors = [_resolve_threshold_color(t, display_levels) for t in thresholds]
 
     if transition == "hard":
         # Descending by value so we build stops top → bottom.
@@ -251,7 +249,7 @@ def _threshold_gradient_stops(
 def _bar_threshold_fill(
     value: float,
     thresholds: list[dict[str, object]],
-    grayscale_levels: int,
+    display_levels: int,
 ) -> str:
     """Resolve the threshold fill color for a single bar value.
 
@@ -261,7 +259,7 @@ def _bar_threshold_fill(
     Args:
         value: The bar's data value.
         thresholds: Sorted ascending by ``"value"``.
-        grayscale_levels: Display grayscale depth for color mapping.
+        display_levels: Display grayscale depth for color mapping.
 
     Returns:
         Resolved ``#rrggbb`` hex string for the bar's fill.
@@ -272,7 +270,7 @@ def _bar_threshold_fill(
             chosen = t
         else:
             break
-    return _resolve_threshold_color(chosen, grayscale_levels)
+    return _resolve_threshold_color(chosen, display_levels)
 
 
 def _normalize_thresholds(
@@ -594,7 +592,9 @@ def _fix_header_layout(
     config: DisplayConfig,
     header_h: int,
     svg_w: int,
-    grayscale_levels: int,
+    display_levels: int,
+    *,
+    state_font_sz: int | None = None,
 ) -> tuple[int, int]:
     """Override header layout fields in the context from _entity_info_context.
 
@@ -603,6 +603,12 @@ def _fix_header_layout(
     row the font sizes and icon geometry must be re-derived from
     ``_compute_metrics(header_h)`` so they match the standard row
     height proportions used by the tile and heading widgets.
+
+    ``ctx["value_text"]`` is truncated in place to fit between
+    ``value_x`` and the icon (or the right card inset, when the icon
+    is hidden), so callers that set an unusually long value string
+    — e.g. the multi-entity combined state text — must do so before
+    calling this function.
 
     Returns ``(gx1, gx2)`` — the left and right graph area edges
     computed from card insets, decoupled from icon geometry.
@@ -614,7 +620,11 @@ def _fix_header_layout(
         config: Display config.
         header_h: Pixel height of the header row.
         svg_w: Full widget width.
-        grayscale_levels: Display grayscale depth.
+        display_levels: Display grayscale depth.
+        state_font_sz: Optional override for the value/unit font
+            size in pixels, from the widget's ``state_font_size``
+            config key. Falls back to ``m_hdr.font_secondary`` when
+            omitted.
 
     Returns:
         ``(gx1, gx2)`` — left and right graph area pixel edges.
@@ -623,15 +633,18 @@ def _fix_header_layout(
 
     m_hdr = _compute_metrics(header_h)
     card_style = str(widget.get("card_style", DEFAULT_CARD_STYLE))
-    x_off, r_inset, _bar_w = _card_insets(m_hdr, card_style, grayscale_levels)
+    x_off, r_inset, _bar_w = _card_insets(m_hdr, card_style, display_levels)
     lpad = m_hdr.padding if x_off == 0 else 0
     rpad = m_hdr.padding if r_inset == 0 else 0
+    value_unit_font_sz = (
+        state_font_sz if state_font_sz is not None else m_hdr.font_secondary
+    )
 
     ctx["name_font_sz"] = m_hdr.font_primary
     ctx["name_y"] = header_h // 2
-    ctx["value_font_sz"] = m_hdr.font_secondary
+    ctx["value_font_sz"] = value_unit_font_sz
     ctx["value_y"] = header_h // 2
-    ctx["unit_font_sz"] = m_hdr.font_secondary
+    ctx["unit_font_sz"] = value_unit_font_sz
     ctx["unit_y"] = header_h // 2
 
     # When the name is shown, value_x must be shifted right past the
@@ -643,23 +656,6 @@ def _fix_header_layout(
         name_w = round(nf.getlength(name_text_str))
         ctx["value_x"] = cast("int", ctx["name_x"]) + name_w + m_hdr.inner_gap
 
-    value_text_str = str(ctx.get("value_text", ""))
-    unit_text_str = str(ctx.get("unit_text", ""))
-    value_x = cast("int", ctx["value_x"])
-    ctx["unit_x"] = value_x
-    if unit_text_str and value_text_str:
-        value_bold = bool(ctx["value_bold"])
-        vf = _load_font(
-            m_hdr.font_secondary,
-            medium=not value_bold,
-            bold=value_bold,
-        )
-        ctx["unit_x"] = (
-            value_x
-            + round(vf.getlength(value_text_str))
-            + m_hdr.inner_gap // 2
-        )
-
     icon_r = m_hdr.icon_dia // 2
     icon_cx = svg_w - r_inset - rpad - icon_r
     icon_cy = r_inset + icon_r if r_inset else header_h // 2
@@ -670,13 +666,173 @@ def _fix_header_layout(
     ctx["icon_glyph_y"] = icon_cy - m_hdr.icon_inner // 2
     ctx["letter_font_sz"] = m_hdr.font_letter
 
+    # Value text must not run into the icon (or the right card inset
+    # when the icon is hidden) — the multi-entity header's combined
+    # state string can be much longer than a single entity's value.
+    icon_shown = bool(ctx.get("icon_svg")) or bool(ctx.get("letter"))
+    right_bound = (
+        icon_cx - icon_r - m_hdr.inner_gap
+        if icon_shown
+        else svg_w - r_inset - rpad
+    )
+    value_text_str = str(ctx.get("value_text", ""))
+    unit_text_str = str(ctx.get("unit_text", ""))
+    value_x = cast("int", ctx["value_x"])
+    value_bold = bool(ctx["value_bold"])
+    vf = _load_font(value_unit_font_sz, medium=not value_bold, bold=value_bold)
+    if value_text_str:
+        value_text_str = _truncate_to_width(
+            value_text_str, vf, max(0, right_bound - value_x)
+        )
+        ctx["value_text"] = value_text_str
+
+    ctx["unit_x"] = value_x
+    if unit_text_str and value_text_str:
+        ctx["unit_x"] = (
+            value_x
+            + round(vf.getlength(value_text_str))
+            + m_hdr.inner_gap // 2
+        )
+
     return x_off + lpad, svg_w - r_inset - rpad
+
+
+def _resolve_start_cutoff(
+    start_time_str: str, now: datetime.datetime
+) -> float | None:
+    """Resolve a ``start_time`` config string to today's Unix timestamp.
+
+    ``now`` is treated as local time: HA sets the system timezone to
+    match its configured timezone, so local time is the correct frame
+    of reference for server-side rendering (see the same assumption
+    in ``conditions.py``'s time-condition evaluation).
+
+    Args:
+        start_time_str: Time-of-day string parseable by
+            ``datetime.time.fromisoformat`` (e.g. ``"00:00"``), or
+            empty to disable the fixed start time.
+        now: Current local datetime; only its date is used, so tests
+            can pass a fixed value for deterministic results.
+
+    Returns:
+        Unix timestamp for ``now``'s date at the given time, or
+        ``None`` when ``start_time_str`` is empty or unparsable. If
+        the resolved timestamp is still in the future relative to
+        ``now``, it is returned as-is (the graph will show no data
+        until that time is reached later today) and a warning is
+        logged.
+    """
+    if not start_time_str:
+        return None
+    try:
+        parsed = datetime.time.fromisoformat(start_time_str)
+    except ValueError:
+        _LOGGER.warning(
+            "Graph widget 'start_time' %r is not a valid HH:MM time; "
+            "ignoring it",
+            start_time_str,
+        )
+        return None
+    cutoff = datetime.datetime.combine(now.date(), parsed)
+    if cutoff > now:
+        _LOGGER.warning(
+            "Graph widget 'start_time' %s has not occurred yet "
+            "today; the graph will show no data until then",
+            start_time_str,
+        )
+    return cutoff.timestamp()
+
+
+def _combined_state_text(
+    entity_descs: list[dict[str, object]],
+    states: dict[str, Any],
+    config: DisplayConfig,
+    show_state: bool,
+    widget: Widget,
+) -> str | None:
+    """Build a " / "-joined state string for multi-entity headers.
+
+    Args:
+        entity_descs: Normalized entity descriptor list from
+            ``_normalize_entities()``.
+        states: States dict for resolving entity state and unit.
+        config: Display config used for locale-aware number
+            formatting via ``_fmt``.
+        show_state: Widget's ``show_state`` setting; ``False``
+            short-circuits to ``None`` without touching ``states``.
+        widget: Widget config dict, consulted for the ``unit``
+            override key. When set, it replaces every entity's
+            auto-detected ``unit_of_measurement``, matching the
+            single-entity behaviour in ``_entity_info_context``.
+
+    Returns:
+        The joined string of every entity with a usable (non-empty,
+        known) state, or ``None`` when ``show_state`` is ``False``,
+        only one entity is configured, or no entity has a usable
+        state.
+    """
+    if not show_state or len(entity_descs) <= 1:
+        return None
+    unit_override = widget.get("unit")
+    parts: list[str] = []
+    for desc in entity_descs:
+        eid = str(desc["entity"])
+        st = states.get(eid, {})
+        if not isinstance(st, dict):
+            continue
+        state_val = str(st.get("state", ""))
+        if not state_val or state_val in ("unknown", "unavailable"):
+            continue
+        attrs = st.get("attributes", {})
+        unit = (
+            str(attrs.get("unit_of_measurement", ""))
+            if isinstance(attrs, dict)
+            else ""
+        )
+        if unit_override is not None:
+            unit = str(unit_override)
+        formatted = _fmt(state_val, config)
+        parts.append(f"{formatted}{unit}" if unit else formatted)
+    return " / ".join(parts) if parts else None
+
+
+def _truncate_to_width(text: str, font: Any, max_w: float) -> str:
+    """Truncate ``text`` with a trailing ellipsis to fit ``max_w``.
+
+    Widths are rounded before comparison so the fit check matches
+    the rounding ``_legend_geometry`` applies when it measures the
+    returned string for layout.
+
+    Args:
+        text: Candidate string.
+        font: A loaded PIL font used to measure text width.
+        max_w: Maximum allowed pixel width.
+
+    Returns:
+        ``text`` unchanged if it already fits; otherwise the longest
+        prefix of ``text`` plus ``"…"`` that fits within ``max_w``.
+        Returns an empty string if even a bare ``"…"`` does not fit.
+    """
+    if round(font.getlength(text)) <= max_w:
+        return text
+    ellipsis = "…"
+    if round(font.getlength(ellipsis)) > max_w:
+        return ""
+    lo, hi = 0, len(text)
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        if round(font.getlength(text[:mid] + ellipsis)) <= max_w:
+            lo = mid
+        else:
+            hi = mid - 1
+    return text[:lo] + ellipsis
 
 
 def _legend_geometry(
     entity_descs: list[dict[str, object]],
     states: dict[str, Any],
     gx1: int,
+    gx2: int,
     gy2: int,
     label_font_sz: int,
     graph_h: int,
@@ -688,13 +844,23 @@ def _legend_geometry(
     line graphs, each entry shows a short dash-pattern line sample;
     for bar charts, a small filled rectangle swatch in the entity's
     fill color is shown instead.  The legend is placed at ``gy2``
-    and that boundary is shifted upward to reserve space.
+    and that boundary is shifted upward to reserve space.  When
+    entity names are long enough that entries would overflow the
+    graph width (and overlap each other), names are truncated with
+    an ellipsis to fit.  Each entry's fair share is an equal split
+    of the available width; entries whose name already fits that
+    share keep it in full, and the width they don't use is handed
+    to the remaining (over-budget) entries before those are
+    truncated, so one long name doesn't needlessly shrink short
+    ones.
 
     Args:
         entity_descs: Normalized entity descriptor list from
             ``_normalize_entities()``.
         states: States dict for resolving entity friendly names.
         gx1: Left edge of the graph area.
+        gx2: Right edge of the graph area, used to cap total legend
+            width and truncate names that would otherwise overflow.
         gy2: Current bottom edge of the graph area (shifted up).
         label_font_sz: Font size from axis labels; 0 triggers the
             same fallback formula as ``_label_geometry``.
@@ -724,13 +890,8 @@ def _legend_geometry(
     legend_y = gy2
     new_gy2 = gy2 - legend_h
 
-    entries: list[dict[str, object]] = []
-    x = gx1
-    # Centre each swatch/line sample and text label vertically
-    # within the legend band.
-    entry_mid_y = legend_y + legend_h // 2
-    swatch_h = max(4, font_sz // 2)
-    for i, desc in enumerate(entity_descs):
+    names: list[str] = []
+    for desc in entity_descs:
         eid = str(desc["entity"])
         name_override = str(desc.get("name", ""))
         if name_override:
@@ -743,6 +904,35 @@ def _legend_geometry(
                 if isinstance(attrs, dict)
                 else eid
             )
+        names.append(name)
+
+    text_widths = [round(legend_font.getlength(n)) for n in names]
+    entry_w = [line_sample_w + gap + tw + gap * 2 for tw in text_widths]
+    avail_w = max(0, gx2 - gx1)
+    if entity_descs and sum(entry_w) > avail_w:
+        even_share = avail_w / len(entity_descs)
+        fits = [w <= even_share for w in entry_w]
+        spare_w = avail_w - sum(
+            w for w, f in zip(entry_w, fits, strict=True) if f
+        )
+        overflow_n = len(fits) - sum(fits)
+        over_share = spare_w / overflow_n if overflow_n else 0.0
+        max_text_w = max(0.0, over_share - line_sample_w - gap * 3)
+        names = [
+            n if fits[i] else _truncate_to_width(n, legend_font, max_text_w)
+            for i, n in enumerate(names)
+        ]
+        text_widths = [round(legend_font.getlength(n)) for n in names]
+
+    entries: list[dict[str, object]] = []
+    x = gx1
+    # Centre each swatch/line sample and text label vertically
+    # within the legend band.
+    entry_mid_y = legend_y + legend_h // 2
+    swatch_h = max(4, font_sz // 2)
+    for i, (desc, name, text_w) in enumerate(
+        zip(entity_descs, names, text_widths, strict=True)
+    ):
         fill = bar_fills[i % len(bar_fills)] if bar_fills else ""
         entries.append(
             {
@@ -761,7 +951,6 @@ def _legend_geometry(
                 "font_sz": font_sz,
             }
         )
-        text_w = round(legend_font.getlength(name))
         x += line_sample_w + gap + text_w + gap * 2
     return new_gy2, legend_y, entries
 
@@ -778,7 +967,7 @@ def _bar_series(
     gy1: int,
     gy2: int,
     thresholds: list[dict[str, object]] | None = None,
-    grayscale_levels: int = 16,
+    display_levels: int = 16,
 ) -> list[dict[str, object]]:
     """Compute bar rectangles for a bar chart from per-entity points.
 
@@ -810,7 +999,7 @@ def _bar_series(
         thresholds: Optional sorted ascending threshold list; when
             non-empty, per-bar threshold fills override entity-level
             colors.
-        grayscale_levels: Display grayscale depth for threshold color
+        display_levels: Display grayscale depth for threshold color
             mapping.
 
     Returns:
@@ -880,7 +1069,7 @@ def _bar_series(
             # Per-bar threshold fill overrides entity-level color.
             if thresholds:
                 bar["bar_fill"] = _bar_threshold_fill(
-                    v, thresholds, grayscale_levels
+                    v, thresholds, display_levels
                 )
             bars.append(bar)
 
@@ -914,7 +1103,7 @@ def _line_series(
     show_fill: bool,
     thresholds: list[dict[str, object]] | None = None,
     threshold_transition: str = "smooth",
-    grayscale_levels: int = 16,
+    display_levels: int = 16,
 ) -> tuple[list[dict[str, object]], bool]:
     """Compute SVG line/polyline series dicts from per-entity points.
 
@@ -949,7 +1138,7 @@ def _line_series(
         thresholds: Optional sorted ascending threshold list.  When
             non-empty, gradient stops are computed per entity.
         threshold_transition: ``"smooth"`` or ``"hard"``.
-        grayscale_levels: Display grayscale depth for color mapping.
+        display_levels: Display grayscale depth for color mapping.
 
     Returns:
         Tuple of ``(series, has_any_data)`` where ``series`` is a
@@ -1032,7 +1221,7 @@ def _line_series(
                 threshold_transition,
                 y_min_s,
                 y_max_s,
-                grayscale_levels,
+                display_levels,
             )
             fill_stops = [
                 {
@@ -1064,19 +1253,26 @@ def _extract_entity_points(
     hours_to_show: int,
     points_per_hour: float,
     aggregate_func: str,
+    start_cutoff: float | None = None,
 ) -> list[tuple[float, float]]:
     """Extract and aggregate history data for one entity descriptor.
 
     Reads the entity's raw history from ``states_dict``, filters to
-    the ``hours_to_show`` time window, strips non-numeric entries, and
-    buckets the result via ``_aggregate_history``.
+    the ``hours_to_show`` time window (or ``start_cutoff`` when
+    given), strips non-numeric entries, and buckets the result via
+    ``_aggregate_history``.
 
     Args:
         desc: Entity descriptor dict from ``_normalize_entities()``.
         states_dict: States dict from the display config.
-        hours_to_show: History window in hours.
+        hours_to_show: History window in hours.  Ignored when
+            ``start_cutoff`` is not ``None``.
         points_per_hour: Target data density for bucketing.
         aggregate_func: Bucket reduction function name.
+        start_cutoff: Optional fixed Unix timestamp cutoff (from the
+            widget's ``start_time`` setting).  When given, only
+            history entries at or after this timestamp are kept,
+            replacing the rolling ``hours_to_show`` window entirely.
 
     Returns:
         Sorted oldest-to-newest list of ``(timestamp, value)`` pairs,
@@ -1089,24 +1285,32 @@ def _extract_entity_points(
         list(state.get("history", [])) if isinstance(state, dict) else []
     )
     if raw_hist:
-        t_latest = max(
-            (
-                float(str(e.get("lu", 0)))
-                for e in raw_hist
-                if math.isfinite(float(str(e.get("lu", 0))))
-            ),
-            default=None,
-        )
-        if t_latest is None:
-            raw_hist = []
-        else:
-            cutoff = t_latest - hours_to_show * 3600
+        if start_cutoff is not None:
             raw_hist = [
                 e
                 for e in raw_hist
                 if math.isfinite(float(str(e.get("lu", 0))))
-                and float(str(e.get("lu", 0))) > cutoff
+                and float(str(e.get("lu", 0))) >= start_cutoff
             ]
+        else:
+            t_latest = max(
+                (
+                    float(str(e.get("lu", 0)))
+                    for e in raw_hist
+                    if math.isfinite(float(str(e.get("lu", 0))))
+                ),
+                default=None,
+            )
+            if t_latest is None:
+                raw_hist = []
+            else:
+                cutoff = t_latest - hours_to_show * 3600
+                raw_hist = [
+                    e
+                    for e in raw_hist
+                    if math.isfinite(float(str(e.get("lu", 0))))
+                    and float(str(e.get("lu", 0))) > cutoff
+                ]
     numeric: list[tuple[float, float]] = []
     for entry in raw_hist:
         s = entry.get("s", "")
@@ -1252,7 +1456,7 @@ def _normalize_entities(
             _LOGGER.warning(
                 "Graph widget 'entities' list has no valid items "
                 "(each item must be a dict with an 'entity' key); "
-                "falling back to single-entity mode"
+                "widget will render without a graph"
             )
     else:
         eid = str(widget.get("entity", ""))
@@ -1260,6 +1464,7 @@ def _normalize_entities(
             raw.append(
                 {
                     "entity": eid,
+                    "name": str(widget.get("name") or ""),
                     "data_source": str(widget.get("data_source", "history")),
                     "attribute": str(widget.get("attribute", "")),
                     "attribute_timestamp_key": str(
@@ -1276,7 +1481,7 @@ def _normalize_entities(
                 raw.append(
                     {
                         "entity": eid2,
-                        "name": str(widget.get(f"name{suffix}", "")),
+                        "name": str(widget.get(f"name{suffix}") or ""),
                         "y_axis": str(
                             widget.get(f"y_axis{suffix}", "primary")
                         ),
@@ -1292,7 +1497,7 @@ def _normalize_entities(
         result.append(
             {
                 "entity": str(item.get("entity", "")),
-                "name": str(item.get("name", "")),
+                "name": str(item.get("name") or ""),
                 "y_axis": str(item.get("y_axis", "primary")),
                 "line_style": style_name,
                 "dash": _DASH_PATTERNS[idx],
@@ -1343,7 +1548,14 @@ def _build_graph_context(
             ``name`` (display name override),
             ``icon`` (MDI icon name, e.g. ``"mdi:thermometer"``),
             ``unit`` (unit string override),
-            ``hours_to_show`` (history window in hours; default 24),
+            ``hours_to_show`` (history window in hours; default 24;
+            ignored when ``start_time`` is set),
+            ``start_time`` (time-of-day string, e.g. ``"00:00"``,
+            parseable by ``datetime.time.fromisoformat``; when set,
+            the graph shows data from this time today onward instead
+            of a rolling ``hours_to_show`` window; empty/unparsable
+            values are ignored; if the time has not occurred yet
+            today, the graph shows no data until it does),
             ``points_per_hour`` (data points per hour; default 0.5,
             giving one point per 2-hour bucket),
             ``aggregate_func`` (``"avg"``, ``"min"``, ``"max"``,
@@ -1361,6 +1573,10 @@ def _build_graph_context(
             ``min_bound_range`` (minimum Y-axis range; if the
             auto-computed range is smaller, it is expanded
             symmetrically around the midpoint),
+            ``secondary_upper_bound`` (optional fixed upper bound
+            for the secondary Y-axis; auto-computed when omitted),
+            ``secondary_lower_bound`` (optional fixed lower bound
+            for the secondary Y-axis; auto-computed when omitted),
             ``smoothing`` (midpoint Q-curve path smoothing;
             default ``True``),
             ``show_fill`` (draw light-gray fill below the first
@@ -1370,11 +1586,20 @@ def _build_graph_context(
             ``show_extrema`` (show min/max values with timestamps
             below the graph; default ``False``),
             ``show_state`` (show current entity value in the
-            header; default ``True``),
+            header; default ``True``; when multiple entities are
+            configured, every entity with a currently known state
+            is shown concatenated with ``" / "``),
             ``show_name`` (show entity name in the header; default
             ``True``),
             ``show_icon`` (show icon in the header; default
             ``True``),
+            ``show_legend`` (show the legend below the graph for
+            multi-entity widgets; default ``True``; has no effect
+            for single-entity widgets, which never show a legend),
+            ``state_font_size`` (override the header value/unit font
+            size in pixels; defaults to
+            ``_compute_metrics(header_h).font_secondary`` when
+            omitted),
             ``graph`` (chart type: ``"line"`` (default) for a line
             graph with polyline/path elements, or ``"bar"`` for a
             bar chart with ``<rect>`` elements; in bar mode
@@ -1383,7 +1608,7 @@ def _build_graph_context(
             default ``False``),
             ``card_style``, ``x``, ``w``, ``h``.
         config: Display config with ``width``, ``states``,
-            ``grayscale_levels``, and optionally ``time_format``
+            ``display_levels``, and optionally ``time_format``
             (``"24"`` or ``"12"``; default ``"24"``).
 
     Returns:
@@ -1401,6 +1626,9 @@ def _build_graph_context(
     svg_w = _widget_dim(widget, "w", config["width"] - x)
 
     hours_to_show: int = int(float(widget.get("hours_to_show", 24)))
+    start_cutoff = _resolve_start_cutoff(
+        str(widget.get("start_time", "")), datetime.datetime.now()
+    )
     points_per_hour: float = float(widget.get("points_per_hour", 0.5))
     aggregate_func: str = str(widget.get("aggregate_func", "avg"))
     group_by: str = str(widget.get("group_by", "interval"))
@@ -1408,6 +1636,8 @@ def _build_graph_context(
     upper_bound = widget.get("upper_bound")
     lower_bound = widget.get("lower_bound")
     min_bound_range = widget.get("min_bound_range")
+    secondary_upper_bound = widget.get("secondary_upper_bound")
+    secondary_lower_bound = widget.get("secondary_lower_bound")
     smoothing: bool = bool(widget.get("smoothing", True))
     show_fill: bool = bool(widget.get("show_fill", True))
     show_labels: bool = bool(widget.get("show_labels", True))
@@ -1415,7 +1645,8 @@ def _build_graph_context(
     show_state: bool = bool(widget.get("show_state", True))
     show_name: bool = bool(widget.get("show_name", True))
     show_icon: bool = bool(widget.get("show_icon", True))
-    grayscale_levels = config.get("grayscale_levels", 16)
+    show_legend: bool = bool(widget.get("show_legend", True))
+    display_levels = config.get("display_levels", 16)
     # "line" (default) renders polyline/path; "bar" renders <rect>
     # elements.  smoothing and show_fill are ignored in bar mode.
     graph_type: str = str(widget.get("graph", "line"))
@@ -1429,7 +1660,7 @@ def _build_graph_context(
     threshold_transition: str = str(
         widget.get("color_thresholds_transition", "smooth")
     )
-    has_thresholds: bool = len(raw_thresholds) >= 2 and grayscale_levels > 2
+    has_thresholds: bool = len(raw_thresholds) >= 2 and display_levels > 2
     active_thresholds: list[dict[str, object]] = (
         raw_thresholds if has_thresholds else []
     )
@@ -1482,12 +1713,36 @@ def _build_graph_context(
             **_color_context(),
         }
 
+    # --- Multi-entity state display ---
+    # Header normally shows only the first entity's state; when
+    # multiple entities are configured, concatenate every entity
+    # with a usable state with " / " so all of them are visible.
+    # This must run before _fix_header_layout() so the (possibly
+    # much longer) combined text goes through its icon-overlap
+    # truncation, not the original single-entity value.
+    combined_state = _combined_state_text(
+        entity_descs, config.get("states", {}), config, show_state, widget
+    )
+    if combined_state is not None:
+        ctx["value_text"] = combined_state
+        ctx["unit_text"] = ""
+
+    state_font_size = widget.get("state_font_size")
+    state_font_sz = (
+        int(float(state_font_size)) if state_font_size is not None else None
+    )
     gx1, gx2 = _fix_header_layout(
-        ctx, widget, config, header_h, svg_w, grayscale_levels
+        ctx,
+        widget,
+        config,
+        header_h,
+        svg_w,
+        display_levels,
+        state_font_sz=state_font_sz,
     )
 
     # Stroke width: user-configured, widened on 2-level displays.
-    graph_stroke_w = line_width * 2 if grayscale_levels <= 2 else line_width
+    graph_stroke_w = line_width * 2 if display_levels <= 2 else line_width
     # Inset graph area by 2× stroke so line stays within bounds.
     margin = graph_stroke_w * 2
     gy1 = header_h + margin
@@ -1512,6 +1767,7 @@ def _build_graph_context(
                     hours_to_show,
                     points_per_hour,
                     aggregate_func,
+                    start_cutoff,
                 )
             )
 
@@ -1537,7 +1793,15 @@ def _build_graph_context(
         else (0.0, 1.0)
     )
     sec_y_min, sec_y_max = (
-        _y_bounds(secondary_values, None, None, None)
+        # min_bound_range has no secondary_min_bound_range
+        # counterpart — only explicit min/max overrides are
+        # exposed for the secondary axis, so this is always None.
+        _y_bounds(
+            secondary_values,
+            secondary_lower_bound,
+            secondary_upper_bound,
+            None,
+        )
         if has_secondary
         else (0.0, 1.0)
     )
@@ -1564,6 +1828,10 @@ def _build_graph_context(
     all_points: list[tuple[float, float]] = [
         p for ep in per_entity_points for p in ep
     ]
+    # Single source of truth for "is there any data to draw" — reused
+    # for the legend-geometry gate, the final show_legend flag, and
+    # has_graph, so the three can never desync from one another.
+    has_any_data = bool(all_points)
     # Use primary-axis points for label/extrema (first primary entity
     # that has data).
     primary_points: list[tuple[float, float]] = []
@@ -1619,7 +1887,7 @@ def _build_graph_context(
         grid_y_top = gy1
         grid_y_bot = gy2
         # Suppress fine gray lines on 2-level (B&W) displays.
-        show_grid = show_labels_ctx and grayscale_levels > 2
+        show_grid = show_labels_ctx and display_levels > 2
 
     # --- Secondary Y-axis labels (shifts gx2 inward) ---
     show_secondary_labels = False
@@ -1648,13 +1916,14 @@ def _build_graph_context(
     multi_entity = len(entity_descs) > 1
     legend_y = gy2
     legend_entries: list[dict[str, object]] = []
-    if multi_entity and all_points:
+    if multi_entity and has_any_data and show_legend:
         graph_h_leg = gy2 - gy1
         bar_fills_legend = _BAR_FILL_COLORS if is_bar else None
         gy2, legend_y, legend_entries = _legend_geometry(
             entity_descs,
             states_dict,
             gx1,
+            gx2,
             gy2,
             label_font_sz,
             graph_h_leg,
@@ -1676,12 +1945,18 @@ def _build_graph_context(
             gy1,
             gy2,
             thresholds=active_thresholds,
-            grayscale_levels=grayscale_levels,
+            display_levels=display_levels,
         )
-        has_any_data = any(bool(s["has_data"]) for s in series)
+        # has_data per entity mirrors bool(ep), so this is always
+        # equal to the has_any_data computed above from all_points;
+        # reuse that single value rather than recomputing it here.
     else:
         # Line mode: delegate to helper to keep complexity in bounds.
-        series, has_any_data = _line_series(
+        # has_any_data is set exactly when any entity has points,
+        # so the returned value is always equal to the has_any_data
+        # computed above from all_points; discard it and reuse the
+        # single earlier value instead.
+        series, _ = _line_series(
             per_entity_points,
             entity_descs,
             prim_y_min,
@@ -1696,7 +1971,7 @@ def _build_graph_context(
             show_fill,
             thresholds=active_thresholds,
             threshold_transition=threshold_transition,
-            grayscale_levels=grayscale_levels,
+            display_levels=display_levels,
         )
 
     return {
@@ -1743,7 +2018,7 @@ def _build_graph_context(
         "y2_min_label_y": y2_min_label_y,
         "y2_max_label_y": y2_max_label_y,
         # Legend.
-        "show_legend": multi_entity and has_any_data,
+        "show_legend": multi_entity and has_any_data and show_legend,
         "legend_y": legend_y,
         "legend_entries": legend_entries,
         # Bar chart mode flag consumed by the template.

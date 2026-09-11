@@ -16,6 +16,7 @@
 
 from __future__ import annotations
 
+from ..conditions import check_conditions
 from ..const import (
     COLOR_GRAY,
     DEFAULT_CARD_STYLE,
@@ -73,9 +74,13 @@ def _build_tile_context(
             ``icon_style`` (``"filled"`` / ``"outlined"`` /
             ``"none"``), ``bold_value`` (render the secondary
             state line in bold; default ``False``), ``card_style``,
-            ``x``, ``w``, ``h``.
+            ``invert_condition`` (list of Lovelace condition dicts,
+            same format as ``visibility``; when non-empty and all
+            conditions are met the tile renders inverted — solid
+            black card, white text/icon — as an e-ink "needs
+            attention" signal), ``x``, ``w``, ``h``.
         config: Display config with ``width``, ``height``,
-            ``states``, and ``grayscale_levels``.
+            ``states``, and ``display_levels``.
 
     Returns:
         Template context dict consumed by ``tile.svg.j2``.
@@ -87,9 +92,10 @@ def _build_tile_context(
         strings (``hex_*`` prefix), text content (``primary``,
         ``secondary``), icon data (``icon_svg``, ``letter``),
         and icon style flags (``icon_fill``, ``icon_outline``,
-        ``icon_no_circle``).  The ``card_row`` ``value`` key is
-        intentionally omitted — tiles have no right-aligned
-        value text; the macro defaults to ``""``.
+        ``icon_no_circle``), plus ``invert`` (whether the
+        ``invert_condition`` conditions were met).  The ``card_row``
+        ``value`` key is intentionally omitted — tiles have no
+        right-aligned value text; the macro defaults to ``""``.
     """
     from ..render import _compute_metrics
 
@@ -105,7 +111,7 @@ def _build_tile_context(
     icon_style = widget.get("icon_style")
     card_style = widget.get("card_style", DEFAULT_CARD_STYLE)
     states = config.get("states", {})
-    grayscale_levels = config.get("grayscale_levels", 16)
+    display_levels = config.get("display_levels", 16)
 
     state = states.get(entity_id) if entity_id else None
     if state is None:
@@ -113,6 +119,7 @@ def _build_tile_context(
             "w": svg_w,
             "h": _widget_dim(widget, "h", DEFAULT_ROW_H),
             "has_entity": False,
+            "invert": False,
             **_color_context(),
         }
 
@@ -122,7 +129,7 @@ def _build_tile_context(
     svg_h = _widget_dim(widget, "h", _auto_row_height("", 1))
     row_h = svg_h
     m = _compute_metrics(row_h)
-    x_off, r_inset, bar_width = _card_insets(m, card_style, grayscale_levels)
+    x_off, r_inset, bar_width = _card_insets(m, card_style, display_levels)
     # Zero lpad/rpad when card_container already insets that
     # side.
     lpad = m.padding if x_off == 0 else 0
@@ -171,14 +178,29 @@ def _build_tile_context(
             entity_id,
         )
         icon_outline, icon_no_circle = _resolve_icon_style(
-            icon_style, state_val, grayscale_levels
+            icon_style, state_val, display_levels
         )
     # Filled style always uses gray; state is conveyed by
     # icon_style (filled vs outlined), not fill colour.
     icon_fill = color_to_hex(COLOR_GRAY)
     # Widen the outline stroke on 2-level displays to avoid
     # dithering.
-    icon_stroke_w = m.border * 3 if grayscale_levels <= 2 else m.border
+    icon_stroke_w = m.border * 3 if display_levels <= 2 else m.border
+
+    # Inverted "needs attention" signal: same condition format and
+    # evaluator as `visibility`, but drives a solid black card with
+    # white text/icon instead of hide/show.  `check_conditions([])`
+    # returns True, so the emptiness check is required — an absent
+    # or empty `invert_condition` must never invert the tile.  The
+    # icon is forced to the flat, no-circle style so the glyph draws
+    # cleanly on the black background.
+    invert_condition = widget.get("invert_condition")
+    invert = bool(invert_condition) and check_conditions(
+        invert_condition, states
+    )
+    if invert:
+        icon_no_circle = True
+        icon_outline = False
 
     ctx: dict[str, object] = {
         "w": svg_w,
@@ -202,6 +224,7 @@ def _build_tile_context(
         "icon_no_circle": icon_no_circle,
         "icon_stroke_w": icon_stroke_w,
         "letter": letter,
+        "invert": invert,
     }
     # When icon is hidden, collapse the icon column so text starts
     # at the left edge.

@@ -31,11 +31,12 @@ DEFAULT_HEIGHT = 1024
 DEFAULT_UPDATE_INTERVAL = 60
 DEFAULT_GRAYSCALE_DEPTH = 8
 DEFAULT_OPTIMIZE = False
-DEFAULT_GRAYSCALE_LEVELS = 16
+DEFAULT_DISPLAY_LEVELS = 16
 DEFAULT_DITHER_ALGORITHM = "floyd_steinberg"
 DEFAULT_MEASURED_PALETTE = "auto"
 DEFAULT_EXPOSURE = 1.0
 DEFAULT_SATURATION = 1.0
+DEFAULT_USE_SYSTEM_FONTS = False
 DEFAULT_ROW_H = 56
 # DEFAULT_METRICS = _compute_metrics(DEFAULT_ROW_H) lives in render.py
 # rather than here to avoid a circular import (render.py imports const.py).
@@ -83,7 +84,7 @@ class DevicePreset:
     label: str
     width: int
     height: int
-    grayscale_levels: int
+    display_levels: int
     optimize: bool
     manufacturer: str
     native_landscape: bool = False
@@ -96,7 +97,7 @@ class DevicePreset:
     measured_palette: str = DEFAULT_MEASURED_PALETTE
     """Measured palette key for photographically calibrated dithering.
     ``"auto"`` means use the idealized ``ColorScheme`` derived from
-    ``color_scheme`` or ``grayscale_levels``.  Non-auto values match
+    ``color_scheme`` or ``display_levels``.  Non-auto values match
     keys in ``optimize._MEASURED_PALETTES``."""
 
 
@@ -183,11 +184,12 @@ DEVICE_PRESETS: dict[str, DevicePreset] = {
     ),
     "reterminal_e1003": DevicePreset(
         "reTerminal E1003",
-        1404,
         1872,
+        1404,
         16,
         False,
         "Seeed",
+        native_landscape=True,
         integration_dithers=True,
     ),
     "custom": DevicePreset(

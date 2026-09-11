@@ -181,6 +181,33 @@
             },
             "refresh_duration": {
                 "name": "Aktualisierungsdauer"
+            },
+            "movies": {
+                "name": "Filme"
+            },
+            "series": {
+                "name": "Serien"
+            },
+            "episodes": {
+                "name": "Episoden"
+            },
+            "latest_movie": {
+                "name": "Neuester Film"
+            },
+            "latest_episode": {
+                "name": "Neueste Episode"
+            },
+            "transcoding_streams": {
+                "name": "Transkodierungs-Streams"
+            },
+            "connected_clients": {
+                "name": "Verbundene Clients"
+            },
+            "storage_free": {
+                "name": "Medienspeicher frei"
+            },
+            "storage_free_percent": {
+                "name": "Medienspeicher frei in Prozent"
             }
         },
         "media_player": {
@@ -201,6 +228,18 @@
                 "item_id": {
                     "name": "Element-ID",
                     "description": "Jellyfin Element-ID zum Abspielen"
+                },
+                "use_series_image": {
+                    "name": "Serienposter verwenden",
+                    "description": "Für TV-Episoden das offizielle Serienplakat auf Chromecast senden statt des Episode-Screenshots"
+                },
+                "subtitle_mode": {
+                    "name": "Untertitelmodus",
+                    "description": "Untertitel-Auswahlstrategie: auto (Jellyfin-Benutzerprofil), none (deaktiviert), forced_only oder custom"
+                },
+                "subtitle_language": {
+                    "name": "Untertitelsprachen",
+                    "description": "Priorisierte, kommagetrennte Liste von Sprachcodes oder -namen (z.B. 'sl, en' oder 'slv, eng')"
                 }
             }
         },

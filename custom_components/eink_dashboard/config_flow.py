@@ -16,8 +16,10 @@
 
 from __future__ import annotations
 
+import os
+import statistics
 from copy import deepcopy
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from urllib.parse import urlparse
 
 import voluptuous as vol
@@ -47,15 +49,19 @@ from homeassistant.helpers.selector import (
     TextSelectorType,
 )
 
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+
 from .const import (
+    DEFAULT_DISPLAY_LEVELS,
     DEFAULT_DITHER_ALGORITHM,
     DEFAULT_EXPOSURE,
-    DEFAULT_GRAYSCALE_LEVELS,
     DEFAULT_HEIGHT,
     DEFAULT_MEASURED_PALETTE,
     DEFAULT_OPTIMIZE,
     DEFAULT_SATURATION,
     DEFAULT_UPDATE_INTERVAL,
+    DEFAULT_USE_SYSTEM_FONTS,
     DEFAULT_WIDTH,
     DEVICE_PRESETS,
     DOMAIN,
@@ -179,6 +185,93 @@ def _build_user_schema(
     )
 
 
+def _build_advanced_section(
+    opts: Mapping[str, Any], display_levels: int, optimize: bool
+) -> Any:
+    """Build the collapsed Advanced section of the display settings form.
+
+    ``font_dir`` is always present since it is unrelated to e-ink
+    optimization. The remaining fields (dither_algorithm,
+    measured_palette, exposure, saturation) only affect
+    ``optimize_for_eink()``, which early-returns when optimize is off,
+    so they are omitted from the section until optimize is enabled.
+
+    Args:
+        opts: Currently stored config entry options, used as field
+            defaults.
+        display_levels: Currently stored display_levels value. When it
+            equals 256, exposure/saturation are omitted since they are
+            only forwarded to dither_image(), which is never called on
+            the 256-level passthrough path.
+        optimize: Whether e-ink optimization is currently enabled.
+
+    Returns:
+        A voluptuous section wrapping font_dir and, once optimize is
+        enabled, dither_algorithm, measured_palette, and (unless
+        display_levels == 256) exposure and saturation.
+    """
+    advanced_fields: dict = {
+        vol.Optional(
+            "font_dir",
+            description={"suggested_value": opts.get("font_dir", "")},
+        ): TextSelector(TextSelectorConfig(type=TextSelectorType.TEXT)),
+    }
+    if optimize:
+        advanced_fields[
+            vol.Optional(
+                "dither_algorithm",
+                default=opts.get(
+                    "dither_algorithm",
+                    DEFAULT_DITHER_ALGORITHM,
+                ),
+            )
+        ] = SelectSelector(
+            SelectSelectorConfig(
+                options=_DITHER_ALGO_OPTIONS,
+                translation_key="dither_algorithm",
+                mode=SelectSelectorMode.DROPDOWN,
+            )
+        )
+        advanced_fields[
+            vol.Optional(
+                "measured_palette",
+                default=opts.get(
+                    "measured_palette",
+                    DEFAULT_MEASURED_PALETTE,
+                ),
+            )
+        ] = SelectSelector(
+            SelectSelectorConfig(
+                options=_MEASURED_PALETTE_OPTIONS,
+                translation_key="measured_palette",
+                mode=SelectSelectorMode.DROPDOWN,
+            )
+        )
+        if display_levels != 256:
+            advanced_fields[
+                vol.Optional(
+                    "exposure",
+                    default=opts.get("exposure", DEFAULT_EXPOSURE),
+                )
+            ] = vol.All(
+                vol.Coerce(float),
+                vol.Range(min=0.0, max=10.0),
+            )
+            advanced_fields[
+                vol.Optional(
+                    "saturation",
+                    default=opts.get("saturation", DEFAULT_SATURATION),
+                )
+            ] = vol.All(
+                vol.Coerce(float),
+                vol.Range(min=0.0, max=10.0),
+            )
+    return flow_section(
+        vol.Schema(advanced_fields),
+        {"collapsed": True},
+    )
+
+
 _STEP_CUSTOM_RESOLUTION_SCHEMA = vol.Schema(
     {
         vol.Required("width", default=DEFAULT_WIDTH): _POSITIVE_INT,
@@ -226,11 +319,142 @@ def _screen_portion_options(
     ]
 
 
+# An entry's width or height exceeding this ratio versus the baseline
+# marks it as "large" for _split_large_entries. Chosen so a landscape
+# reTerminal E1003 (1872x1404) next to a portrait Kindle Paperwhite
+# (758x1024) is isolated, while a Kindle Paperwhite 4 (1072x1448)
+# stays grouped with a Kindle Paperwhite.
+_LARGE_SIZE_RATIO = 1.5
+
+
+def _entry_dimensions(entry: ConfigEntry) -> tuple[int, int]:
+    """Return an entry's stored card dimensions.
+
+    Args:
+        entry: A config entry for the ``eink_dashboard`` domain.
+
+    Returns:
+        A (width, height) tuple, falling back to the default canvas
+        size if the entry has not stored dimensions yet. Each value
+        is clamped to a minimum of 1 to guard against hand-edited
+        storage containing zero, which would otherwise cause a
+        division by zero in ``_split_large_entries``.
+    """
+    return (
+        max(entry.options.get("width", DEFAULT_WIDTH), 1),
+        max(entry.options.get("height", DEFAULT_HEIGHT), 1),
+    )
+
+
+def _split_large_entries(
+    entries: list[ConfigEntry],
+) -> tuple[list[ConfigEntry], list[ConfigEntry]]:
+    """Split entries into normal-sized and oversized groups.
+
+    An entry is "large" when its width or height exceeds
+    ``_LARGE_SIZE_RATIO`` times the baseline for that dimension, so
+    generated dashboard YAML can give it its own full-width section
+    instead of squeezing it into a shared row. The baseline is the
+    median width/height across all entries, or the minimum when
+    there are fewer than three entries (a median is meaningless
+    with so few samples and would flag the larger of just two
+    entries as an outlier).
+
+    Args:
+        entries: Config entries for the ``eink_dashboard`` domain.
+
+    Returns:
+        A tuple of (normal-sized entries, large entries), each
+        preserving the input order.
+    """
+    dims = [_entry_dimensions(e) for e in entries]
+    if len(entries) >= 3:
+        baseline_w = statistics.median(w for w, _ in dims)
+        baseline_h = statistics.median(h for _, h in dims)
+    else:
+        baseline_w = min((w for w, _ in dims), default=DEFAULT_WIDTH)
+        baseline_h = min((h for _, h in dims), default=DEFAULT_HEIGHT)
+
+    normal: list[ConfigEntry] = []
+    large: list[ConfigEntry] = []
+    for entry, (width, height) in zip(entries, dims, strict=True):
+        ratio = max(width / baseline_w, height / baseline_h)
+        (large if ratio > _LARGE_SIZE_RATIO else normal).append(entry)
+    return normal, large
+
+
+def _grid_section(
+    entries: list[ConfigEntry],
+    full_width: bool = False,
+) -> str:
+    """Build one ``type: grid`` section block for the dashboard YAML.
+
+    Args:
+        entries: Config entries whose cards appear in this section.
+        full_width: When ``True``, each card gets
+            ``grid_options: columns: full`` so it spans the entire
+            view width instead of sharing the row.
+
+    Returns:
+        A YAML string fragment for a single sections-view grid.
+    """
+    # entry_id is always an HA-generated hex/ULID string, so it
+    # never needs YAML escaping here.
+    suffix = (
+        "\n            grid_options:\n              columns: full"
+        if full_width
+        else ""
+    )
+    cards = "\n".join(
+        "          - type: custom:eink-dashboard-card\n"
+        f"            config_entry: {e.entry_id}{suffix}"
+        for e in entries
+    )
+    return (
+        f"      - type: grid\n        cards:\n{cards}\n        column_span: 10"
+    )
+
+
+def _build_dashboard_yaml(entries: list[ConfigEntry]) -> str:
+    """Build a Lovelace ``sections`` view YAML for all given entries.
+
+    Normal-sized entries share one grid section so they lay out side
+    by side; entries much larger than the rest (see
+    ``_split_large_entries``) each get their own full-width section.
+
+    Args:
+        entries: Config entries for the ``eink_dashboard`` domain.
+            The caller (``async_step_copy_dashboard_yaml``) always
+            passes at least one entry, since the options flow's own
+            config entry is always part of the domain's entries.
+
+    Returns:
+        A YAML string for a full Lovelace dashboard view.
+    """
+    normal, large = _split_large_entries(entries)
+
+    sections = []
+    if normal:
+        sections.append(_grid_section(normal))
+    sections.extend(_grid_section([e], full_width=True) for e in large)
+
+    sections_yaml = "\n".join(sections)
+    return (
+        "views:\n"
+        "  - type: sections\n"
+        "    max_columns: 10\n"
+        "    sections:\n"
+        f"{sections_yaml}\n"
+        "    title: E-Ink Dashboards\n"
+        "    cards: []"
+    )
+
+
 class EinkDashboardConfigFlow(ConfigFlow, domain=DOMAIN):
     """Multi-step config flow for creating a new dashboard entry."""
 
     VERSION = 1
-    MINOR_VERSION = 2
+    MINOR_VERSION = 4
 
     def __init__(self) -> None:
         """Initialise flow state."""
@@ -293,7 +517,7 @@ class EinkDashboardConfigFlow(ConfigFlow, domain=DOMAIN):
                     "height": height,
                     "rotation": rotation,
                     "optimize": preset.optimize,
-                    "grayscale_levels": preset.grayscale_levels,
+                    "display_levels": preset.display_levels,
                     "dither_algorithm": preset.dither_algorithm,
                     "color_scheme": preset.color_scheme,
                     "measured_palette": preset.measured_palette,
@@ -337,7 +561,7 @@ class EinkDashboardConfigFlow(ConfigFlow, domain=DOMAIN):
                     {
                         "rotation": rotation,
                         "optimize": preset.optimize,
-                        "grayscale_levels": preset.grayscale_levels,
+                        "display_levels": preset.display_levels,
                         "dither_algorithm": preset.dither_algorithm,
                         "color_scheme": preset.color_scheme,
                         "measured_palette": preset.measured_palette,
@@ -354,7 +578,7 @@ class EinkDashboardConfigFlow(ConfigFlow, domain=DOMAIN):
                     "height": final_height,
                     "rotation": rotation,
                     "optimize": preset.optimize,
-                    "grayscale_levels": preset.grayscale_levels,
+                    "display_levels": preset.display_levels,
                     "dither_algorithm": preset.dither_algorithm,
                     "color_scheme": preset.color_scheme,
                     "measured_palette": preset.measured_palette,
@@ -390,7 +614,7 @@ class EinkDashboardConfigFlow(ConfigFlow, domain=DOMAIN):
                     {
                         "rotation": 0,
                         "optimize": DEFAULT_OPTIMIZE,
-                        "grayscale_levels": DEFAULT_GRAYSCALE_LEVELS,
+                        "display_levels": DEFAULT_DISPLAY_LEVELS,
                         "dither_algorithm": DEFAULT_DITHER_ALGORITHM,
                         "color_scheme": None,
                         "measured_palette": DEFAULT_MEASURED_PALETTE,
@@ -513,7 +737,7 @@ class EinkDashboardOptionsFlow(OptionsFlow):
 
         Args:
             extra: Display-specific keys (width, height,
-                rotation, optimize, grayscale_levels, and
+                rotation, optimize, display_levels, and
                 optionally screen_portion) merged after
                 ``self._data``.
 
@@ -579,12 +803,7 @@ class EinkDashboardOptionsFlow(OptionsFlow):
         if user_input is not None:
             return await self.async_step_init()
         entries = self.hass.config_entries.async_entries(DOMAIN)
-        cards = "\n".join(
-            f"      - type: custom:eink-dashboard-card\n"
-            f"        config_entry: {e.entry_id}"
-            for e in entries
-        )
-        yaml = f"views:\n  - title: E-Ink Dashboards\n    cards:\n{cards}"
+        yaml = _build_dashboard_yaml(entries)
         return self.async_show_form(
             step_id="copy_dashboard_yaml",
             data_schema=vol.Schema({}),
@@ -774,7 +993,7 @@ class EinkDashboardOptionsFlow(OptionsFlow):
                             "height": fh,
                             "rotation": rot,
                             "optimize": preset.optimize,
-                            "grayscale_levels": preset.grayscale_levels,
+                            "display_levels": preset.display_levels,
                             "dither_algorithm": preset.dither_algorithm,
                             "color_scheme": preset.color_scheme,
                             "measured_palette": preset.measured_palette,
@@ -792,7 +1011,7 @@ class EinkDashboardOptionsFlow(OptionsFlow):
                     "height": height,
                     "rotation": rotation,
                     "optimize": preset.optimize,
-                    "grayscale_levels": preset.grayscale_levels,
+                    "display_levels": preset.display_levels,
                     "dither_algorithm": preset.dither_algorithm,
                     "color_scheme": preset.color_scheme,
                     "measured_palette": preset.measured_palette,
@@ -855,7 +1074,7 @@ class EinkDashboardOptionsFlow(OptionsFlow):
                     "height": final_height,
                     "rotation": rotation,
                     "optimize": preset.optimize,
-                    "grayscale_levels": preset.grayscale_levels,
+                    "display_levels": preset.display_levels,
                     "dither_algorithm": preset.dither_algorithm,
                     "color_scheme": preset.color_scheme,
                     "measured_palette": preset.measured_palette,
@@ -885,7 +1104,7 @@ class EinkDashboardOptionsFlow(OptionsFlow):
                     "height": validated["height"],
                     "rotation": 0,
                     "optimize": DEFAULT_OPTIMIZE,
-                    "grayscale_levels": DEFAULT_GRAYSCALE_LEVELS,
+                    "display_levels": DEFAULT_DISPLAY_LEVELS,
                     "dither_algorithm": DEFAULT_DITHER_ALGORITHM,
                     "color_scheme": None,
                     "measured_palette": DEFAULT_MEASURED_PALETTE,
@@ -982,94 +1201,49 @@ class EinkDashboardOptionsFlow(OptionsFlow):
     async def async_step_display_settings(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Update refresh interval, optimize, and image quality settings."""
+        """Update refresh interval, optimize, and image quality settings.
+
+        Also collects ``use_system_fonts`` (top-level, off by default)
+        and, via the Advanced section, ``font_dir`` — both add glyph
+        fallback fonts for scripts the bundled Roboto font does not
+        cover, such as Hebrew, Arabic, or CJK. See docs/fonts.md.
+        """
         opts = self.config_entry.options
-        grayscale_levels = opts.get(
-            "grayscale_levels", DEFAULT_GRAYSCALE_LEVELS
-        )
-        # exposure/saturation are only forwarded to dither_image(), which
-        # is never called on the 256-level passthrough path, so those
-        # controls serve no purpose there.
-        advanced_fields: dict = {
-            vol.Optional(
-                "dither_algorithm",
-                default=opts.get(
-                    "dither_algorithm",
-                    DEFAULT_DITHER_ALGORITHM,
-                ),
-            ): SelectSelector(
-                SelectSelectorConfig(
-                    options=_DITHER_ALGO_OPTIONS,
-                    translation_key="dither_algorithm",
-                    mode=SelectSelectorMode.DROPDOWN,
-                )
-            ),
-            vol.Optional(
-                "measured_palette",
-                default=opts.get(
-                    "measured_palette",
-                    DEFAULT_MEASURED_PALETTE,
-                ),
-            ): SelectSelector(
-                SelectSelectorConfig(
-                    options=_MEASURED_PALETTE_OPTIONS,
-                    translation_key="measured_palette",
-                    mode=SelectSelectorMode.DROPDOWN,
-                )
-            ),
-            vol.Optional(
-                "grayscale_levels",
-                default=grayscale_levels,
-            ): vol.All(
-                vol.Coerce(int),
-                vol.In([2, 4, 16, 256]),
-            ),
-        }
-        if grayscale_levels != 256:
-            advanced_fields[
-                vol.Optional(
-                    "exposure",
-                    default=opts.get("exposure", DEFAULT_EXPOSURE),
-                )
-            ] = vol.All(
-                vol.Coerce(float),
-                vol.Range(min=0.0, max=10.0),
-            )
-            advanced_fields[
-                vol.Optional(
-                    "saturation",
-                    default=opts.get("saturation", DEFAULT_SATURATION),
-                )
-            ] = vol.All(
-                vol.Coerce(float),
-                vol.Range(min=0.0, max=10.0),
-            )
-        schema = vol.Schema(
-            {
-                vol.Required(
-                    "update_interval",
-                    default=opts.get(
-                        "update_interval", DEFAULT_UPDATE_INTERVAL
-                    ),
-                ): _POSITIVE_INT,
-                vol.Optional(
-                    "optimize",
-                    default=opts.get("optimize", DEFAULT_OPTIMIZE),
-                ): bool,
-                vol.Required("advanced_section"): flow_section(
-                    vol.Schema(advanced_fields),
-                    {"collapsed": True},
-                ),
-            }
-        )
-        if user_input is not None:
-            validated = schema(user_input)
-            section = validated.pop("advanced_section", {})
-            return self.async_create_entry(
-                data={**opts, **validated, **section},
-            )
+        optimize = opts.get("optimize", DEFAULT_OPTIMIZE)
         device_model = opts.get("device_model", "")
         preset = DEVICE_PRESETS.get(device_model)
+        default_display_levels = (
+            preset.display_levels if preset else DEFAULT_DISPLAY_LEVELS
+        )
+        display_levels = opts.get("display_levels", default_display_levels)
+        schema_fields: dict = {
+            vol.Required(
+                "update_interval",
+                default=opts.get("update_interval", DEFAULT_UPDATE_INTERVAL),
+            ): _POSITIVE_INT,
+            vol.Optional("optimize", default=optimize): bool,
+            vol.Optional(
+                "display_levels",
+                default=str(display_levels),
+            ): SelectSelector(
+                SelectSelectorConfig(
+                    options=["2", "4", "16", "256"],
+                    translation_key="display_levels",
+                    mode=SelectSelectorMode.LIST,
+                )
+            ),
+            vol.Optional(
+                "use_system_fonts",
+                default=opts.get("use_system_fonts", DEFAULT_USE_SYSTEM_FONTS),
+            ): bool,
+            # font_dir lives in the Advanced section (built below) since
+            # it is a power-user field; the section itself is always
+            # present so font support does not depend on optimize.
+            vol.Optional("advanced_section"): _build_advanced_section(
+                opts, display_levels, optimize
+            ),
+        }
+        schema = vol.Schema(schema_fields)
         if preset and preset.integration_dithers:
             optimize_note = (
                 "This device's Home Assistant integration handles image"
@@ -1078,6 +1252,24 @@ class EinkDashboardOptionsFlow(OptionsFlow):
             )
         else:
             optimize_note = ""
+        if user_input is not None:
+            validated = schema(user_input)
+            validated["display_levels"] = int(validated["display_levels"])
+            section = validated.get("advanced_section", {})
+            font_dir = section.get("font_dir", "")
+            if font_dir and not await self.hass.async_add_executor_job(
+                os.path.isdir, font_dir
+            ):
+                return self.async_show_form(
+                    step_id="display_settings",
+                    data_schema=schema,
+                    errors={"base": "font_dir_not_found"},
+                    description_placeholders={"optimize_note": optimize_note},
+                )
+            section = validated.pop("advanced_section", {})
+            return self.async_create_entry(
+                data={**opts, **validated, **section},
+            )
         return self.async_show_form(
             step_id="display_settings",
             data_schema=schema,

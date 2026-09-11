@@ -78,7 +78,7 @@ def _build_waste_schedule_context(
             ``False``),
             ``card_style``, ``title``, ``x``, ``w``, ``h``.
         config: Display config with ``states`` (entity ID →
-            state dict) and ``grayscale_levels``.
+            state dict), ``display_levels``, and ``language``.
 
     Returns:
         Template context dict consumed by
@@ -104,8 +104,9 @@ def _build_waste_schedule_context(
     title: str = widget.get("title", "")
     show_all: bool = bool(widget.get("show_all", False))
     value_bold: bool = widget.get("bold_value", False)
+    language: str = config.get("language", "en")
     states = config.get("states", {})
-    grayscale_levels = config.get("grayscale_levels", 16)
+    display_levels = config.get("display_levels", 16)
 
     empty_ctx: dict[str, object] = {
         "w": svg_w,
@@ -169,9 +170,9 @@ def _build_waste_schedule_context(
     row_h = content_h // num_display_rows
 
     m = _compute_metrics(row_h)
-    icon_stroke_w = m.border * 3 if grayscale_levels <= 2 else m.border
-    divider_stroke_w = m.divider * 3 if grayscale_levels <= 2 else m.divider
-    x_off, r_inset, bar_width = _card_insets(m, card_style, grayscale_levels)
+    icon_stroke_w = m.border * 3 if display_levels <= 2 else m.border
+    divider_stroke_w = m.divider * 3 if display_levels <= 2 else m.divider
+    x_off, r_inset, bar_width = _card_insets(m, card_style, display_levels)
     lpad = m.padding if x_off == 0 else 0
     rpad = m.padding if r_inset == 0 else 0
 
@@ -182,7 +183,7 @@ def _build_waste_schedule_context(
 
     rows: list[dict[str, object]] = []
     for i, (label, raw, days) in enumerate(visible):
-        date_str = _format_relative_date(days, raw)
+        date_str = _format_relative_date(days, raw, language)
         # Date text is always black; urgency is conveyed by the
         # icon fill/outline instead.
         date_fill = color_to_hex(COLOR_BLACK)

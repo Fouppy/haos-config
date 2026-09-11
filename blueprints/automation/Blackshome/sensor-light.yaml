@@ -1,6 +1,6 @@
 blueprint:
   name: Sensor Light
-  description: "# \U0001F4A1 Sensor Light\n**Version: 8.6**\n\nYour lighting experience,
+  description: "# \U0001F4A1 Sensor Light\n**Version: 8.7**\n\nYour lighting experience,
     your way - take control and customize it to perfection! \U0001F4A1✨\n\n**If you
     like my blueprints, and would like to show your support or just say thank you?**
     [Click Here](https://www.paypal.com/donate/?hosted_button_id=WAZS3QSDTPGA8) \U0001F642\n\n<details>
@@ -121,8 +121,8 @@ blueprint:
               filter:
               - domain:
                 - input_boolean
-              reorder: false
               multiple: false
+              reorder: false
         end_scenes:
           name: Scenes - Scripts To Turn OFF
           description: 'If you have selected a scene or a script to be turned ON above
@@ -243,8 +243,8 @@ blueprint:
                 value: use_rgbww_colour
               - label: Disable Colour Control
                 value: disable_colour_control
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         light_colour_temperature:
           name: Colour Temperature
@@ -318,8 +318,8 @@ blueprint:
                 value: dim_before_off_enabled
               - label: Disable the Dim Before OFF option
                 value: dim_before_off_disabled
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         dim_before_off_pct:
           name: Dim Before OFF - Percentage
@@ -371,8 +371,8 @@ blueprint:
               filter:
               - domain:
                 - input_boolean
-              reorder: false
               multiple: false
+              reorder: false
     dynamic_lighting_settings:
       name: Dynamic Lighting
       icon: mdi:creation-outline
@@ -445,8 +445,8 @@ blueprint:
               - label: 16 - Time Controlled - Colour Temp + Lux Controlled Brightness
                   Inverted
                 value: enable_time_controled_colour_lux_brightness_inv
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         dynamic_lighting_lux_sensor:
           name: Dynamic Lighting - Ambient Light Sensor
@@ -463,8 +463,8 @@ blueprint:
                 - sensor
                 device_class:
                 - illuminance
-              reorder: false
               multiple: false
+              reorder: false
         dynamic_lighting_max_lux:
           name: Dynamic Lighting - Max Lux Value
           description: '**Used in options 1, 2, 8, 9, 15 or 16** - Specify the maximum
@@ -548,8 +548,8 @@ blueprint:
               filter:
               - domain:
                 - input_boolean
-              reorder: false
               multiple: false
+              reorder: false
         dynamic_lighting_max_colour_temp:
           name: Dynamic Lighting - Max Colour Temperature
           description: '**Used in options 3, 6, 7, 8, 9, 10, 13, 14, 15 or 16** -
@@ -774,8 +774,8 @@ blueprint:
                 value: enable_state_control
               - label: Disable State Control Option
                 value: disable_state_control
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         dynamic_lighting_state_control_activation_state:
           name: Dynamic Lighting - State Control Activation State
@@ -793,8 +793,8 @@ blueprint:
                 value: 'on'
               - label: OFF State
                 value: 'off'
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         dynamic_lighting_state_control_entity:
           name: Dynamic Lighting - State Control Entity
@@ -805,8 +805,8 @@ blueprint:
           default: []
           selector:
             entity:
-              reorder: false
               multiple: false
+              reorder: false
     bypass_settings:
       name: Bypass
       icon: mdi:cog-pause-outline
@@ -949,8 +949,8 @@ blueprint:
                 value: sun_enabled
               - label: Disable the sun option
                 value: sun_disabled
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         sun_elevation:
           name: Sun Elevation Falling
@@ -1007,8 +1007,8 @@ blueprint:
                 value: ambient_enabled
               - label: Disable the ambient options
                 value: ambient_disabled
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         ambient_light_sensor:
           name: Ambient Light Sensor
@@ -1023,8 +1023,8 @@ blueprint:
                 - sensor
                 device_class:
                 - illuminance
-              reorder: false
               multiple: false
+              reorder: false
         ambient_light_options:
           name: Ambient Light Sensor - Site Conditions
           description: 'In some cases when your lights turn ON, your ambient light
@@ -1044,8 +1044,8 @@ blueprint:
                 value: ambient_light_option_enabled
               - label: NO - My Ambient Light Sensor is not affected by the Lights
                 value: ambient_light_option_disabled
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         ambient_light_value:
           name: Ambient Light - Low Lux Value
@@ -1133,8 +1133,8 @@ blueprint:
                 value: time_enabled
               - label: Disable the time options
                 value: time_disabled
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         after_time:
           name: Start Time
@@ -1208,8 +1208,8 @@ blueprint:
                 value: state_control_enabled
               - label: Disable State Control Option
                 value: state_control_disabled
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         state_control_activation_state:
           name: Activation State
@@ -1225,8 +1225,8 @@ blueprint:
                 value: 'on'
               - label: OFF State
                 value: 'off'
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         state_control_entity:
           name: Control Entity
@@ -1237,8 +1237,8 @@ blueprint:
           default: []
           selector:
             entity:
-              reorder: false
               multiple: false
+              reorder: false
     device_tracker_settings:
       name: Device Tracker
       icon: mdi:account-multiple-check-outline
@@ -1266,8 +1266,8 @@ blueprint:
                 value: zone_people_enabled
               - label: Disable the device tracker options
                 value: device_tracker_disabled
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         zone:
           name: Device Tracker - Zone
@@ -1281,8 +1281,8 @@ blueprint:
               filter:
               - domain:
                 - zone
-              reorder: false
               multiple: false
+              reorder: false
         people:
           name: Device Tracker - People
           description: 'Select the people you would like to track in the zone selected
@@ -1322,8 +1322,8 @@ blueprint:
                 value: night_lights_enabled
               - label: Disable the night lights options
                 value: night_lights_disabled
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         night_lights_conditions:
           name: Night Lights Conditions (Required For Night Lights)
@@ -1455,8 +1455,8 @@ blueprint:
               filter:
               - domain:
                 - input_boolean
-              reorder: false
               multiple: false
+              reorder: false
         night_time_delay:
           name: Night Lights - Time Delay
           description: 'The time delay determines how long the night lights will remain
@@ -1566,8 +1566,8 @@ blueprint:
                 value: use_rgbww_colour
               - label: Disable Colour Control
                 value: disable_colour_control
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         night_light_colour_temperature:
           name: Night Lights - Colour Temperature
@@ -1645,8 +1645,8 @@ blueprint:
                 value: dim_before_off_enabled
               - label: Disable the Dim Before OFF option
                 value: dim_before_off_disabled
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         night_light_dim_before_off_pct:
           name: Dim Before OFF - Percentage
@@ -1699,8 +1699,8 @@ blueprint:
               filter:
               - domain:
                 - input_boolean
-              reorder: false
               multiple: false
+              reorder: false
     night_lights_night_glow:
       name: Night Glow
       icon: mdi:candle
@@ -1727,8 +1727,8 @@ blueprint:
                 value: night_glow_enabled
               - label: Disable night glow
                 value: night_glow_disabled
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         night_glow_lights:
           name: Night Glow - Lights
@@ -1832,8 +1832,8 @@ blueprint:
                 value: use_rgbww_colour
               - label: Disable Colour Control
                 value: disable_colour_control
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         night_glow_light_colour_temperature:
           name: Night Glow - Colour Temperature
@@ -2875,7 +2875,7 @@ condition:
     - t8_on
     - t8_off
     - t8_stop
-action:
+actions:
 - choose:
   - alias: Check if night lights are enabled and within conditions
     conditions:
@@ -8773,8 +8773,9 @@ action:
                       - condition: template
                         value_template: '{{ include_dynamic_lighting == ''enable_sun_elevation_colour_lux_brightness''
                           }}'
-                      - '{{ expand(light_entities) | selectattr(''state'', ''=='',
-                        ''off'') | list | count > 0 }}'
+                      - condition: template
+                        value_template: '{{ expand(light_entities) | selectattr(''state'',
+                          ''=='', ''off'') | list | count > 0 }}'
                       sequence:
                       - action: light.turn_on
                         target:
@@ -9190,8 +9191,9 @@ action:
                       - condition: template
                         value_template: '{{ include_dynamic_lighting == ''enable_sun_elevation_colour_lux_brightness_inv''
                           }}'
-                      - '{{ expand(light_entities) | selectattr(''state'', ''=='',
-                        ''off'') | list | count > 0 }}'
+                      - condition: template
+                        value_template: '{{ expand(light_entities) | selectattr(''state'',
+                          ''=='', ''off'') | list | count > 0 }}'
                       sequence:
                       - action: light.turn_on
                         target:
@@ -10643,14 +10645,6 @@ action:
                       - alias: Dynamic lighting heartbeat
                         delay:
                           minutes: !input dynamic_lighting_heartbeat
-                    - alias: Check if the light is off
-                      conditions: '{{ expand(light_entities) | selectattr(''state'',
-                        ''=='', ''off'') | list | count > 0 }}'
-                      sequence:
-                      - alias: Delay for parallel actions needed for when the light
-                          is off
-                        delay:
-                          milliseconds: 100
                   - choose:
                     - alias: Stop when crossing over
                       conditions:
@@ -10730,8 +10724,9 @@ action:
                       - condition: template
                         value_template: '{{ include_dynamic_lighting == ''enable_time_controled_colour_lux_brightness''
                           }}'
-                      - '{{ expand(light_entities) | selectattr(''state'', ''=='',
-                        ''off'') | list | count > 0 }}'
+                      - condition: template
+                        value_template: '{{ expand(light_entities) | selectattr(''state'',
+                          ''=='', ''off'') | list | count > 0 }}'
                       sequence:
                       - action: light.turn_on
                         target:
@@ -10827,6 +10822,15 @@ action:
                         <= current_time <= end_time_morning %} {% set in_evening =
                         start_time_evening <= current_time <= end_time_evening %}
                         {{ lights_on and not (in_morning or in_evening) }}\n"
+                  - choose:
+                    - alias: Check if the light is off
+                      conditions: '{{ expand(light_entities) | selectattr(''state'',
+                        ''=='', ''off'') | list | count > 0 }}'
+                      sequence:
+                      - alias: Delay for parallel actions needed for when the light
+                          is off
+                        delay:
+                          milliseconds: 100
                   - choose:
                     - alias: Stop when crossing over
                       conditions:
@@ -11071,14 +11075,6 @@ action:
                       - alias: Dynamic lighting heartbeat
                         delay:
                           minutes: !input dynamic_lighting_heartbeat
-                    - alias: Check if the light is off
-                      conditions: '{{ expand(light_entities) | selectattr(''state'',
-                        ''=='', ''off'') | list | count > 0 }}'
-                      sequence:
-                      - alias: Delay for parallel actions needed for when the light
-                          is off
-                        delay:
-                          milliseconds: 100
                   - choose:
                     - alias: Stop when crossing over
                       conditions:
@@ -11158,8 +11154,9 @@ action:
                       - condition: template
                         value_template: '{{ include_dynamic_lighting == ''enable_time_controled_colour_lux_brightness_inv''
                           }}'
-                      - '{{ expand(light_entities) | selectattr(''state'', ''=='',
-                        ''off'') | list | count > 0 }}'
+                      - condition: template
+                        value_template: '{{ expand(light_entities) | selectattr(''state'',
+                          ''=='', ''off'') | list | count > 0 }}'
                       sequence:
                       - action: light.turn_on
                         target:
@@ -11255,6 +11252,15 @@ action:
                         <= current_time <= end_time_morning %} {% set in_evening =
                         start_time_evening <= current_time <= end_time_evening %}
                         {{ lights_on and not (in_morning or in_evening) }}\n"
+                  - choose:
+                    - alias: Check if the light is off
+                      conditions: '{{ expand(light_entities) | selectattr(''state'',
+                        ''=='', ''off'') | list | count > 0 }}'
+                      sequence:
+                      - alias: Delay for parallel actions needed for when the light
+                          is off
+                        delay:
+                          milliseconds: 100
                   - choose:
                     - alias: Stop when crossing over
                       conditions:

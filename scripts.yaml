@@ -70,22 +70,12 @@ living_room_switch_to_late_night_mode:
       device_id: 1afc8c66a55ad10c811c83c17b089188
     data:
       volume_level: 0.05
-  - action: media_player.play_media
-    metadata: {}
+  - action: androidtv.adb_command
     target:
-      entity_id: media_player.living_room_chromecast
+      entity_id: media_player.living_room_chromecast_adb
     data:
-      media:
-        media_content_id: org.smarttube.stable
-        media_content_type: app
-        metadata:
-          title: SmartTube
-          thumbnail: https://smarttubeapp.github.io/images/site_logo.png
-          media_class: app
-          children_media_class:
-          navigateIds:
-          - {}
-          browse_entity_id: media_player.living_room_chromecast
+      command: monkey -p org.smarttube.stable -c android.intent.category.LAUNCHER
+        1
   alias: 'Living Room: Switch to late night mode'
   description: ''
   icon: mdi:lightbulb-night-outline
@@ -138,30 +128,12 @@ living_room_change_audio_to_optical:
     target:
       entity_id: media_player.wiim_living_room
     data: {}
-  - choose:
-    - conditions:
-      - condition: not
-        conditions:
-        - condition: state
-          entity_id: media_player.living_room_chromecast
-          state:
-          - com.github.damontecres.wholphin
-          attribute: app_id
-      sequence:
-      - action: media_player.play_media
-        metadata: {}
-        target:
-          entity_id: media_player.living_room_chromecast
-        data:
-          media:
-            media_content_id: com.github.damontecres.wholphin
-            media_content_type: app
-            metadata:
-              navigateIds:
-              - {}
-              - media_content_type: ''
-                media_content_id: __MANUAL_ENTRY__
-              browse_entity_id: media_player.living_room_chromecast
+  - action: androidtv.adb_command
+    target:
+      entity_id: media_player.living_room_chromecast_adb
+    data:
+      command: monkey -p com.github.damontecres.wholphin -c android.intent.category.LAUNCHER
+        1
   alias: 'Living Room: Change audio to optical'
   description: ''
   icon: mdi:movie-outline

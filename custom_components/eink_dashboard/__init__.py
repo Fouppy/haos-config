@@ -31,6 +31,8 @@ from homeassistant.components.http import StaticPathConfig
 from homeassistant.helpers import area_registry as ar
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers.icon import async_get_icons
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -40,10 +42,11 @@ if TYPE_CHECKING:
 
 from .battery import resolve_battery_level
 from .const import (
+    DEFAULT_DISPLAY_LEVELS,
     DEFAULT_EXPOSURE,
-    DEFAULT_GRAYSCALE_LEVELS,
     DEFAULT_HEIGHT,
     DEFAULT_SATURATION,
+    DEFAULT_USE_SYSTEM_FONTS,
     DEFAULT_WIDTH,
     DEVICE_PRESETS,
     DOMAIN,
@@ -51,6 +54,7 @@ from .const import (
     NumberFormat,
     TimeFormat,
     WidgetType,
+    resolve_display,
 )
 from .http import EinkLayoutView, EinkPublicImageView
 from .store import EinkDashboardStore
@@ -238,10 +242,11 @@ async def _build_display_config(
         entry_id: Config entry ID present in ``hass.data[DOMAIN]``.
 
     Returns:
-        Dict with ``width``, ``height``, ``grayscale_levels``,
-        ``number_format``, ``language``, ``first_weekday``,
-        ``date_format``, ``time_format``, ``states``, and (when
-        battery data is available) ``device_battery_level`` and
+        Dict with ``width``, ``height``, ``display_levels``,
+        ``font_dir``, ``use_system_fonts``, ``number_format``,
+        ``language``, ``first_weekday``, ``date_format``,
+        ``time_format``, ``states``, and (when battery data is
+        available) ``device_battery_level`` and
         ``device_battery_charging`` keys suitable for
         ``render_widget_svg()``.
     """
@@ -257,6 +262,7 @@ async def _build_display_config(
             # existing nested values.
             "attributes": dict(state.attributes),
         }
+    await _enrich_entity_icons(hass, states)
     (
         number_format,
         language,
@@ -267,10 +273,14 @@ async def _build_display_config(
     config: dict[str, Any] = {
         "width": entry.options.get("width", DEFAULT_WIDTH),
         "height": entry.options.get("height", DEFAULT_HEIGHT),
-        "grayscale_levels": entry.options.get(
-            "grayscale_levels", DEFAULT_GRAYSCALE_LEVELS
+        "display_levels": entry.options.get(
+            "display_levels", DEFAULT_DISPLAY_LEVELS
         ),
         "color_scheme": entry.options.get("color_scheme"),
+        "font_dir": entry.options.get("font_dir", ""),
+        "use_system_fonts": entry.options.get(
+            "use_system_fonts", DEFAULT_USE_SYSTEM_FONTS
+        ),
         "number_format": number_format,
         "language": language,
         "first_weekday": first_weekday,
@@ -287,6 +297,77 @@ async def _build_display_config(
         config["device_battery_level"] = level
         config["device_battery_charging"] = is_charging
     return config
+
+
+async def _enrich_entity_icons(
+    hass: HomeAssistant,
+    states: dict[str, Any],
+) -> None:
+    """Inject icons.json-derived icons into entities lacking one.
+
+    Modern HA integrations (e.g. ``moon``) define state-dependent
+    icons in an ``icons.json`` file rather than setting them on the
+    entity, so ``state.attributes`` never carries an ``icon`` key for
+    them.  The HA frontend resolves these client-side; this dashboard
+    has no equivalent, so such entities would otherwise fall back to
+    a plain letter icon.  This mirrors that resolution server-side by
+    reading each entity's registry entry (for its integration platform
+    and translation key) and looking up the matching icon definition.
+
+    Only entities missing ``attributes["icon"]`` are touched, so user
+    or integration-set icons are never overridden.  Failures to load
+    icon definitions are logged and otherwise ignored so a broken or
+    unloaded integration cannot break rendering.
+
+    Args:
+        hass: Home Assistant instance.
+        states: Mutable states dict built by ``_build_display_config``
+            or ``EinkDashboardImage._build_states``.
+    """
+    registry = er.async_get(hass)
+    candidates: dict[str, er.RegistryEntry] = {}
+    platforms: set[str] = set()
+    for entity_id, data in states.items():
+        if data["attributes"].get("icon"):
+            continue
+        entry = registry.async_get(entity_id)
+        if entry is None or entry.translation_key is None:
+            continue
+        candidates[entity_id] = entry
+        platforms.add(entry.platform)
+
+    if not candidates:
+        return
+
+    icons: dict[str, Any] = {}
+    for platform in platforms:
+        try:
+            icons.update(await async_get_icons(hass, "entity", {platform}))
+        except Exception:  # noqa: BLE001
+            _LOGGER.debug("Could not load icons.json for %s", platform)
+
+    for entity_id, entry in candidates.items():
+        domain = entity_id.split(".", 1)[0]
+        platform_icons = icons.get(entry.platform)
+        if not isinstance(platform_icons, dict):
+            continue
+        domain_icons = platform_icons.get(domain)
+        if not isinstance(domain_icons, dict):
+            continue
+        definition = domain_icons.get(entry.translation_key)
+        if not isinstance(definition, dict):
+            continue
+        state_icons = definition.get("state")
+        state_icon = (
+            state_icons.get(states[entity_id]["state"])
+            if isinstance(state_icons, dict)
+            else None
+        )
+        icon = (
+            state_icon if state_icon is not None else definition.get("default")
+        )
+        if icon:
+            states[entity_id]["attributes"]["icon"] = icon
 
 
 async def _fetch_forecasts(
@@ -731,6 +812,16 @@ async def async_migrate_entry(
     in epaper-dithering; ``contrast`` is superseded by ``exposure``.
     Both new keys default to 1.0 (no change).
 
+    Version 1.2 → 1.3: rename ``grayscale_levels`` to
+    ``display_levels`` so the option name also fits future color
+    e-ink displays.
+
+    Version 1.3 → 1.4: recompute ``width``, ``height``, and
+    ``rotation`` for ``reterminal_e1003`` entries.  The device's
+    native orientation preset was previously wrong, so entries
+    created before the fix have a stale ``rotation`` baked in that
+    produces a 90°-rotated image.
+
     Args:
         hass: Home Assistant instance.
         config_entry: The config entry to migrate.
@@ -753,6 +844,42 @@ async def async_migrate_entry(
             config_entry,
             options=new_options,
             minor_version=2,
+        )
+
+    if config_entry.minor_version == 2:
+        _LOGGER.debug(
+            "Migrating %s from minor version %d to 3",
+            config_entry.entry_id,
+            config_entry.minor_version,
+        )
+        new_options = dict(config_entry.options)
+        if "grayscale_levels" in new_options:
+            new_options["display_levels"] = new_options.pop("grayscale_levels")
+        hass.config_entries.async_update_entry(
+            config_entry,
+            options=new_options,
+            minor_version=3,
+        )
+
+    if config_entry.minor_version == 3:
+        _LOGGER.debug(
+            "Migrating %s from minor version %d to 4",
+            config_entry.entry_id,
+            config_entry.minor_version,
+        )
+        new_options = dict(config_entry.options)
+        if new_options.get("device_model") == "reterminal_e1003":
+            orientation = new_options.get("orientation", "landscape")
+            width, height, rotation, _preset = resolve_display(
+                "reterminal_e1003", orientation
+            )
+            new_options["width"] = width
+            new_options["height"] = height
+            new_options["rotation"] = rotation
+        hass.config_entries.async_update_entry(
+            config_entry,
+            options=new_options,
+            minor_version=4,
         )
 
     return True

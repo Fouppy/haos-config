@@ -45,6 +45,7 @@ export const WIDGET_TYPES = {
             h: 56,
             heading: "",
             heading_style: "title",
+            heading_align: "left",
             icon_style: "none",
             card_style: DEFAULT_CARD_STYLE,
         },
@@ -352,6 +353,63 @@ function boldValueSelector() {
         name: "bold_value",
         default: false,
         selector: { boolean: {} },
+    };
+}
+/**
+ * Name position dropdown selector (above or below the value).
+ *
+ * @returns A single ha-form schema entry.
+ */
+function namePositionSelector() {
+    return {
+        name: "name_position",
+        default: "bottom",
+        selector: {
+            select: {
+                options: [
+                    { value: "bottom", label: "Bottom" },
+                    { value: "top", label: "Top" },
+                ],
+            },
+        },
+    };
+}
+/**
+ * Name alignment dropdown selector.
+ *
+ * @returns A single ha-form schema entry.
+ */
+function nameAlignSelector() {
+    return {
+        name: "name_align",
+        default: "left",
+        selector: {
+            select: {
+                options: [
+                    { value: "left", label: "Left" },
+                    { value: "right", label: "Right" },
+                ],
+            },
+        },
+    };
+}
+/**
+ * Heading text alignment dropdown selector.
+ *
+ * @returns A single ha-form schema entry.
+ */
+function headingAlignSelector() {
+    return {
+        name: "heading_align",
+        default: "left",
+        selector: {
+            select: {
+                options: [
+                    { value: "left", label: "Left" },
+                    { value: "right", label: "Right" },
+                ],
+            },
+        },
     };
 }
 /**
@@ -726,7 +784,13 @@ export const SCHEMAS = {
             flatten: true,
             title: "Appearance",
             icon: "mdi:palette",
-            schema: [cardStyleSelector(), iconStyleSelector(), boldValueSelector()],
+            schema: [
+                cardStyleSelector(),
+                iconStyleSelector(),
+                boldValueSelector(),
+                namePositionSelector(),
+                nameAlignSelector(),
+            ],
         },
     ],
     entities: (d) => [
@@ -808,7 +872,11 @@ export const SCHEMAS = {
             flatten: true,
             title: "Appearance",
             icon: "mdi:palette",
-            schema: [cardStyleSelector(), iconStyleSelector("none")],
+            schema: [
+                cardStyleSelector(),
+                iconStyleSelector("none"),
+                headingAlignSelector(),
+            ],
         },
     ],
     device_battery: (d) => [
@@ -1250,6 +1318,10 @@ export const SCHEMAS = {
                     ],
                 },
                 {
+                    name: "start_time",
+                    selector: { time: {} },
+                },
+                {
                     name: "aggregate_func",
                     default: "avg",
                     selector: {
@@ -1288,6 +1360,20 @@ export const SCHEMAS = {
                     ],
                 },
                 {
+                    type: "grid",
+                    name: "",
+                    schema: [
+                        {
+                            name: "secondary_lower_bound",
+                            selector: { number: { mode: "box" } },
+                        },
+                        {
+                            name: "secondary_upper_bound",
+                            selector: { number: { mode: "box" } },
+                        },
+                    ],
+                },
+                {
                     name: "show_fill",
                     default: true,
                     selector: { boolean: {} },
@@ -1298,12 +1384,23 @@ export const SCHEMAS = {
                     selector: { boolean: {} },
                 },
                 {
+                    name: "state_font_size",
+                    selector: {
+                        number: { min: 8, max: 72, mode: "box" },
+                    },
+                },
+                {
                     name: "show_name",
                     default: true,
                     selector: { boolean: {} },
                 },
                 {
                     name: "show_icon",
+                    default: true,
+                    selector: { boolean: {} },
+                },
+                {
+                    name: "show_legend",
                     default: true,
                     selector: { boolean: {} },
                 },
@@ -1452,6 +1549,7 @@ export const LABELS = {
     unit: "Unit",
     heading: "Heading",
     heading_style: "Heading style",
+    heading_align: "Heading alignment",
     badges: "Badges",
     card_style: "Card style",
     icon_style: "Icon style",
@@ -1467,6 +1565,7 @@ export const LABELS = {
     attribute_timestamp_key: "Timestamp key",
     attribute_value_key: "Value key",
     hours_to_show: "Hours to show",
+    start_time: "Start time",
     detail: "Detail",
     limits_min: "Y-axis minimum",
     limits_max: "Y-axis maximum",
@@ -1478,6 +1577,8 @@ export const LABELS = {
     gauge_type: "Gauge type",
     needle: "Needle mode",
     header_position: "Name position",
+    name_position: "Name position",
+    name_align: "Name alignment",
     show_unit: "Show unit",
     decimals: "Decimal places",
     points_per_hour: "Points per hour",
@@ -1485,10 +1586,14 @@ export const LABELS = {
     line_width: "Line width",
     upper_bound: "Y-axis upper bound",
     lower_bound: "Y-axis lower bound",
+    secondary_upper_bound: "Secondary Y-axis upper bound",
+    secondary_lower_bound: "Secondary Y-axis lower bound",
     show_fill: "Show fill",
     show_state: "Show state",
+    state_font_size: "State font size",
     show_name: "Show name",
     show_icon: "Show icon",
+    show_legend: "Show legend",
     smoothing: "Smoothing",
     show_labels: "Show labels",
     show_extrema: "Show extrema",
@@ -2113,6 +2218,15 @@ class EinkDashboardEditor extends HTMLElement {
             if (!("visibility" in data) && cur.visibility) {
                 data.visibility = cur.visibility;
             }
+            // Preserve invert_condition — managed by
+            // ha-card-conditions-editor, not by ha-form, so the spread
+            // would drop it. cur.invert_condition is never [] because
+            // _buildConditionsPanel deletes the key when conditions are
+            // cleared (empty array).
+            if (!("invert_condition" in data)
+                && cur.invert_condition) {
+                data.invert_condition = cur.invert_condition;
+            }
             this._widgets[index] = data;
             this._fireWidgetChange();
             this._updateSummary(index);
@@ -2125,6 +2239,15 @@ class EinkDashboardEditor extends HTMLElement {
         container.appendChild(form);
         if (widget.type === "waste_schedule") {
             this._buildEntriesEditor(container, index);
+        }
+        if (widget.type === "tile" || widget.type === "entity") {
+            this._buildConditionsPanel(container, index, {
+                key: "invert_condition",
+                title: "Invert",
+                icon: "mdi:invert-colors",
+                hint: "Render the widget inverted (dark card, light text) when" +
+                    " the conditions below are met.",
+            });
         }
         this._buildVisibilityEditor(container, index);
         return container;
@@ -2278,55 +2401,75 @@ class EinkDashboardEditor extends HTMLElement {
         }
         container.appendChild(section);
     }
-    // ── Visibility conditions editor ────────────────────────────────
+    // ── Visibility / invert conditions editor ──────────────────────
     /**
      * Build a visibility conditions editor using HA's built-in
      * `<ha-card-conditions-editor>` component.  Appended to every
      * widget form regardless of widget type.
      *
-     * Reads the current widget's `visibility` array, passes it to the
-     * conditions editor, and writes changes back on `value-changed`.
-     * An empty conditions array is stored as `undefined` (field
-     * removed) to avoid serialising empty arrays.
+     * Thin wrapper around `_buildConditionsPanel` for the `visibility`
+     * field — see that method for the shared behaviour.
      *
      * @param container - Parent div to append the section to.
      * @param index     - Widget index in the widget array.
      */
     _buildVisibilityEditor(container, index) {
+        this._buildConditionsPanel(container, index, {
+            key: "visibility",
+            title: "Visibility",
+            icon: "mdi:eye",
+            hint: "Show this widget only when the conditions below are met.",
+        });
+    }
+    /**
+     * Build a conditions editor panel using HA's built-in
+     * `<ha-card-conditions-editor>` component, backed by an arbitrary
+     * widget field (e.g. `visibility` or `invert_condition`).
+     *
+     * Reads the current widget's condition array at `opts.key`, passes
+     * it to the conditions editor, and writes changes back on
+     * `value-changed`. An empty conditions array is stored as
+     * `undefined` (field removed) to avoid serialising empty arrays.
+     *
+     * @param container - Parent div to append the section to.
+     * @param index     - Widget index in the widget array.
+     * @param opts      - Field key plus panel title/icon/hint text.
+     */
+    _buildConditionsPanel(container, index, opts) {
         const panel = document.createElement("ha-expansion-panel");
         panel.outlined = true;
-        // ha-form sections have internal spacing; the visibility panel
+        // ha-form sections have internal spacing; the conditions panel
         // is appended outside ha-form so it needs an explicit top gap.
         panel.style.marginTop = "8px";
         // Match ha-form-expandable: icon in "leading-icon" slot,
         // title in "header" slot.
         const icon = document.createElement("ha-icon");
         icon.setAttribute("slot", "leading-icon");
-        icon.icon = "mdi:eye";
+        icon.icon = opts.icon;
         panel.appendChild(icon);
         const panelHeader = document.createElement("div");
         panelHeader.setAttribute("slot", "header");
-        panelHeader.textContent = "Visibility";
+        panelHeader.textContent = opts.title;
         panel.appendChild(panelHeader);
         const hint = document.createElement("div");
         hint.className = "visibility-hint";
-        hint.textContent =
-            "Show this widget only when the conditions below are met.";
+        hint.textContent = opts.hint;
         panel.appendChild(hint);
         if (!customElements.get("ha-card-conditions-editor")) {
             console.warn("eink-dashboard: ha-card-conditions-editor not registered;" +
-                " visibility editing unavailable");
+                ` ${opts.title.toLowerCase()} editing unavailable`);
             const unavailable = document.createElement("div");
             unavailable.className = "visibility-hint";
             unavailable.textContent =
-                "Visibility conditions require a newer Home Assistant version.";
+                `${opts.title} conditions require a newer Home Assistant` +
+                    " version.";
             panel.appendChild(unavailable);
             container.appendChild(panel);
             return;
         }
         const editor = document.createElement("ha-card-conditions-editor");
         const cur = this._widgets[index];
-        const conditions = cur.visibility
+        const conditions = cur[opts.key]
             ?? [];
         editor.hass = this._hass;
         editor.conditions =
@@ -2336,10 +2479,10 @@ class EinkDashboardEditor extends HTMLElement {
             const updated = ev.detail.value;
             const w = this._widgets[index];
             if (updated.length > 0) {
-                w.visibility = updated;
+                w[opts.key] = updated;
             }
             else {
-                delete w.visibility;
+                delete w[opts.key];
             }
             // Write back so the Lit component re-renders immediately,
             // showing newly added condition fields without a save+reopen.

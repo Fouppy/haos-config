@@ -181,6 +181,33 @@
             },
             "refresh_duration": {
                 "name": "Durée du rafraîchissement"
+            },
+            "movies": {
+                "name": "Films"
+            },
+            "series": {
+                "name": "Séries"
+            },
+            "episodes": {
+                "name": "Épisodes"
+            },
+            "latest_movie": {
+                "name": "Dernier film"
+            },
+            "latest_episode": {
+                "name": "Dernier épisode"
+            },
+            "transcoding_streams": {
+                "name": "Flux de transcodage"
+            },
+            "connected_clients": {
+                "name": "Clients connectés"
+            },
+            "storage_free": {
+                "name": "Stockage multimédia libre"
+            },
+            "storage_free_percent": {
+                "name": "Pourcentage de stockage libre"
             }
         },
         "media_player": {
@@ -201,6 +228,18 @@
                 "item_id": {
                     "name": "ID de l'élément",
                     "description": "ID de l'élément Jellyfin à lire"
+                },
+                "use_series_image": {
+                    "name": "Utiliser l'affiche de la série",
+                    "description": "Pour les épisodes TV, envoyer l'affiche officielle de la série sur Chromecast au lieu de la capture d'écran de l'épisode"
+                },
+                "subtitle_mode": {
+                    "name": "Mode sous-titres",
+                    "description": "Stratégie de sélection des sous-titres : auto (profil utilisateur Jellyfin), none (désactivé), forced_only ou custom"
+                },
+                "subtitle_language": {
+                    "name": "Langues des sous-titres",
+                    "description": "Liste prioritaire de codes ou noms de langues séparés par des virgules (ex. 'sl, en' ou 'slv, eng')"
                 }
             }
         },

@@ -18,6 +18,7 @@ from homeassistant.components.http.auth import async_sign_path
 import asyncio
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.issue_registry import async_create_issue, IssueSeverity
 from homeassistant.util import dt as dt_util
 
@@ -28,6 +29,7 @@ from .api import (
     JellyfinConnectionError,
 )
 from .ws_client import JellyfinWebSocketClient
+from .media_strategy import MediaStrategy
 from .const import (
     CONF_API_KEY,
     CONF_LIBRARIES,
@@ -38,12 +40,16 @@ from .const import (
     DEFAULT_IMAGE_QUALITY,
     DEFAULT_REFRESH_INTERVAL,
     DOMAIN,
+    EVENT_CHAPTER_CHANGE,
+    EVENT_SEGMENT_CHANGE,
+    CHAPTER_SEGMENT_PATTERNS,
     ITEM_TYPE_MOVIE,
     ITEM_TYPE_SERIES,
     RATING_SOURCE_AUTO,
     RATING_SOURCE_IMDB,
     RATING_SOURCE_TMDB,
     TICKS_PER_MINUTE,
+    TICKS_PER_SECOND,
     migrate_refresh_interval,
 )
 
@@ -65,6 +71,7 @@ class JellyHALibraryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     ) -> None:
         """Initialize the coordinator."""
         self.entry = entry
+        self.config_entry = entry
         self.storage = storage
         self._api: JellyfinApiClient | None = None
         self._server_name: str | None = None
@@ -74,6 +81,7 @@ class JellyHALibraryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self.last_refresh_duration: float | None = None  # Duration of last refresh in seconds
         self._previous_item_ids: set[str] = set()
         self._previous_item_hash: str = ""
+        self._favorite_series_ids: set[str] = set()
         # Cache signed URLs by (item_id, image_type, tag) -> (url, monotonic timestamp)
         self._url_cache: dict[tuple[str, str, str], tuple[str, float]] = {}
 
@@ -93,6 +101,11 @@ class JellyHALibraryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             update_interval=update_interval,
             always_update=False,
         )
+
+    @property
+    def api(self) -> JellyfinApiClient | None:
+        """Return the API client."""
+        return self._api
 
     async def _async_setup(self) -> None:
         """Set up the coordinator (called once during first refresh)."""
@@ -143,6 +156,17 @@ class JellyHALibraryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 library_ids=libraries if libraries else None,
             )
 
+            # Pre-compute favorite series IDs from raw items or API so episode transforms inherit favorite status
+            self._favorite_series_ids = {
+                item["Id"] for item in raw_items
+                if item.get("Type") == "Series" and item.get("UserData", {}).get("IsFavorite", False) and item.get("Id")
+            }
+            if not self._favorite_series_ids:
+                try:
+                    self._favorite_series_ids = set(await self._api.get_favorite_series_ids(user_id))
+                except Exception as err:
+                    _LOGGER.debug("Could not fetch favorite series IDs: %s", err)
+
             items = await asyncio.gather(*(self._async_transform_item(item) for item in raw_items))
 
             # Fetch Next Up items (limit 20)
@@ -157,6 +181,53 @@ class JellyHALibraryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     i["episode"] = raw.get("IndexNumber")
                     i["season_name"] = raw.get("SeasonName")
                     i["series_name"] = raw.get("SeriesName")
+                    series_id = raw.get("SeriesId")
+                    i["series_id"] = series_id
+                    if series_id and series_id in self._favorite_series_ids:
+                        i["is_favorite"] = True
+
+            # Fetch latest items
+            latest_movie = None
+            latest_episode = None
+            try:
+                raw_latest_movies = await self._api.get_latest_items(
+                    user_id=user_id,
+                    item_types=["Movie"],
+                    limit=1,
+                    library_ids=libraries if libraries else None,
+                )
+                if raw_latest_movies:
+                    latest_movie = await self._async_transform_item(raw_latest_movies[0])
+            except Exception as err:
+                _LOGGER.debug("Failed to fetch latest movie: %s", err)
+
+            try:
+                raw_latest_episodes = await self._api.get_latest_items(
+                    user_id=user_id,
+                    item_types=["Episode"],
+                    limit=1,
+                    library_ids=libraries if libraries else None,
+                )
+                if raw_latest_episodes:
+                    latest_episode = await self._async_transform_item(raw_latest_episodes[0])
+                    raw_ep = raw_latest_episodes[0]
+                    latest_episode["season"] = raw_ep.get("ParentIndexNumber")
+                    latest_episode["episode"] = raw_ep.get("IndexNumber")
+                    latest_episode["season_name"] = raw_ep.get("SeasonName")
+                    latest_episode["series_name"] = raw_ep.get("SeriesName")
+                    series_id = raw_ep.get("SeriesId")
+                    latest_episode["series_id"] = series_id
+                    if series_id and series_id in self._favorite_series_ids:
+                        latest_episode["is_favorite"] = True
+            except Exception as err:
+                _LOGGER.debug("Failed to fetch latest episode: %s", err)
+
+            # Fetch storage info
+            storage_info = None
+            try:
+                storage_info = await self._api.get_storage_info()
+            except Exception as err:
+                _LOGGER.debug("Failed to fetch storage info: %s", err)
 
             # Update last refresh time (always updates)
             self.last_refresh_time = dt_util.utcnow()
@@ -209,6 +280,9 @@ class JellyHALibraryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 "last_refresh": self.last_refresh_time.isoformat(),
                 "last_data_change": self.last_data_change_time.isoformat() if self.last_data_change_time else None,
                 "next_up_items": next_up_items,
+                "latest_movie": latest_movie,
+                "latest_episode": latest_episode,
+                "storage": storage_info,
             }
 
         except JellyfinAuthError as err:
@@ -283,14 +357,19 @@ class JellyHALibraryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         backdrop_url = None
         backdrop_tags = item.get('BackdropImageTags', [])
-        if backdrop_tags:
+        backdrop_item_id = item_id
+        if not backdrop_tags:
+            backdrop_tags = item.get('ParentBackdropImageTags', [])
+            backdrop_item_id = item.get('ParentBackdropItemId') or item.get('SeriesId') or item_id
+
+        if backdrop_tags and backdrop_item_id:
             backdrop_tag = backdrop_tags[0]
-            backdrop_cache_key = (item_id, "Backdrop", backdrop_tag)
+            backdrop_cache_key = (backdrop_item_id, "Backdrop", backdrop_tag)
             cached = self._url_cache.get(backdrop_cache_key)
             if cached and (now - cached[1]) < _URL_CACHE_TTL:
                 backdrop_url = cached[0]
             else:
-                backdrop_path = f"/api/jellyha/image/{self.entry.entry_id}/{item_id}/Backdrop?tag={backdrop_tag}"
+                backdrop_path = f"/api/jellyha/image/{self.entry.entry_id}/{backdrop_item_id}/Backdrop?tag={backdrop_tag}"
                 backdrop_url = async_sign_path(self.hass, backdrop_path, expiration)
                 self._url_cache[backdrop_cache_key] = (backdrop_url, now)
 
@@ -298,8 +377,8 @@ class JellyHALibraryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         series_poster_url = None
         if item_type == "Episode":
             series_id = item.get("SeriesId")
-            series_tag = item.get("SeriesPrimaryImageTag")
-            if series_id and series_tag:
+            series_tag = item.get("SeriesPrimaryImageTag") or ""
+            if series_id:
                 series_cache_key = (series_id, "Primary", series_tag)
                 cached = self._url_cache.get(series_cache_key)
                 if cached and (now - cached[1]) < _URL_CACHE_TTL:
@@ -308,6 +387,13 @@ class JellyHALibraryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     series_path = f"/api/jellyha/image/{self.entry.entry_id}/{series_id}/Primary?tag={series_tag}"
                     series_poster_url = async_sign_path(self.hass, series_path, expiration)
                     self._url_cache[series_cache_key] = (series_poster_url, now)
+
+        # Extract media streams if present
+        media_streams = []
+        if "MediaStreams" in item and item["MediaStreams"]:
+            media_streams = item.get("MediaStreams", [])
+        elif "MediaSources" in item and item["MediaSources"]:
+            media_streams = item["MediaSources"][0].get("MediaStreams", [])
 
         # Build music-specific fields conditionally
         artist_name = None
@@ -319,28 +405,66 @@ class JellyHALibraryCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             artist_name = album_artist or (artists[0] if artists else None)
             album = item.get("Album")
 
+        video_attrs = MediaStrategy.extract_video_stream_attributes(item)
+
+        is_fav = item.get("UserData", {}).get("IsFavorite", False)
+        if not is_fav and item_type == "Episode":
+            series_id = item.get("SeriesId")
+            if series_id and series_id in getattr(self, "_favorite_series_ids", set()):
+                is_fav = True
+
+        year = item.get("ProductionYear")
+        if not year and item.get("PremiereDate"):
+            try:
+                year = int(item["PremiereDate"][:4])
+            except (ValueError, TypeError):
+                pass
+
         return {
             "id": item_id,
+            "entry_id": self.entry.entry_id,
+            "config_entry_id": self.entry.entry_id,
             "name": item.get("Name", ""),
             "type": item_type,
-            "year": item.get("ProductionYear"),
+            "year": year,
             "runtime_minutes": runtime_minutes,
             "genres": item.get("Genres", []),
             "rating": rating,
             "description": item.get("Overview", ""),
             "poster_url": poster_url,
+            "image_url": poster_url,
+            "backdrop_url": backdrop_url,
             "series_poster_url": series_poster_url,
-            "date_added": item.get("DateCreated"),
-            "jellyfin_url": self._api.get_jellyfin_url(item_id),
             "is_played": item.get("UserData", {}).get("Played", False),
-            "unplayed_count": item.get("UserData", {}).get("UnplayedItemCount"),
-            "is_favorite": item.get("UserData", {}).get("IsFavorite", False),
+            "unplayed_count": (0 if item.get("UserData", {}).get("Played", False) else (item.get("UserData", {}).get("UnplayedItemCount") or 0)) if item_type == "Series" else item.get("UserData", {}).get("UnplayedItemCount"),
+            "total_episodes": (item.get("RecursiveItemCount") if item.get("RecursiveItemCount") is not None else item.get("ChildCount", 0)) if item_type == "Series" else None,
+            "is_favorite": is_fav,
+            "date_added": item.get("DateCreated"),
+            "date_created": item.get("DateCreated"),
+
             "official_rating": item.get("OfficialRating"),
             "trailer_url": next((t["Url"] for t in item.get("RemoteTrailers", []) if t.get("Url")), None),
             "last_played_date": item.get("UserData", {}).get("LastPlayedDate"),
             "community_rating": rating,
             "season_name": item.get("SeasonName"),
             "index_number": item.get("IndexNumber"),
+            "series_name": item.get("SeriesName"),
+            "series_id": item.get("SeriesId"),
+            "season": item.get("ParentIndexNumber"),
+            "episode": item.get("IndexNumber"),
+            "dynamic_range": video_attrs["dynamic_range"],
+            "video_range": video_attrs["video_range"],
+            "video_range_type": video_attrs["video_range_type"],
+            "video_codec": video_attrs["video_codec"],
+            "video_bit_depth": video_attrs["video_bit_depth"],
+            "dv_profile": video_attrs["dv_profile"],
+            "critic_rating": item.get("CriticRating"),
+            "container": (item.get("Container") or "").lower() or None,
+            "width": video_attrs.get("width"),
+            "height": video_attrs.get("height"),
+            "aspect_ratio": video_attrs.get("aspect_ratio"),
+            "resolution": video_attrs.get("resolution"),
+            "media_streams": media_streams,
             # Music-specific fields (None for non-music items)
             "artist_name": artist_name,
             "album_artist": album_artist,
@@ -376,6 +500,12 @@ class JellyHASessionCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
         self._device_id: str | None = None
         # Cache signed URLs by (item_id, image_type, tag) -> (url, monotonic timestamp)
         self._url_cache: dict[tuple[str, str, str], tuple[str, float]] = {}
+
+        self._session_segments: dict[str, list[dict]] = {}
+        self._session_typed_segments: dict[str, list[dict]] = {}
+        self._previous_chapter_index: dict[str, int | None] = {}
+        self._previous_segment_type: dict[str, str | None] = {}
+        self._current_item_id: dict[str, str | None] = {}
 
         if self._ws_client:
             self._ws_client.set_on_session_update(self._handle_ws_session_update)
@@ -415,10 +545,14 @@ class JellyHASessionCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
                             user_data = item_details.get("UserData")
                             if user_data:
                                 s["NowPlayingItem"]["UserData"] = user_data
+                            chapters = item_details.get("Chapters")
+                            if chapters:
+                                s["NowPlayingItem"]["Chapters"] = chapters
                         except JellyfinApiError as err:
                             _LOGGER.debug("Failed to fetch UserData for item %s: %s", item_id, err)
 
             self._enrich_sessions(sessions)
+            await self._process_chapters(sessions)
             
             # Fire events even during polling to ensure automation triggers work
             self._fire_session_events(sessions)
@@ -456,22 +590,27 @@ class JellyHASessionCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
                     
                     # Cache backdrop URL
                     backdrop_tags = item.get("BackdropImageTags", [])
-                    if backdrop_tags:
+                    backdrop_item_id = item_id
+                    if not backdrop_tags:
+                        backdrop_tags = item.get("ParentBackdropImageTags", [])
+                        backdrop_item_id = item.get("ParentBackdropItemId") or item.get("SeriesId") or item_id
+
+                    if backdrop_tags and backdrop_item_id:
                         backdrop_tag = backdrop_tags[0]
-                        backdrop_cache_key = (item_id, "Backdrop", backdrop_tag)
+                        backdrop_cache_key = (backdrop_item_id, "Backdrop", backdrop_tag)
                         cached = self._url_cache.get(backdrop_cache_key)
                         if cached and (now - cached[1]) < _URL_CACHE_TTL:
                             s["jellyha_backdrop_url"] = cached[0]
                         else:
-                            backdrop_path = f"/api/jellyha/image/{self.entry.entry_id}/{item_id}/Backdrop?tag={backdrop_tag}"
+                            backdrop_path = f"/api/jellyha/image/{self.entry.entry_id}/{backdrop_item_id}/Backdrop?tag={backdrop_tag}"
                             s["jellyha_backdrop_url"] = async_sign_path(self.hass, backdrop_path, expiration)
                             self._url_cache[backdrop_cache_key] = (s["jellyha_backdrop_url"], now)
                     
                     # Cache series poster URL for episodes
                     if item.get("Type") == "Episode":
                         series_id = item.get("SeriesId")
-                        series_tag = item.get("SeriesPrimaryImageTag")
-                        if series_id and series_tag:
+                        series_tag = item.get("SeriesPrimaryImageTag") or ""
+                        if series_id:
                             series_cache_key = (series_id, "Primary", series_tag)
                             cached = self._url_cache.get(series_cache_key)
                             if cached and (now - cached[1]) < _URL_CACHE_TTL:
@@ -496,11 +635,15 @@ class JellyHASessionCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
                         user_data = item_details.get("UserData")
                         if user_data:
                             s["NowPlayingItem"]["UserData"] = user_data
+                        chapters = item_details.get("Chapters")
+                        if chapters:
+                            s["NowPlayingItem"]["Chapters"] = chapters
                     except JellyfinApiError as err:
                         _LOGGER.debug("Failed to fetch UserData for WS item %s: %s", item_id, err)
 
         # Enrich with signed URLs (same as polling path)
         self._enrich_sessions(sessions)
+        await self._process_chapters(sessions)
         
         # Fire events for device triggers
         self._fire_session_events(sessions)
@@ -514,9 +657,16 @@ class JellyHASessionCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
         """Fire events based on session state changes."""
         if not self._device_id:
             dev_reg = dr.async_get(self.hass)
-            device = dev_reg.async_get_device(identifiers={(DOMAIN, self.entry.entry_id)})
-            if device:
-                self._device_id = device.id
+            try:
+                devices = dr.async_entries_for_config_entry(dev_reg, self.entry.entry_id)
+                for d in devices:
+                    if (DOMAIN, self.entry.entry_id) in d.identifiers:
+                        self._device_id = d.id
+                        break
+                if not self._device_id and devices:
+                    self._device_id = devices[0].id
+            except Exception as ex:
+                _LOGGER.debug("Could not resolve device_id for %s: %s", self.entry.entry_id, ex)
         
         if not self._device_id:
             return
@@ -558,6 +708,7 @@ class JellyHASessionCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
         for s_id, prev in self._previous_sessions.items():
             if s_id not in curr_map or "NowPlayingItem" not in curr_map[s_id]:
                 if "NowPlayingItem" in prev:
+                    self._cleanup_session(s_id, prev)
                     self.hass.bus.async_fire(
                         f"{DOMAIN}_event",
                         {
@@ -574,12 +725,308 @@ class JellyHASessionCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
     async def _handle_ws_connect(self) -> None:
         """Handle WebSocket connection."""
         _LOGGER.info("WebSocket connected, switching to push updates")
-        self.update_interval = None
-        # We don't need to do anything else, WS will send data.
+        # Keep a 10s safety polling interval as fallback so sessions never go stale if WS drops
+        self.update_interval = timedelta(seconds=10)
+        async_dispatcher_send(self.hass, f"{DOMAIN}_{self.entry.entry_id}_ws_status")
+        # Trigger an immediate refresh to ensure we have fresh data on connect
+        await self.async_request_refresh()
 
     async def _handle_ws_disconnect(self) -> None:
         """Handle WebSocket disconnection."""
         _LOGGER.info("WebSocket disconnected, switching to polling updates")
         self.update_interval = timedelta(seconds=5)
+        async_dispatcher_send(self.hass, f"{DOMAIN}_{self.entry.entry_id}_ws_status")
         # Trigger an immediate refresh to ensure we have data and restart the timer
         await self.async_request_refresh()
+
+    async def _process_chapters(self, sessions: list[dict[str, Any]]) -> None:
+        """Process chapters and segments for active sessions."""
+        for session in sessions:
+            session_id = session.get("Id")
+            if not session_id:
+                continue
+            now_playing = session.get("NowPlayingItem") or {}
+            play_state = session.get("PlayState") or {}
+            item_id = now_playing.get("Id")
+            position = play_state.get("PositionTicks", 0)
+            chapters = now_playing.get("Chapters") or []
+            runtime = now_playing.get("RunTimeTicks")
+
+            # --- Detect new item ---
+            if item_id and item_id != self._current_item_id.get(session_id):
+                self._current_item_id[session_id] = item_id
+                self._previous_chapter_index[session_id] = None
+                self._previous_segment_type[session_id] = None
+                await self._build_segment_cache(session_id, item_id, chapters, runtime)
+
+            # --- Resolve current state ---
+            current_chapter = self._get_current_chapter(session_id, position)
+            current_seg = self._get_current_segment(session_id, position)
+            current_seg_type = current_seg["type"] if current_seg else None
+
+            if current_chapter:
+                # --- Chapter transition ---
+                prev_idx = self._previous_chapter_index.get(session_id)
+                if current_chapter["chapter_index"] != prev_idx:
+                    self._previous_chapter_index[session_id] = current_chapter["chapter_index"]
+                    self._fire_chapter_event(session, current_chapter)
+
+            # --- Segment transition ---
+            prev_seg = self._previous_segment_type.get(session_id)
+            if current_seg_type != prev_seg:
+                self._previous_segment_type[session_id] = current_seg_type
+                self._fire_segment_event(
+                    session,
+                    current_chapter or {"chapter_index": None, "chapter_name": ""},
+                    current_seg_type,
+                    prev_seg,
+                    segment_entry=current_seg,
+                )
+
+    def _classify_chapter_name(self, name: str) -> str | None:
+        """Apply local regex patterns to a chapter name."""
+        for segment_type, pattern in CHAPTER_SEGMENT_PATTERNS:
+            if pattern.search(name):
+                return segment_type
+        return None
+
+    async def _build_segment_cache(
+        self,
+        session_id: str,
+        item_id: str,
+        chapters: list[dict],
+        runtime_ticks: int | None,
+    ) -> None:
+        """Populate session segment cache."""
+        segments_from_api: list[dict] = []
+
+        if item_id:
+            segments_from_api = await self._api.get_media_segments(item_id)
+
+        # 1. Parse typed segments from MediaSegments API (Intro Skipper, etc.)
+        typed_segments: list[dict] = []
+        for seg in segments_from_api:
+            stype = seg.get("Type")
+            if stype:
+                typed_segments.append({
+                    "type": stype,
+                    "start_ticks": seg.get("StartTicks", 0),
+                    "end_ticks": seg.get("EndTicks", seg.get("StartTicks", 0)),
+                })
+
+        # 2. If no API segments, extract typed segments from chapter names
+        if not typed_segments and chapters:
+            for idx, ch in enumerate(chapters):
+                classified = self._classify_chapter_name(ch.get("Name", ""))
+                if classified:
+                    start = ch.get("StartPositionTicks", 0)
+                    is_last = (idx == len(chapters) - 1)
+                    if not is_last:
+                        end = chapters[idx + 1].get("StartPositionTicks", start)
+                    elif runtime_ticks:
+                        end = runtime_ticks
+                    else:
+                        end = start + 1
+                    typed_segments.append({
+                        "type": classified,
+                        "start_ticks": start,
+                        "end_ticks": end,
+                    })
+
+        self._session_typed_segments[session_id] = typed_segments
+
+        # 3. If no embedded chapters but we have typed segments, build synthetic chapters
+        if not chapters and typed_segments:
+            chapters = self._build_synthetic_chapters(typed_segments, runtime_ticks)
+
+        total = len(chapters)
+        enriched: list[dict] = []
+        for idx, chapter in enumerate(chapters):
+            start = chapter.get("StartPositionTicks", 0)
+            is_last = (idx == total - 1)
+
+            if not is_last:
+                end = chapters[idx + 1].get("StartPositionTicks", start)
+            elif runtime_ticks:
+                end = runtime_ticks
+            else:
+                end = start + 1  # Minimal fallback for zero-duration last chapter
+
+            # Check if chapter overlaps any typed segment
+            segment_type = None
+            for s in typed_segments:
+                if max(start, s["start_ticks"]) < min(end, s["end_ticks"]):
+                    segment_type = s["type"]
+                    break
+            if segment_type is None:
+                segment_type = self._classify_chapter_name(chapter.get("Name", ""))
+
+            enriched.append({
+                "chapter_index":   idx + 1,
+                "chapter_count":   total,
+                "chapter_name":    chapter.get("Name", ""),
+                "segment_type":    segment_type,
+                "start_ticks":     start,
+                "end_ticks":       end,
+                "is_last_chapter": is_last,
+            })
+
+        self._session_segments[session_id] = enriched
+
+    @staticmethod
+    def _build_synthetic_chapters(
+        segments: list[dict], runtime_ticks: int | None
+    ) -> list[dict]:
+        """Build synthetic chapter entries from segment data.
+
+        Used when a file has no embedded chapters but Intro Skipper or a
+        segment provider has detected segments (e.g. Intro, Outro).
+        """
+        boundaries: set[int] = {0}
+        for seg in segments:
+            boundaries.add(seg.get("start_ticks", seg.get("StartTicks", 0)))
+            end = seg.get("end_ticks", seg.get("EndTicks"))
+            if end is not None:
+                boundaries.add(end)
+        if runtime_ticks:
+            boundaries.add(runtime_ticks)
+
+        sorted_bounds = sorted(boundaries)
+
+        synthetic: list[dict] = []
+        for i in range(len(sorted_bounds) - 1):
+            start = sorted_bounds[i]
+            # Find matching segment type if this slice is within a segment
+            seg_type = None
+            for seg in segments:
+                s_start = seg.get("start_ticks", seg.get("StartTicks", 0))
+                s_end = seg.get("end_ticks", seg.get("EndTicks", s_start))
+                if s_start <= start < s_end:
+                    seg_type = seg.get("type", seg.get("Type"))
+                    break
+            name = seg_type if seg_type else "Content"
+            synthetic.append({
+                "StartPositionTicks": start,
+                "Name": name,
+            })
+
+        return synthetic
+
+    def _get_current_chapter(self, session_id: str, position_ticks: int) -> dict | None:
+        """Return the enriched chapter dict that contains position_ticks."""
+        segments = self._session_segments.get(session_id)
+        if not segments:
+            return None
+
+        current = None
+        for entry in segments:
+            if position_ticks >= entry["start_ticks"]:
+                current = entry
+            else:
+                break
+        return current
+
+    def _get_current_segment(self, session_id: str, position_ticks: int) -> dict | None:
+        """Return the active typed segment dict for position_ticks."""
+        segments = self._session_typed_segments.get(session_id, [])
+        for seg in segments:
+            if seg["start_ticks"] <= position_ticks < seg["end_ticks"]:
+                return seg
+        return None
+
+    def _get_current_segment_type(self, session_id: str, position_ticks: int) -> str | None:
+        """Return the SegmentType the current position falls within."""
+        seg = self._get_current_segment(session_id, position_ticks)
+        return seg["type"] if seg else None
+
+    def _get_current_segment_entry(self, session_id: str, position_ticks: int) -> dict | None:
+        """Return the typed segment entry for position_ticks."""
+        return self._get_current_segment(session_id, position_ticks)
+
+    def _cleanup_session(self, session_id: str, session: dict | None = None) -> None:
+        """Remove all cached state for a session that has ended.
+
+        If the session was inside a typed segment when it ended, fire a
+        media_segment_change event with in_segment=False so automations
+        (e.g. lighting) get a clean exit signal.
+        """
+        prev_seg = self._previous_segment_type.get(session_id)
+        if prev_seg is not None:
+            # Build a minimal chapter context from cached data for the event
+            segments = self._session_segments.get(session_id, [])
+            prev_idx = self._previous_chapter_index.get(session_id)
+            chapter_context = {"chapter_index": prev_idx, "chapter_name": ""}
+            for entry in segments:
+                if entry["chapter_index"] == prev_idx:
+                    chapter_context["chapter_name"] = entry["chapter_name"]
+                    break
+
+            # Fire exit event — use provided session or build minimal context
+            exit_session = session or {"Id": session_id}
+            self._fire_segment_event(
+                exit_session, chapter_context, None, prev_seg
+            )
+
+        self._session_segments.pop(session_id, None)
+        self._session_typed_segments.pop(session_id, None)
+        self._previous_chapter_index.pop(session_id, None)
+        self._previous_segment_type.pop(session_id, None)
+        self._current_item_id.pop(session_id, None)
+
+    def _fire_chapter_event(self, session: dict, chapter: dict) -> None:
+        """Fire jellyha_event with type=media_chapter_change."""
+        now_playing = session.get("NowPlayingItem") or {}
+        event_data = {
+            "type":            EVENT_CHAPTER_CHANGE,
+            "device_id":       self._device_id or session.get("DeviceId"),
+            "session_id":      session.get("Id"),
+            "user_id":         session.get("UserId"),
+            "media_title":     now_playing.get("Name"),
+            "chapter_index":   chapter["chapter_index"],
+            "chapter_count":   chapter.get("chapter_count"),
+            "chapter_name":    chapter["chapter_name"],
+            "segment_type":    chapter.get("segment_type"),
+            "is_last_chapter": chapter.get("is_last_chapter"),
+        }
+        # Add segment end position for skip automations
+        end_ticks = chapter.get("end_ticks")
+        if end_ticks is not None and chapter.get("segment_type"):
+            event_data["segment_end_seconds"] = round(end_ticks / TICKS_PER_SECOND, 1)
+        self.hass.bus.async_fire(f"{DOMAIN}_event", event_data)
+
+    def _fire_segment_event(
+        self,
+        session: dict,
+        chapter: dict,
+        current_segment_type: str | None,
+        previous_segment_type: str | None,
+        segment_entry: dict | None = None,
+    ) -> None:
+        """Fire jellyha_event with type=media_segment_change."""
+        now_playing = session.get("NowPlayingItem") or {}
+        event_data = {
+            "type":                  EVENT_SEGMENT_CHANGE,
+            "device_id":             self._device_id or session.get("DeviceId"),
+            "session_id":            session.get("Id"),
+            "user_id":               session.get("UserId"),
+            "media_title":           now_playing.get("Name"),
+            "segment_type":          current_segment_type,
+            "previous_segment_type": previous_segment_type,
+            "in_segment":            current_segment_type is not None,
+            "chapter_index":         chapter.get("chapter_index"),
+            "chapter_name":          chapter.get("chapter_name"),
+        }
+        # When entering a typed segment, provide exact end position for skip automations
+        if current_segment_type is not None:
+            if segment_entry and "end_ticks" in segment_entry:
+                event_data["segment_end_seconds"] = round(
+                    segment_entry["end_ticks"] / TICKS_PER_SECOND, 1
+                )
+            else:
+                session_id = session.get("Id")
+                seg = self._get_current_segment(session_id, session.get("PlayState", {}).get("PositionTicks", 0)) if session_id else None
+                if seg:
+                    event_data["segment_end_seconds"] = round(
+                        seg["end_ticks"] / TICKS_PER_SECOND, 1
+                    )
+        self.hass.bus.async_fire(f"{DOMAIN}_event", event_data)

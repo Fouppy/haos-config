@@ -49,8 +49,8 @@ blueprint:
                 value: enable_button_trigger
               - label: Dont use a button trigger
                 value: disable_button_trigger
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         button_entity:
           name: Button Helper
@@ -63,8 +63,8 @@ blueprint:
               filter:
               - domain:
                 - input_button
-              reorder: false
               multiple: false
+              reorder: false
         include_time:
           name: Use The Time Trigger (Optional)
           description: 'Enable this if you''d like to periodically check for blueprint
@@ -79,8 +79,8 @@ blueprint:
                 value: time_enabled
               - label: Disable the time options
                 value: time_disabled
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         time:
           name: Time
@@ -156,8 +156,8 @@ blueprint:
                 value: enable_folder_watcher
               - label: Do Not Use Folder Watcher
                 value: disable_folder_watcher
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         blueprint_file_name:
           name: Blueprint File Name
@@ -213,8 +213,8 @@ blueprint:
               filter:
               - domain:
                 - sensor
-              reorder: false
               multiple: false
+              reorder: false
         blueprint_local_sensor:
           name: Blueprint Local Sensor
           description: 'Select the sensor that monitors the version of the blueprint
@@ -230,8 +230,8 @@ blueprint:
               filter:
               - domain:
                 - sensor
-              reorder: false
               multiple: false
+              reorder: false
     device_notify_settings:
       name: Mobile App Notify
       icon: mdi:devices
@@ -251,8 +251,8 @@ blueprint:
                 value: enable_mobile_app_notify
               - label: Disable Mobile App Notify Options
                 value: disable_mobile_app_notify
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         notify_device:
           name: Devices Notified (Optional)
@@ -316,8 +316,8 @@ blueprint:
                 value: time-sensitive
               - label: Quiet Notifications Without Waking Screen
                 value: passive
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         notify_sound:
           name: Notification Sound - iOS Only
@@ -407,8 +407,8 @@ blueprint:
                 value: enable_blueprint_url
               - label: Disable Blueprint URL
                 value: disable_blueprint_url
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
     persistent_notify_settings:
       name: Notifications
@@ -427,8 +427,8 @@ blueprint:
                 value: enable_persistent_notification
               - label: Disable UI Notifications
                 value: disabled_persistent_notification
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         persistent_title:
           name: Title
@@ -489,8 +489,8 @@ blueprint:
                 value: enable_version_numbers
               - label: Disable Version Numbers
                 value: disable_version_numbers
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         latest_version_text:
           name: Latest Version Text
@@ -530,8 +530,8 @@ blueprint:
                 value: enable_custom_actions
               - label: Disable Custom Actions
                 value: disable_custom_actions
-              custom_value: false
               multiple: false
+              custom_value: false
               sort: false
         custom_actions:
           name: Custom Actions
